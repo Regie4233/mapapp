@@ -13,3 +13,9 @@ export interface Shift {
     time_end: string;
     updated_at: Date;
 }
+
+export interface WorkingDays {
+    work_day: Date;
+    shifts: Array<Shift>;
+    location: string;
+}
