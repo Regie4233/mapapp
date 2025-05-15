@@ -23,6 +23,7 @@ export default function CalendarRenderer({data}: {data: WorkingDays[], limit: nu
                                     </li>
                                 ))}
                             </ul>
+                            <button className='bg-blue-500 text-white p-2 rounded mt-2' onClick={() => console.log('add shift')}>Add Shift</button>
                         </div>
                     )
                 })

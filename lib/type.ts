@@ -1,3 +1,5 @@
+import { AuthRecord } from "pocketbase";
+
 export interface Shift {
     booked: boolean;
     booked_by: number;
@@ -18,4 +20,18 @@ export interface WorkingDays {
     work_day: Date;
     shifts: Array<Shift>;
     location: string;
+}
+
+export interface PocketBaseUser {
+    id: string;
+    email: string;
+    name: string;
+    verified: boolean;
+    privilage: string;
+    phone: string;
+}
+
+export interface AuthData {
+    token: string;
+    record: AuthRecord;
 }

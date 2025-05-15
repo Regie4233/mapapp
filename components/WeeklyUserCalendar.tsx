@@ -1,5 +1,5 @@
 import { getWorkingDays_Week } from "@/lib/server/handler";
-import CalendarRenderer from "../shared/CalendarRenderer";
+import CalendarRenderer from "./shared/CalendarRenderer";
 
 
 export default async function WeeklyUserCalendar() {

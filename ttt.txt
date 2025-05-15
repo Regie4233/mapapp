@@ -1,0 +1,127 @@
+
+// import { useActionState } from 'react'; // or import { useFormState as useActionState } from 'react-dom';
+// import { useFormStatus } from 'react-dom'; // For the submit button's pending state
+// import { getTokenViaAction, type TokenAuthActionState } from '../auth/actions'; // Adjust path if needed
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation'; // Optional: For redirecting after login
+// import Link from 'next/link'; // Optional: For a "Sign up" link
+// import { useDispatch } from "react-redux";
+// import { } from "@reduxjs/toolkit"
+// import { AuthData } from '@/lib/type';
+// import { setAuthUser } from '@/lib/store/states/sessionsSlice';
+// const initialState: TokenAuthActionState = { success: false };
+
+
+// function LoginSubmitButton() {
+//     const { pending } = useFormStatus();
+
+//     return (
+//         <button
+//             type="submit"
+//             disabled={pending}
+//             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+//         >
+//             {pending ? 'Logging In...' : 'Login'}
+//         </button>
+//     );
+// }
+
+
+// export default function LoginPage() {
+//     // useActionState is an alias for useFormState
+//     const [state, formAction] = useActionState(getTokenViaAction, initialState);
+//     const [sessionToken, setSessionToken] = useState<string | null>(null);
+
+//     const dispatch = useDispatch();
+
+//     const router = useRouter();
+//     useEffect(() => {
+//         if (state.success && state.authData?.token) {
+           
+//             setSessionToken(state.authData.token);
+    
+//             const authdata: AuthData = {
+//                 token: state.authData.token,
+//                 record: state.authData.record || null,
+//             }
+//             dispatch(setAuthUser(authdata));
+//             router.push('/dashboard');
+//         }
+//     }, [state.success, state.authData]);
+
+//     return (
+//         <main>
+//             <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+//                 <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+//                     <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">Login</h1>
+
+//                     {state?.message && (
+//                         <div
+//                             className={`mb-4 p-3 rounded-md text-sm ${state.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+//                                 }`}
+//                         >
+//                             {state.message}
+//                         </div>
+//                     )}
+
+//                     <form action={formAction} className="space-y-6">
+//                         <div>
+//                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+//                                 Email
+//                             </label>
+//                             <input
+//                                 type="email"
+//                                 id="email"
+//                                 name="email"
+//                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+//                                 required
+//                                 autoComplete="email"
+//                             />
+                           
+//                             {state?.errors?.email && (
+//                                 <p className="mt-1 text-xs text-red-600">{state.errors.email.join(', ')}</p>
+//                             )}
+//                         </div>
+
+//                         <div>
+//                             <label
+//                                 htmlFor="password"
+//                                 className="block text-sm font-medium text-gray-700 mb-1"
+//                             >
+//                                 Password
+//                             </label>
+//                             <input
+//                                 type="password"
+//                                 id="password"
+//                                 name="password"
+//                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+//                                 required
+//                                 autoComplete="current-password"
+//                             />
+                         
+//                             {state?.errors?.password && (
+//                                 <p className="mt-1 text-xs text-red-600">{state.errors.password.join(', ')}</p>
+//                             )}
+//                         </div>
+
+//                         <LoginSubmitButton />
+//                     </form>
+
+                
+//                     {sessionToken && (
+//                         <div className="mt-6 p-3 bg-green-100 text-green-700 rounded-md text-sm text-center">
+//                             Logged in! (Token stored client-side)
+//                         </div>
+//                     )}
+
+//                     <p className="mt-8 text-sm text-center text-gray-600">
+//                         Dont have an account?{' '}
+//                         <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-700 hover:underline">
+//                             Sign up
+//                         </Link>
+//                     </p>
+//                 </div>
+//             </div>
+//         </main>
+//     );
+// }
