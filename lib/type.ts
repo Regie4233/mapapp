@@ -35,3 +35,16 @@ export interface AuthData {
     token: string;
     record: AuthRecord;
 }
+
+export interface AuthUser {
+    id: string;
+    email: string;
+    name: string;   
+    verified: boolean;
+    privilage: string;
+    phone: string;
+    created: Date;
+    updated: Date;
+    title: string;
+    about: string;
+}

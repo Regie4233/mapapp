@@ -6,11 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "node lib/inital_pocketbase_seeder.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.1",
     "date-fns": "^4.1.0",
+    "jose": "^6.0.11",
     "next": "^15.3.2",
     "pocketbase": "^0.26.0",
     "react": "^19.0.0",

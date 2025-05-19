@@ -1,21 +1,40 @@
-'use client'
-import WeeklyUserCalendar from "@/components/WeeklyUserCalendar"
-import { UseDispatch } from "react-redux"
-import { useAppSelector } from "@/lib/hooks"
-import { redirect } from "next/navigation";
-export default function Dashboard() {
-    // const dispatch = UseDispatch();
-    const authUser = useAppSelector((state) => state.sessions.authUser);
-    if(authUser === null) {
-        redirect('/login');
-    }
-    return (
-        <main>
-            <h1 className="text-2xl font-bold mb-6 text-center">Dashboard</h1>
-            <p className="text-center mb-4">This is a placeholder please delete this code</p>
-         
-            {/* <WeeklyUserCalendar /> */}
+'use client';
 
-        </main>
-    )
+import { useDispatch } from "react-redux"
+import { useEffect } from "react";
+import { setAuthUser } from "@/lib/store/states/sessionsSlice";
+import TestUserInfo from "@/components/test_userinfo/TestUserInfo";
+
+export default function DashboardPage() {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const fetcher = async () => {
+            const res = await fetch('/api/auth/user', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!res.ok) {
+                console.error("Error fetching auth user");
+                return;
+            }
+            const data = await res.json();
+            const userData = data.userData;
+            if (data.record === null) {
+                console.error("No auth user found");
+                return;
+            }
+            dispatch(setAuthUser(userData));
+        }
+        fetcher();
+    }, [dispatch])
+
+    return (
+        <>
+            
+          <TestUserInfo />
+        </>
+    );
 }
