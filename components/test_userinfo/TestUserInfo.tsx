@@ -8,13 +8,13 @@ export default function TestUserInfo() {
     return (
         <>
             <h1>Dashboard</h1>
-            <p>This is the dashboard page.</p>
+            {/* <p>This is the dashboard page.</p>
             <p>Welcome, {authUser.name}</p>
             <p>Your email is {authUser.email}</p>
             <p>Your phone number is {authUser.phone}</p>
             <p>Your title is {authUser.title}</p>
             <p>Your about is {authUser.about}</p>
-            <p>Your privilage is {authUser.privilage}</p>
+            <p>Your privilage is {authUser.privilage}</p> */}
         </>
     )
 }

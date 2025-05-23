@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux"
 import { useEffect } from "react";
 import { setAuthUser } from "@/lib/store/states/sessionsSlice";
 import TestUserInfo from "@/components/test_userinfo/TestUserInfo";
+import CalendarViewer from "@/components/ViewSessions/CalendarViewer";
 
 export default function DashboardPage() {
     const dispatch = useDispatch();
@@ -32,9 +33,10 @@ export default function DashboardPage() {
     }, [dispatch])
 
     return (
-        <>
+        <div className="">
             
           <TestUserInfo />
-        </>
+          <CalendarViewer />
+        </div>
     );
 }

@@ -3,7 +3,7 @@ export default async function Home() {
  
   return (
     // create simple landing page with tailwindcss
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <main className="flex flex-col items-center justify-center min-h-screen ">
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-6 text-center">Welcome</h1>
         <p className="text-center mb-4">This is a placeholder please delete this code</p>
