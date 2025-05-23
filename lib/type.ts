@@ -73,6 +73,8 @@ export interface Shift {
   shift_end: string; // Time string, e.g., "HH:mm"
   shift_start: string; // Time string, e.g., "HH:mm"
   updated: string; // ISO 8601 date-time string
+   title: string;
+  description: string;
 }
 
 /**
@@ -87,8 +89,7 @@ export interface ShiftLocation {
   name: string;
   shiftOccurences: string[]; // Array of ShiftOccurrence IDs
   updated: string; // ISO 8601 date-time string
-    title: string;
-  description: string;
+   
 }
 
 /**

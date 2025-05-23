@@ -6,10 +6,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { ShiftOccurrence } from "@/lib/type"
+import { Shift } from "@/lib/type"
 import { formatDateToMonthYear } from "@/lib/utils"
 
-export default function ShiftCards(data: ShiftOccurrence) {
+export default function ShiftCards({data}:{data:Shift}) {
     return (
         <Card>
             <CardHeader>
@@ -17,8 +17,8 @@ export default function ShiftCards(data: ShiftOccurrence) {
                 <CardDescription>{data.description ||'some description'}</CardDescription>
             </CardHeader>
             <CardContent>
-                <p>{formatDateToMonthYear(new Date(data.shiftDate))}</p>
-                <p>{data.shiftLocation}</p>
+                <p>{formatDateToMonthYear(new Date(data.shift_date))}</p>
+                <p>{data.location}</p>
             </CardContent>
             <CardFooter>
                 <p>Card Footer</p>
