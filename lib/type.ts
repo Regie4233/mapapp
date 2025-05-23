@@ -87,6 +87,8 @@ export interface ShiftLocation {
   name: string;
   shiftOccurences: string[]; // Array of ShiftOccurrence IDs
   updated: string; // ISO 8601 date-time string
+    title: string;
+  description: string;
 }
 
 /**

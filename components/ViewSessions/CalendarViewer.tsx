@@ -1,8 +1,10 @@
+'use client'
 import React from 'react'
 import { CVTabs, CVTabsContent, CVTabsList, CVTabsTrigger } from '../ui/cvtabs'
 import WeekSelector from './WeekSelector'
-
+import ShiftRenderer from './ShiftRenderer'
 export default function CalendarViewer() {
+    
     return (
         <>
             <CVTabs defaultValue="upcoming" className="gap-0">
@@ -12,6 +14,7 @@ export default function CalendarViewer() {
                 </CVTabsList>
                 <CVTabsContent value="upcoming">
                     <WeekSelector />
+                    <ShiftRenderer/>
                 </CVTabsContent>
                 <CVTabsContent value="pastsession">
                     Change your password here.
