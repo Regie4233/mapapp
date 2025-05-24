@@ -11,7 +11,7 @@ export const initPocketBase = (request?: Request) => {
    
     if (request) {
         const cookie = request.headers.get('cookie');
-        console.log(cookie);
+        // console.log(cookie);
         if (cookie) {
             const test = pbInstance.authStore.loadFromCookie(cookie, 'pb_auth');
             console.log(test)

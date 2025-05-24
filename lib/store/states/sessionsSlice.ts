@@ -2,12 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import { AuthRecord } from "pocketbase";
 import {AuthUser, ShiftOccurencesResponse } from "@/lib/type";
 
-
-
 const initialState = {
     authUser: null as AuthUser | null,
     selectedDate: null as string | null,
     shiftDatas: null as ShiftOccurencesResponse | null,
+    dateTargetWeek: null as string | null,
 }
 
 const sessionSlice = createSlice({
@@ -35,7 +34,13 @@ const sessionSlice = createSlice({
         },
         clearSelectedDate: (state) => {
             state.selectedDate = null;
-        }
+        },
+        setDateTargetWeek: (state, action: PayloadAction<string>) => {
+            state.dateTargetWeek = action.payload;
+        },
+        clearDateTargetWeek: (state) => {
+            state.dateTargetWeek = null;
+        },
     },
 });
 

@@ -7,23 +7,42 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Shift } from "@/lib/type"
-import { formatDateToMonthYear } from "@/lib/utils"
+import { convertTo12HourFormat, formatDateToMonthYear, getLetterColor } from "@/lib/utils"
+import ShiftDetails from "./ShiftDetails"
+import { useState } from "react"
+import UserBadge from "./UserBadge"
 
-export default function ShiftCards({data}:{data:Shift}) {
+export default function ShiftCards({ data }: { data: Shift }) {
+    const [open, setOpen] = useState(false);
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{data.title || "Session Title"}</CardTitle>
-                <CardDescription>{data.description ||'some description'}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p>{formatDateToMonthYear(new Date(data.shift_date))}</p>
-                <p>{data.location}</p>
-            </CardContent>
-            <CardFooter>
-                <p>Card Footer</p>
-            </CardFooter>
-        </Card>
-
+        <>
+            <ShiftDetails shift={data} open={open} setOpen={setOpen} />
+            <Card className="m-4" onClick={() => setOpen(!open)}>
+                <CardHeader>
+                    <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
+                    <CardDescription className="">
+                        <p>{formatDateToMonthYear(new Date(data.shift_date), true)} | {convertTo12HourFormat(data.shift_start)}</p>
+                        <p>{data.location}</p>
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="" >
+                    <ul className="flex flex-row gap-2 items-center">
+                        {
+                            data.approved.length > 0 &&
+                            data.expand.approved.map(mentor => (
+                                <li key={mentor.id}>
+                                    <UserBadge size={12} user={mentor}/>
+                                </li>
+                            ))
+                        }
+                        <p>{data.approved.length} Attendee{data.approved.length > 1 ? "s" : ""}</p>
+                    </ul>
+                    
+                </CardContent>
+                <CardFooter>
+                    <button className="w-full bg-slate-700 text-white py-3 rounded-lg">Request Shift</button>
+                </CardFooter>
+            </Card>
+        </>
     )
 }

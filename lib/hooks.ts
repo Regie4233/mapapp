@@ -1,8 +1,8 @@
 'use client'
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
-import { ShiftOccurencesResponse, TargetWeekQuery } from './type';
-import { useEffect, useState } from 'react';
+import { TargetWeekQuery } from './type';
+import { useEffect } from 'react';
 import { setShiftDatas } from './store/states/sessionsSlice';
 
 

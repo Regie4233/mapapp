@@ -39,7 +39,8 @@ export interface AuthData {
 export interface AuthUser {
     id: string;
     email: string;
-    name: string;   
+    firstname: string;
+    lastname: string;
     verified: boolean;
     privilage: string;
     phone: string;
@@ -66,7 +67,7 @@ export interface Shift {
   collectionId: string;
   collectionName: string;
   created: string; // ISO 8601 date-time string
-  expand: Record<string, ShiftLocation>; // In your example, it's empty {}, but could contain more
+  expand: ShiftExpand; // In your example, it's empty {}, but could contain more
   id: number;
   pending_approval: string[]; // Assuming these are IDs or some string identifiers
   shift_date: string; // ISO 8601 date-time string (date part might be most relevant)
@@ -121,6 +122,29 @@ export interface ShiftOccurencesResponse {
   perPage: number;
   totalItems: number;
   totalPages: number;
+}
+
+export interface UserPool {
+  about: string;
+collectionId: string;
+collectionName: string;
+created: string;
+email: string;
+emailVisibility: boolean;
+id: string;
+firstname: string;
+lastname: string;
+phone: number;
+privilage: string;
+title: string;
+updated: string;
+verified: boolean;
+}
+
+export interface ShiftExpand {
+  approved: UserPool[];
+  pending_approval: UserPool[];
+
 }
 
 // --- Example Usage (how you might type a variable holding this data) ---

@@ -10,7 +10,7 @@ export default function ShiftRenderer() {
     return (
         <section>
             {
-                selectedShiftOccurences?.expand.shifts.map(shift => {
+                selectedShiftOccurences?.expand.shifts.map((shift) => {
                     return(
                         <div key={shift.id}>
                           <ShiftCards data={shift}/>
