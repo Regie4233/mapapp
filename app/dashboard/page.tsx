@@ -3,7 +3,7 @@
 import { useDispatch } from "react-redux"
 import { useEffect } from "react";
 import { setAuthUser } from "@/lib/store/states/sessionsSlice";
-import CalendarViewer from "@/components/ViewSessions/CalendarViewer";
+import CalendarViewer from "@/components/ViewSessions/upcoming/ShiftsViewer";
 import ViewController from "@/components/Navigation/ViewController";
 import TestNotesDash from "@/components/Notes/TestNotesDash";
 import { useAppSelector } from "@/lib/hooks";

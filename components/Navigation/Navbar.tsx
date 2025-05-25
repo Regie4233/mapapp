@@ -26,6 +26,8 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import UserBadge from "../ViewSessions/UserBadge";
 import { signOut } from "@/lib/server/auth";
 import { clearAuthUser } from "@/lib/store/states/sessionsSlice";
+
+
 const viewTags = [
     { tag: "Shifts", icon: <LuCalendar /> },
     { tag: "Notes", icon: <LuScroll /> },
@@ -41,6 +43,7 @@ export default function Navbar() {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+
     const createQueryString = useCallback(
         (name: string, value: string) => {
             const params = new URLSearchParams(searchParams.toString())
@@ -50,6 +53,18 @@ export default function Navbar() {
         },
         [searchParams]
     )
+    const viewTitle = () => {
+        switch (searchParams.get('view')) {
+            case '0':
+                return <span className="flex flex-row gap-2 items-center justify-center"><LuCalendar /> Shifts</span>
+            case '1':
+                return <span className="flex flex-row gap-2 items-center justify-center"><LuScroll/> Notes</span>
+            case '2':
+                return <span className="flex flex-row gap-2 items-center justify-center"><LuUsers /> Mentor</span>
+            default:
+                return <span className="flex flex-row gap-2 items-center justify-center"><LuCalendar /> Shifts</span>
+        }
+    }
 
     const handleLogoff = () => {
         dispatch(clearAuthUser());
@@ -62,7 +77,7 @@ export default function Navbar() {
                 <DropdownMenuTrigger className="p-4">
                     {
                         authData &&
-                        <UserBadge size={12} user={authData} tooltip={false} />
+                        <UserBadge size={50} user={authData} tooltip={false} />
                     }
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="-my-10 mx-12">
@@ -75,7 +90,7 @@ export default function Navbar() {
 
             </DropdownMenu>
             <section className="flex flex-row gap-5 p-4">
-                <h2 className="font-semibold text-xl">Shifts</h2>
+                <h2 className="font-semibold text-2xl">{viewTitle()}</h2>
                 <Sheet>
                     <SheetTrigger><TfiAlignRight size={24} /></SheetTrigger>
                     <SheetContent side="right" className="w-1/2 bg-slate-200">

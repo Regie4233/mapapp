@@ -2,8 +2,6 @@
 import { pb } from "@/lib/server/pocketbase";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { useDispatch } from "react-redux";
-import { clearAuthUser } from "../store/states/sessionsSlice";
 
 export async function signIn(formData: FormData) {
 

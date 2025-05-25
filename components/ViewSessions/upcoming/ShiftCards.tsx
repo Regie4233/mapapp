@@ -7,10 +7,10 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Shift } from "@/lib/type"
-import { convertTo12HourFormat, formatDateToMonthYear, getLetterColor } from "@/lib/utils"
+import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
 import ShiftDetails from "./ShiftDetails"
 import { useState } from "react"
-import UserBadge from "./UserBadge"
+import UserBadge from "../UserBadge"
 
 export default function ShiftCards({ data }: { data: Shift }) {
     const [open, setOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function ShiftCards({ data }: { data: Shift }) {
                             data.approved.length > 0 &&
                             data.expand.approved.map(mentor => (
                                 <li key={mentor.id}>
-                                    <UserBadge size={12} user={mentor}/>
+                                    <UserBadge size={33} user={mentor}/>
                                 </li>
                             ))
                         }

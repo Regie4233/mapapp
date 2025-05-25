@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const resLocation = request.nextUrl.searchParams.get('location');
     const resDate = request.nextUrl.searchParams.get('date') as ISOStringFormat;
     const targetDate = new Date(resDate);
-     console.log(targetDate)
+    //  console.log(targetDate)
     const weekMinMax = FindWeek(targetDate);
    
     const monday =  weekMinMax.weekmonday.toISOString().replace('T', ' ');
@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         expand: 'shiftLocation, shifts.approved, shifts.pending_approval',
         sort: 'shiftDate',
     });
-
+    // console.log(monday)
+    console.log(locationRecord.items[0])
     return new Response(JSON.stringify(locationRecord));
 }

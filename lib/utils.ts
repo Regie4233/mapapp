@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { AuthUser, Shift, ShiftOccurencesResponse, ShiftOccurrence } from "./type";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -12,11 +13,16 @@ export function cn(...inputs: ClassValue[]) {
  * @returns returns 7 days of the week of the input date returns YYYY-MM-DD
  */
 export const FindWeek = (initalDate: Date) => {
-  const startdifference = initalDate.getDay() - 2;
-  const weekStart = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() - startdifference, -4);
+  // console.log(initalDate.getDate())
+  const startdifference = initalDate.getDay() -1;
+  // console.log(startdifference)
+  // console.log(initalDate.getDate() - startdifference)
+  const weekStart = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() - startdifference);
 
-  const enddifference = 8 - initalDate.getDay();
-  const weekEnd = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() + enddifference, -4);
+  const enddifference = 7 - initalDate.getDay();
+  const weekEnd = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() + enddifference);
+  // console.log(weekStart)
+  // console.log(weekEnd)
   return ({ weekmonday: weekStart, weeksunday: weekEnd })
 }
 
@@ -209,3 +215,21 @@ export function getLetterColor(letter: string | undefined): string {
   }
 }
   
+export function filterShifts_by_user(shiftOccurences : ShiftOccurencesResponse | null, user: AuthUser | null){
+    if (user === null) return;
+    const filteredShifts: Shift[] = shiftOccurences?.items.reduce((acc: Shift[], currOccurence: ShiftOccurrence) => {
+        const approvedShiftsInOccurrence = currOccurence.expand.shifts.filter(shift => 
+            shift.approved.includes(user.id)
+        );
+        return acc.concat(approvedShiftsInOccurrence);
+    }, [] as Shift[]) || []; 
+    return filteredShifts;
+}
+
+export function formatDateToYYYYMMDD_UTC(date: Date) {
+  if (!(date instanceof Date) || isNaN(date.getDate())) {
+    return "Invalid Date"; // Or throw an error, or return null
+  }
+  // toISOString() returns a string in the format "YYYY-MM-DDTHH:mm:ss.sssZ" (Z indicates UTC)
+  return date.toISOString().slice(0, 10);
+}

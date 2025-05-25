@@ -17,7 +17,7 @@ export default function UserBadge({ size, user, tooltip = true }: { size: number
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <div className={`flex flex-row items-center font-semibold justify-center h-${size} w-${size} rounded-full border-2 border-white`} style={{ backgroundColor: getLetterColor(user.lastname[0]) }}>
+                                <div className={`flex flex-row items-center font-semibold justify-center rounded-full `} style={{height: `${size}px`, width: `${size}px` ,backgroundColor: getLetterColor(user.lastname[0]) }}>
                                     {user.firstname[0]}{user.lastname[0]}
                                 </div></TooltipTrigger>
                             <TooltipContent>
@@ -26,7 +26,7 @@ export default function UserBadge({ size, user, tooltip = true }: { size: number
                         </Tooltip>
                     </TooltipProvider> 
                     :
-                    <div className={`flex flex-row items-center font-semibold justify-center h-${size} w-${size} rounded-full border-2 border-white`} style={{ backgroundColor: getLetterColor(user.lastname[0]) }}>
+                    <div className={`flex flex-row items-center font-semibold justify-center h-[${size}px] w-[${size}px] rounded-full `} style={{height: `${size}px`, width: `${size}px` ,backgroundColor: getLetterColor(user.lastname[0]) }}>
                         {user.firstname[0]}{user.lastname[0]}
                     </div>
             }
