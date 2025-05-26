@@ -9,7 +9,7 @@
     "lint": "next lint",
     "seed_shifts": "node lib/pocketbase_seeder_v2.mjs",
     "seed_users": "node lib/pocketbase_user_seeder.mjs",
-    "seed_utc": "node lib/broken_pocketbase_seeder_v3.mjs"
+    "seed_utc": "node lib/pocketbase_seeder_v4.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",

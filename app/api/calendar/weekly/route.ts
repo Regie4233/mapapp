@@ -1,7 +1,7 @@
 import { pb } from "@/lib/server/pocketbase";
 import { FindWeek } from "@/lib/utils";
 import { ISOStringFormat } from "date-fns";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // ** Add query param date=YYYY-MM-DD and location=*target location*
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
    
     const monday =  weekMinMax.weekmonday.toISOString().replace('T', ' ');
     const sunday = weekMinMax.weeksunday.toISOString().replace('T', ' ');
-    console.log(monday, sunday);
+    // console.log(monday, sunday);
 
     await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin')
 
@@ -29,6 +29,6 @@ export async function GET(request: NextRequest) {
         sort: 'shiftDate',
     });
     // console.log(monday)
-    console.log(locationRecord.items[0])
-    return new Response(JSON.stringify(locationRecord));
+    // console.log(locationRecord.items[0])
+    return new NextResponse(JSON.stringify(locationRecord));
 }

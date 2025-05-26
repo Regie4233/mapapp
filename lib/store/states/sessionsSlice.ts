@@ -1,23 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import { AuthRecord } from "pocketbase";
-import {AuthUser, ShiftOccurencesResponse } from "@/lib/type";
-import { formatDateToYYYYMMDD_UTC } from "@/lib/utils";
+import { AuthUser, Shift, ShiftOccurencesResponse } from "@/lib/type";
+import { clear } from "console";
 
-const defaultDate = formatDateToYYYYMMDD_UTC(new Date());
+const defaultDate = new Date()
+defaultDate.setHours(0, 0, 0, 0); 
 
 interface SessionState {
     authUser: AuthUser | null;
     selectedDate: string;
     shiftDatas: ShiftOccurencesResponse | null;
     dateTargetWeek: string | null;
+    userScheduledShifts: Shift[];
 }
 
 
 const initialState: SessionState = {
     authUser: null,
-    selectedDate: defaultDate,
+    selectedDate: defaultDate.toISOString(),
     shiftDatas: null,
     dateTargetWeek: null,
+    userScheduledShifts: []
 }
 
 const sessionSlice = createSlice({
@@ -26,7 +29,7 @@ const sessionSlice = createSlice({
     reducers: {
         setAuthUser: (state, action: PayloadAction<AuthUser>) => {
             try {
-                if(action.payload === null) return;
+                if (action.payload === null) return;
                 state.authUser = action.payload;
             } catch (error) {
                 console.error("Error setting auth user:", error);
@@ -42,6 +45,9 @@ const sessionSlice = createSlice({
         setShiftDatas: (state, action: PayloadAction<ShiftOccurencesResponse>) => {
             state.shiftDatas = action.payload;
         },
+        clearShiftDatas: (state) => {
+            state.shiftDatas = null;
+        },
         clearSelectedDate: (state) => {
             state.selectedDate = '';
         },
@@ -50,9 +56,17 @@ const sessionSlice = createSlice({
         },
         clearDateTargetWeek: (state) => {
             state.dateTargetWeek = null;
+        },
+        setUserScheduledShifts: (state, action: PayloadAction<Shift[]>) => {
+            state.userScheduledShifts = action.payload;
+        },
+        clearUserScheduledShifts: (state) => {
+            state.userScheduledShifts = [];
         }
     },
 });
 
-export const { setAuthUser, clearAuthUser, setSelectedDate, clearSelectedDate, setShiftDatas} = sessionSlice.actions;
+export const { setAuthUser, clearAuthUser, setSelectedDate,
+    clearSelectedDate, setShiftDatas, setDateTargetWeek,
+    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas } = sessionSlice.actions;
 export default sessionSlice.reducer;

@@ -1,33 +1,37 @@
 'use client'
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
-import { TargetWeekQuery } from './type';
-import { useEffect } from 'react';
-import { setShiftDatas } from './store/states/sessionsSlice';
+import { AuthUser, TargetWeekQuery } from './type';
+import { setShiftDatas, setUserScheduledShifts } from './store/states/sessionsSlice';
 
 
 export function useDataFetcher() {
-
-    const useGetShiftsWeekly = (query: TargetWeekQuery) => {
+    const dispatch = useDispatch()
+    const getShiftsWeekly = async (query: TargetWeekQuery) => {
         // const [data, setData] = useState<ShiftOccurencesResponse>();
-        const dispatch = useDispatch()
-        const fetcher = async () => {
+        try {
             const res = await fetch(`/api/calendar/weekly?location=${query.targetLocation}&&date=${query.targetDate}`)
             const data = await res.json()
-            // setData(data)
-            // return data;
-             dispatch(setShiftDatas(data))
+
+            dispatch(setShiftDatas(data))
+        }catch (error) {
+            console.error("Error fetching weekly shifts:", error);
         }
-        useEffect(() => {
-            fetcher();
-           
-        }, [])
-
-
-        // return (data ?? { items: [], page: 0, perPage: 0, totalPages: 0, totalItems: 0 })
     }
+     const getUserShifts = async (query: AuthUser) => {
+        // const [data, setData] = useState<ShiftOccurencesResponse>();
+
+            const res = await fetch(`/api/calendar/user/scheduled?id=${query.id}`)
+            const data = await res.json()
+
+            dispatch(setUserScheduledShifts(data.shiftp.items))
+    }
+
+
+
+
     return {
-        useGetShiftsWeekly
+        getShiftsWeekly, getUserShifts
     }
 }
 
