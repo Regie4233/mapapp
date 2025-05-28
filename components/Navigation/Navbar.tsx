@@ -70,7 +70,7 @@ export default function Navbar() {
         dispatch(clearAuthUser());
         signOut();
     }
-
+    if(!authData) return;
     return (
         <nav className="flex flex-row justify-between items-center">
             <DropdownMenu>

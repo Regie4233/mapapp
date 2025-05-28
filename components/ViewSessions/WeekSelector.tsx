@@ -5,7 +5,6 @@ import ViewSessionSkeleton from "./ViewSessionSkeleton";
 import { useAppSelector } from "@/lib/hooks";
 import { setSelectedDate } from '@/lib/store/states/sessionsSlice'
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { useEffect } from "react";
 export default function WeekSelector() {
     const dispatch = useAppDispatch();
     const targetDate = useAppSelector(state => state.sessions.selectedDate);
@@ -22,8 +21,6 @@ export default function WeekSelector() {
         futureDate.setDate(futureDate.getDate() + 7);
         getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: futureDate.toISOString() });
         dispatch(setSelectedDate(futureDate.toISOString()))
-
-
     }
     const nextWeekPrev = () => {
         const futureDate = new Date(selectedDate);

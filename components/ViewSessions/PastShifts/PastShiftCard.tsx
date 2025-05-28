@@ -11,7 +11,7 @@ import ShiftDetails from "../Upcoming/ShiftDetails" // Or a new ScheduledDetails
 import { useState } from "react"
 import { MdArrowForwardIos } from "react-icons/md";
 
-export default function ScheduledCards({ data }: { data: Shift }) {
+export default function PastShiftCard({ data }: { data: Shift }) {
     const [open, setOpen] = useState(false);
     return (
         <>

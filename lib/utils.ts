@@ -14,7 +14,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export const FindWeek = (initalDate: Date) => {
   // console.log(initalDate.getDate())
-  const startdifference = initalDate.getDay() -1;
+  const startdifference = initalDate.getDay() - 1;
   // console.log(startdifference)
   // console.log(initalDate.getDate() - startdifference)
   const weekStart = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() - startdifference);
@@ -41,22 +41,22 @@ export function formatDateToMonthYear(
 ): string {
   // 1. Validate the input
   if (!(dateInput instanceof Date) || isNaN(dateInput.getTime())) {
-   
+
     return "Invalid Date";
   }
 
   try {
-  
+
     const monthName = dateInput.toLocaleString(locale, { month: 'long' });
 
- 
+
     const year = dateInput.getFullYear();
 
 
-    return `${monthName} ${full ? dateInput.getDate():''} ${year}`;
+    return `${monthName} ${full ? dateInput.getDate() : ''} ${year}`;
 
   } catch (error) {
-    return error+"Invalid Date";
+    return error + "Invalid Date";
   }
 }
 
@@ -214,16 +214,16 @@ export function getLetterColor(letter: string | undefined): string {
     return '#808080'; // Default color (grey) if letter is not in the map
   }
 }
-  
-export function filterShifts_by_user(shiftOccurences : ShiftOccurencesResponse | null, user: AuthUser | null){
-    if (user === null) return;
-    const filteredShifts: Shift[] = shiftOccurences?.items.reduce((acc: Shift[], currOccurence: ShiftOccurrence) => {
-        const approvedShiftsInOccurrence = currOccurence.expand.shifts.filter(shift => 
-            shift.approved.includes(user.id)
-        );
-        return acc.concat(approvedShiftsInOccurrence);
-    }, [] as Shift[]) || []; 
-    return filteredShifts;
+
+export function filterShifts_by_user(shiftOccurences: ShiftOccurencesResponse | null, user: AuthUser | null) {
+  if (user === null) return;
+  const filteredShifts: Shift[] = shiftOccurences?.items.reduce((acc: Shift[], currOccurence: ShiftOccurrence) => {
+    const approvedShiftsInOccurrence = currOccurence.expand.shifts.filter(shift =>
+      shift.approved.includes(user.id)
+    );
+    return acc.concat(approvedShiftsInOccurrence);
+  }, [] as Shift[]) || [];
+  return filteredShifts;
 }
 
 export function formatDateToYYYYMMDD_UTC(date: Date) {
@@ -232,4 +232,20 @@ export function formatDateToYYYYMMDD_UTC(date: Date) {
   }
   // toISOString() returns a string in the format "YYYY-MM-DDTHH:mm:ss.sssZ" (Z indicates UTC)
   return date.toISOString().slice(0, 10);
+}
+
+export function checkRequestPendingStatus(authId: string, shift: Shift): boolean | null {
+  if (shift.pending_approval.includes(authId.toString())) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function checkUserOwnedShift(user: AuthUser, shift: Shift): boolean {
+  if (shift.approved.includes(user.id.toString())) {
+    return true;
+  } else {
+    return false;
+  }
 }

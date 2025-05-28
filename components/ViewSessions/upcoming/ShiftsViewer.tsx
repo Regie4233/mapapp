@@ -4,24 +4,39 @@ import WeekSelector from '../WeekSelector'
 import ShiftRenderer from './ShiftRenderer'
 import ScheduledRenderer from '../scheduled/ScheduledRenderer'
 import { useAppSelector, useDataFetcher } from '@/lib/hooks'
-import { filterShifts_by_user, formatDateToYYYYMMDD_UTC } from '@/lib/utils'
+import { formatDateToYYYYMMDD_UTC } from '@/lib/utils'
 import { useEffect } from 'react'
+import PastShiftRenderer from '../PastShifts/PastShiftRenderer'
+// import { pb } from '@/lib/server/pocketbase'
 
 export default function ShiftsViewer() {
-    const { getShiftsWeekly, getUserShifts } = useDataFetcher();
+    const { getShiftsWeekly, getUserShifts, getUserPastShifts } = useDataFetcher();
     const authData = useAppSelector(state => state.sessions.authUser);
     const defaultDate = formatDateToYYYYMMDD_UTC(new Date());
-   
+
     // const shiftOccurences = useAppSelector(state => state.sessions.shiftDatas);
     // const filteredShifts = filterShifts_by_user(shiftOccurences, authData);
     const filteredShifts = useAppSelector(state => state.sessions.userScheduledShifts)
+    const pastShifts = useAppSelector(state => state.sessions.userPastShifts);
     const numberSched = filteredShifts.length;
-  
+
     useEffect(() => {
-      getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: defaultDate });
-      if(!authData) return;
-      getUserShifts(authData)
+        if (!authData) return;
+        getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: defaultDate });
+        getUserShifts(authData);
+        getUserPastShifts(authData);
     }, [])
+
+    //    useEffect(() => { THIS WORKS
+    //     pb.realtime.subscribe('mapapp_shift', function (e) {
+    //         console.log('realtime', e.record);
+    //         console.log('YETETTEET')
+    //     });
+    //     return () => {
+    //         pb.realtime.unsubscribe(); // don't forget to unsubscribe
+    //     };
+    // });
+
     return (
         <>
             <CVTabs defaultValue="upcoming" className="gap-0">
@@ -38,7 +53,7 @@ export default function ShiftsViewer() {
                     <ScheduledRenderer filteredShifts={filteredShifts} />
                 </CVTabsContent>
                 <CVTabsContent value="pastsession">
-                    Change your password here.
+                   <PastShiftRenderer filteredShifts={pastShifts}/>
                 </CVTabsContent>
             </CVTabs>
 

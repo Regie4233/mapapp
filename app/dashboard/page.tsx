@@ -3,7 +3,7 @@
 import { useDispatch } from "react-redux"
 import { useEffect } from "react";
 import { setAuthUser } from "@/lib/store/states/sessionsSlice";
-import CalendarViewer from "@/components/ViewSessions/upcoming/ShiftsViewer";
+import CalendarViewer from "@/components/ViewSessions/Upcoming/ShiftsViewer";
 import ViewController from "@/components/Navigation/ViewController";
 import TestNotesDash from "@/components/Notes/TestNotesDash";
 import { useAppSelector } from "@/lib/hooks";
@@ -12,8 +12,10 @@ import DashboardSkeleton from "@/components/shared/DashboardSkeleton";
 export default function DashboardPage() {
     const dispatch = useDispatch();
     const authUser = useAppSelector(state => state.sessions.authUser)
+
+    // NEED TO FETCH AUTH USER ONCE ~ maybe using a custom hook?
     useEffect(() => {
-        const fetcher = async () => {
+        (async () => {
             const res = await fetch('/api/auth/user', {
                 method: 'GET',
                 headers: {
@@ -26,19 +28,23 @@ export default function DashboardPage() {
             }
             const data = await res.json();
             const userData = data.userData;
+
             if (data.record === null) {
                 console.error("No auth user found");
                 return;
             }
             dispatch(setAuthUser(userData));
-        }
-        fetcher();
+        })();
+
     }, [dispatch])
-    if(!authUser) return <DashboardSkeleton />
-    return (
-        <ViewController>
-            <CalendarViewer />
-            <TestNotesDash />
-        </ViewController>
-    );
+
+
+   
+if (!authUser) return <DashboardSkeleton />
+return (
+    <ViewController>
+        <CalendarViewer />
+        <TestNotesDash />
+    </ViewController>
+);
 }
