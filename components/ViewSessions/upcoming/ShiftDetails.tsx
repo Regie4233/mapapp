@@ -13,7 +13,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, open: boolean, setOpen: (value: boolean) => void }) {
     const authUser = useAppSelector(state => state.sessions.authUser);
+      const loadingState = useAppSelector(state => state.sessions.loading);
     if (authUser === undefined || authUser === null) return null;
+  
     // const ddd = notes || "No notes available for this shift.";
     // if (!shift || !shift.expand || !shift.expand.notes) return;
     // console.log(notes.summarized)

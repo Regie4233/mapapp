@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
 
         const data = {
-            "orginal": notes,
+            "content": notes,
             "summarized": JSON.stringify(resp),
             "shift": shiftId,
             "mentors": [

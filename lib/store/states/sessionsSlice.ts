@@ -188,7 +188,7 @@ const sessionSlice = createSlice({
                     console.log('Updated items after request:', updatedItems);
                     console.log('Shift occurrence after request:', shiftOccurence);
                     state.shiftDatas.items = updatedItems
-
+                    state.loading = 'Idle';
                 }
             })
             .addCase(requestShift.rejected, (state, action) => {
@@ -212,6 +212,7 @@ const sessionSlice = createSlice({
                     });
 
                     state.shiftDatas.items = updatedItems
+                    state.loading = 'Idle';
                 }
             })
             .addCase(getUserScheduledShifts.pending, (state) => {
@@ -221,6 +222,7 @@ const sessionSlice = createSlice({
                 state.loading = 'Fulfilled State';
                 console.log('Fetched user scheduled shifts:', action.payload);
                 state.userScheduledShifts = action.payload; // Update the userScheduledShifts with the fetched data
+                 state.loading = 'Idle';
             })
             .addCase(getUserScheduledShifts.rejected, (state, action) => {
                 state.loading = 'Rejected State';
@@ -229,6 +231,7 @@ const sessionSlice = createSlice({
             // create addcase for createNotes that updates the scheduled shifts
             .addCase(createNotes.pending, (state) => {
                 state.loading = 'Pending State';
+                console.log('PENDING NOTE CREATION...');
             })
             .addCase(createNotes.fulfilled, (state, action) => {
                 state.loading = 'Fulfilled State';
@@ -245,7 +248,7 @@ const sessionSlice = createSlice({
                         return shift;
                     });
                     state.userScheduledShifts = updatedItems;
-
+                    state.loading = 'Idle';
                     // const tempOccu: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
                     // const updatedOccu: ShiftOccurrence[] = tempOccu.items.map(occurence => {
                     //     if (occurence.id === targetOccurence.id) {

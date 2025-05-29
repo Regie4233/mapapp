@@ -102,6 +102,7 @@ export interface Shift {
   updated: string; // ISO 8601 date-time string
   title: string;
   description: string;
+  loading: boolean;
 }
 
 /**

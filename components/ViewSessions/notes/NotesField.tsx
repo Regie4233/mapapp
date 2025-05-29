@@ -3,7 +3,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { createNotes } from "@/lib/store/states/sessionsSlice";
 import { useState } from "react";
 
-export const NoteField = ({shiftId}: {shiftId: number}) => {
+export const NoteField = ({shiftId, setOpen}: {shiftId: number, setOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
     const [notes, setNotes] = useState("");
     const dispatch = useAppDispatch()
     const handleSubmit = () => {
@@ -12,6 +12,7 @@ export const NoteField = ({shiftId}: {shiftId: number}) => {
         // Reset the notes field after submission
         dispatch(createNotes({ notes: notes.replace(/[\n\r]+/g, ''), shiftId: shiftId.toString() })); // Replace with actual shift ID
         setNotes("");
+        setOpen(false);
     }
     return (
         <>
