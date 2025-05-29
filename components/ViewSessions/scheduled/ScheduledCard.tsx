@@ -23,7 +23,7 @@ export default function ScheduledCards({ data }: { data: Shift }) {
                     <CardDescription className="">
                         <p>{formatDateToMonthYear(new Date(data.shift_date), true)} | {convertTo12HourFormat(data.shift_start)}</p>
                         <section className="flex flex-row justify-between">
-                            <p>{data.location}</p>
+                            {/* <p>{data.location}</p> */}
                             <MdArrowForwardIos />
                         </section>
 

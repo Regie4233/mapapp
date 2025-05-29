@@ -55,7 +55,7 @@ export default function ShiftCards({ data }: { data: Shift }) {
                         <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
                         <CardDescription className="">
                             <p>{formatDateToMonthYear(new Date(data.shift_date), true)} | {convertTo12HourFormat(data.shift_start)}</p>
-                            <p>{data.location}</p>
+                            {/* <p>{data.location}</p> */}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

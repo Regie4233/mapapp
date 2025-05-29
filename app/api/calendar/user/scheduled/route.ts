@@ -8,11 +8,11 @@ export async function GET(request: NextRequest) {
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
     await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
     const date = new Date().toISOString().split('T')[0];
-    const shiftp = await pb.collection('mapapp_shift').getList(1, 60, {
+    const shift = await pb.collection('mapapp_shift').getList(1, 60, {
         filter: `approved ?~ "${id}" && shift_date >= "${date}"`,
-        expand: 'approved',
+        expand: 'approved, notes, pending_approval',
         sort: '-created'
     });
 
-    return new NextResponse(JSON.stringify({ id, shiftp }))
+    return new NextResponse(JSON.stringify({ id, shift }), { status: 200 });
 }

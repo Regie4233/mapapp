@@ -77,6 +77,48 @@ export const cancelRequest = createAsyncThunk(
     }
 );
 
+export const createNotes = createAsyncThunk(
+    'sessions/createNotes',
+    async ({ shiftId, notes }: { shiftId: string, notes: string }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, notes }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to request shift');
+            }
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error creating notes:', error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
+export const getUserScheduledShifts = createAsyncThunk(
+    'sessions/getUserScheduledShifts',
+    async (authUser: string, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`/api/calendar/user/scheduled?id=${authUser}`)
+            const data = await res.json()
+
+            // dispatch(setUserScheduledShifts(data.shiftp.items))
+            return data.shift.items; // Return the scheduled shifts
+        } catch (error) {
+            console.error("Error fetching weekly shifts:", error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
+
+
 
 const sessionSlice = createSlice({
     name: 'sessions',
@@ -128,6 +170,7 @@ const sessionSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(requestShift.pending, (state) => {
             state.loading = 'Pending State';
+            console.log('Requesting shift...');
         })
             .addCase(requestShift.fulfilled, (state, action) => {
                 state.loading = 'Fulfilled State';
@@ -142,7 +185,8 @@ const sessionSlice = createSlice({
                         }
                         return occurence;
                     });
-
+                    console.log('Updated items after request:', updatedItems);
+                    console.log('Shift occurrence after request:', shiftOccurence);
                     state.shiftDatas.items = updatedItems
 
                 }
@@ -170,9 +214,54 @@ const sessionSlice = createSlice({
                     state.shiftDatas.items = updatedItems
                 }
             })
-            .addCase(cancelRequest.rejected, (state, action) => {
+            .addCase(getUserScheduledShifts.pending, (state) => {
+                state.loading = 'Pending State';
+            })
+            .addCase(getUserScheduledShifts.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                console.log('Fetched user scheduled shifts:', action.payload);
+                state.userScheduledShifts = action.payload; // Update the userScheduledShifts with the fetched data
+            })
+            .addCase(getUserScheduledShifts.rejected, (state, action) => {
                 state.loading = 'Rejected State';
-                console.error('Error canceling shift request:', action.payload);
+                console.error('Error fetching user scheduled shifts:', action.payload);
+            })
+            // create addcase for createNotes that updates the scheduled shifts
+            .addCase(createNotes.pending, (state) => {
+                state.loading = 'Pending State';
+            })
+            .addCase(createNotes.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                const shiftData = action.payload.shift;
+                // const targetOccurence = action.payload.shiftOccurence.items[0];
+                console.log('Created notes:', shiftData);
+                // Update the shift occurrence with the new notes
+                if (state.userScheduledShifts !== null) {
+                    const tempData: Shift[] = JSON.parse(JSON.stringify(state.userScheduledShifts));
+                    const updatedItems: Shift[] = tempData.map(shift => {
+                        if (shift.id === shiftData.id) {
+                            return shiftData
+                        }
+                        return shift;
+                    });
+                    state.userScheduledShifts = updatedItems;
+
+                    // const tempOccu: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
+                    // const updatedOccu: ShiftOccurrence[] = tempOccu.items.map(occurence => {
+                    //     if (occurence.id === targetOccurence.id) {
+                    //         return targetOccurence;
+                    //     }
+                    //     return occurence;
+                    // });
+                    // if (state.shiftDatas !== null) {
+                    //     state.shiftDatas.items = updatedOccu;
+                    // }
+
+                }
+            })
+            .addCase(createNotes.rejected, (state, action) => {
+                state.loading = 'Rejected State';
+                console.error('Error creating notes:', action.payload);
             })
 
     },

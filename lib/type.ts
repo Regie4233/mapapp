@@ -1,58 +1,84 @@
 import { AuthRecord } from "pocketbase";
 
-export interface Shift {
-    booked: boolean;
-    booked_by: number;
-    created_at: Date;
-    id: number;
-    location: string;
-    notes: [];
-    pending_boolean: boolean;
-    requested_by: number;
-    shift_date: string;
-    shift_id: number;
-    time_start: string;
-    time_end: string;
-    updated_at: Date;
+
+export interface Notes {
+  id: string;
+  content: string;
+  summarized: NoteSummary;
+  shiftId: Shift;
+  mentors: UserPool[];
+  created: Date;
+  updated: Date;
 }
 
+export interface NoteSummary {
+  workedOn: string;
+  students: StudentNotes[];
+  keyNotes: string;
+}
+
+
+
+export interface StudentNotes {
+  name: string;
+  strengths: string[];
+  challenges: string[];
+  notes: string[];
+}
+
+// export interface Shift {
+//     booked: boolean;
+//     booked_by: number;
+//     created_at: Date;
+//     id: number;
+//     location: string;
+//     notes: Notes;
+//     pending_boolean: boolean;
+//     requested_by: number;
+//     shift_date: string;
+//     shift_id: number;
+//     time_start: string;
+//     time_end: string;
+//     updated_at: Date;
+// }
+
 export interface WorkingDays {
-    work_day: Date;
-    shifts: Array<Shift>;
-    location: string;
+  work_day: Date;
+  shifts: Array<Shift>;
+  location: string;
 }
 
 export interface PocketBaseUser {
-    id: string;
-    email: string;
-    name: string;
-    verified: boolean;
-    privilage: string;
-    phone: string;
+  id: string;
+  email: string;
+  name: string;
+  verified: boolean;
+  privilage: string;
+  phone: string;
 }
 
 export interface AuthData {
-    token: string;
-    record: AuthRecord;
+  token: string;
+  record: AuthRecord;
 }
 
 export interface AuthUser {
-    id: string;
-    email: string;
-    firstname: string;
-    lastname: string;
-    verified: boolean;
-    privilage: string;
-    phone: string;
-    created: Date;
-    updated: Date;
-    title: string;
-    about: string;
+  id: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  verified: boolean;
+  privilage: string;
+  phone: string;
+  created: Date;
+  updated: Date;
+  title: string;
+  about: string;
 }
 
 export interface TargetWeekQuery {
-    targetDate: string;
-    targetLocation: string
+  targetDate: string;
+  targetLocation: string
 }
 
 
@@ -74,7 +100,7 @@ export interface Shift {
   shift_end: string; // Time string, e.g., "HH:mm"
   shift_start: string; // Time string, e.g., "HH:mm"
   updated: string; // ISO 8601 date-time string
-   title: string;
+  title: string;
   description: string;
 }
 
@@ -90,7 +116,7 @@ export interface ShiftLocation {
   name: string;
   shiftOccurences: string[]; // Array of ShiftOccurrence IDs
   updated: string; // ISO 8601 date-time string
-   
+
 }
 
 /**
@@ -126,25 +152,25 @@ export interface ShiftOccurencesResponse {
 
 export interface UserPool {
   about: string;
-collectionId: string;
-collectionName: string;
-created: string;
-email: string;
-emailVisibility: boolean;
-id: string;
-firstname: string;
-lastname: string;
-phone: number;
-privilage: string;
-title: string;
-updated: string;
-verified: boolean;
+  collectionId: string;
+  collectionName: string;
+  created: string;
+  email: string;
+  emailVisibility: boolean;
+  id: string;
+  firstname: string;
+  lastname: string;
+  phone: number;
+  privilage: string;
+  title: string;
+  updated: string;
+  verified: boolean;
 }
 
 export interface ShiftExpand {
   approved: UserPool[];
+  notes: Notes;
   pending_approval: UserPool[];
-
 }
 
 // --- Example Usage (how you might type a variable holding this data) ---

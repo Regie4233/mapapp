@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     const locationRecord = await pb.collection('mapapp_shiftOccurences').getList(1, 60, {
         filter: `shiftDate >= "${monday}" && shiftDate <= "${sunday}" && shiftLocation.name ?~ "${resLocation}"`,
-        expand: 'shiftLocation, shifts.approved, shifts.pending_approval',
+        expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
         sort: 'shiftDate',
     });
     // console.log(monday)

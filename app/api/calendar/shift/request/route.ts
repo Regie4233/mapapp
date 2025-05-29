@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
         const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
             filter: `shifts.id ?~ "${shiftId}"`,
-            expand: 'shiftLocation, shifts.approved, shifts.pending_approval',
+            expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
         });
 
 

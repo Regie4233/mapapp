@@ -3,17 +3,19 @@ import { CVTabs, CVTabsContent, CVTabsList, CVTabsTrigger } from '../../ui/cvtab
 import WeekSelector from '../WeekSelector'
 import ShiftRenderer from './ShiftRenderer'
 import ScheduledRenderer from '../scheduled/ScheduledRenderer'
-import { useAppSelector, useDataFetcher } from '@/lib/hooks'
+import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks'
 import { formatDateToYYYYMMDD_UTC } from '@/lib/utils'
 import { useEffect } from 'react'
 import PastShiftRenderer from '../PastShifts/PastShiftRenderer'
+import { getUserScheduledShifts } from '@/lib/store/states/sessionsSlice'
 // import { pb } from '@/lib/server/pocketbase'
 
 export default function ShiftsViewer() {
-    const { getShiftsWeekly, getUserShifts, getUserPastShifts } = useDataFetcher();
+    const { getShiftsWeekly, getUserPastShifts } = useDataFetcher();
+    const dispatch = useAppDispatch();
     const authData = useAppSelector(state => state.sessions.authUser);
     const defaultDate = formatDateToYYYYMMDD_UTC(new Date());
-
+    
     // const shiftOccurences = useAppSelector(state => state.sessions.shiftDatas);
     // const filteredShifts = filterShifts_by_user(shiftOccurences, authData);
     const filteredShifts = useAppSelector(state => state.sessions.userScheduledShifts)
@@ -23,7 +25,7 @@ export default function ShiftsViewer() {
     useEffect(() => {
         if (!authData) return;
         getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: defaultDate });
-        getUserShifts(authData);
+        dispatch(getUserScheduledShifts(authData?.id))
         getUserPastShifts(authData);
     }, [])
 

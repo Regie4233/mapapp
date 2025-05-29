@@ -1,127 +1,31 @@
-
-// import { useActionState } from 'react'; // or import { useFormState as useActionState } from 'react-dom';
-// import { useFormStatus } from 'react-dom'; // For the submit button's pending state
-// import { getTokenViaAction, type TokenAuthActionState } from '../auth/actions'; // Adjust path if needed
-// import { useEffect, useState } from 'react';
-// import { useRouter } from 'next/navigation'; // Optional: For redirecting after login
-// import Link from 'next/link'; // Optional: For a "Sign up" link
-// import { useDispatch } from "react-redux";
-// import { } from "@reduxjs/toolkit"
-// import { AuthData } from '@/lib/type';
-// import { setAuthUser } from '@/lib/store/states/sessionsSlice';
-// const initialState: TokenAuthActionState = { success: false };
+I workshopped emotions with Ariah, Ali, Bryson, and Kayshawn. I talked about emotions and facial expressions, and showed them a short video that broke down emotions for kids. After that, I had the kids play a game of feelings charades.
+Kayshawn had trouble reading words such as sad and happy, but was able to understand them. Bryson struggles with patience.
+Ariah and Ali were great at expressing various emotions, and they were better at reading than the others. The kids were also very receptive of the talking stick and knew to respect others when it was their turn to talk.
+Just a note about Keyshawn— he’s very soft spoken and may be hard to understand at times. Also, when we talked about anger, Ariah made a remark that she’s often angry. With turn-taking games like charades, it’s important to keep track of whose turn it is to avoid confusion and frustration among the kids.
 
 
-// function LoginSubmitButton() {
-//     const { pending } = useFormStatus();
-
-//     return (
-//         <button
-//             type="submit"
-//             disabled={pending}
-//             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-//         >
-//             {pending ? 'Logging In...' : 'Login'}
-//         </button>
-//     );
-// }
 
 
-// export default function LoginPage() {
-//     // useActionState is an alias for useFormState
-//     const [state, formAction] = useActionState(getTokenViaAction, initialState);
-//     const [sessionToken, setSessionToken] = useState<string | null>(null);
 
-//     const dispatch = useDispatch();
 
-//     const router = useRouter();
-//     useEffect(() => {
-//         if (state.success && state.authData?.token) {
-           
-//             setSessionToken(state.authData.token);
-    
-//             const authdata: AuthData = {
-//                 token: state.authData.token,
-//                 record: state.authData.record || null,
-//             }
-//             dispatch(setAuthUser(authdata));
-//             router.push('/dashboard');
-//         }
-//     }, [state.success, state.authData]);
 
-//     return (
-//         <main>
-//             <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-//                 <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
-//                     <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">Login</h1>
 
-//                     {state?.message && (
-//                         <div
-//                             className={`mb-4 p-3 rounded-md text-sm ${state.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-//                                 }`}
-//                         >
-//                             {state.message}
-//                         </div>
-//                     )}
 
-//                     <form action={formAction} className="space-y-6">
-//                         <div>
-//                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-//                                 Email
-//                             </label>
-//                             <input
-//                                 type="email"
-//                                 id="email"
-//                                 name="email"
-//                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-//                                 required
-//                                 autoComplete="email"
-//                             />
-                           
-//                             {state?.errors?.email && (
-//                                 <p className="mt-1 text-xs text-red-600">{state.errors.email.join(', ')}</p>
-//                             )}
-//                         </div>
 
-//                         <div>
-//                             <label
-//                                 htmlFor="password"
-//                                 className="block text-sm font-medium text-gray-700 mb-1"
-//                             >
-//                                 Password
-//                             </label>
-//                             <input
-//                                 type="password"
-//                                 id="password"
-//                                 name="password"
-//                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-//                                 required
-//                                 autoComplete="current-password"
-//                             />
-                         
-//                             {state?.errors?.password && (
-//                                 <p className="mt-1 text-xs text-red-600">{state.errors.password.join(', ')}</p>
-//                             )}
-//                         </div>
 
-//                         <LoginSubmitButton />
-//                     </form>
 
-                
-//                     {sessionToken && (
-//                         <div className="mt-6 p-3 bg-green-100 text-green-700 rounded-md text-sm text-center">
-//                             Logged in! (Token stored client-side)
-//                         </div>
-//                     )}
 
-//                     <p className="mt-8 text-sm text-center text-gray-600">
-//                         Dont have an account?{' '}
-//                         <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-700 hover:underline">
-//                             Sign up
-//                         </Link>
-//                     </p>
-//                 </div>
-//             </div>
-//         </main>
-//     );
-// }
+
+We did our stretching and brief exercises, and we talked about stress and causes if stress, and how stress makes you feel. They are looking forward to learning about how to reduce stress tomorrow and making slime on Thursday. 
+
+Kids enjoyed and participated. We worked on rhyming words and played rhyming games with several, Rut and Keyshawn enjoyed playing. Bryson got frustrated and bored, and didn't want to participate. He worked by himself on a spelling puzzle. Sebastian did not participate, he may have some challenges and struggles. 
+
+Bryson was impatient and has a low frustration tolerance.
+
+Keyshawn and Rut began understanding word endings and rhyming words. 
+
+
+
+We worked on Spelling
+Ariah had some struggle spelling on her own, mixing up letters like C’s and S’s, but she did a great job with some guidance
+The students enjoyed making spelling into a game with Bananagrams - the game keeps them more engaged.
