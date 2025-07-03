@@ -56,13 +56,13 @@ export default function Navbar() {
     const viewTitle = () => {
         switch (searchParams.get('view')) {
             case '0':
-                return <span className="flex flex-row gap-2 items-center justify-center"><LuCalendar /> Shifts</span>
+                return <span className="flex flex-row gap-2 items-center justify-center"> Shifts</span>
             case '1':
-                return <span className="flex flex-row gap-2 items-center justify-center"><LuScroll/> Notes</span>
+                return <span className="flex flex-row gap-2 items-center justify-center"> Notes</span>
             case '2':
-                return <span className="flex flex-row gap-2 items-center justify-center"><LuUsers /> Mentor</span>
+                return <span className="flex flex-row gap-2 items-center justify-center"> Mentor</span>
             default:
-                return <span className="flex flex-row gap-2 items-center justify-center"><LuCalendar /> Shifts</span>
+                return <span className="flex flex-row gap-2 items-center justify-center">Shifts</span>
         }
     }
 
@@ -73,27 +73,10 @@ export default function Navbar() {
     if(!authData) return;
     return (
         <nav className="flex flex-row justify-between items-center">
-            <DropdownMenu>
-                <DropdownMenuTrigger className="p-4">
-                    {
-                        authData &&
-                        <UserBadge size={50} user={authData} tooltip={false} />
-                    }
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="-my-10 mx-12">
-                    <DropdownMenuLabel>{authData?.firstname} {authData?.lastname}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Account</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleLogoff()}>Sign Out</DropdownMenuItem>
-                </DropdownMenuContent>
-
-            </DropdownMenu>
             <section className="flex flex-row gap-5 p-4">
-                <h2 className="font-semibold text-2xl">{viewTitle()}</h2>
                 <Sheet>
                     <SheetTrigger><TfiAlignRight size={24} /></SheetTrigger>
-                    <SheetContent side="right" className="w-1/2 bg-slate-200">
+                    <SheetContent side="left" className="w-1/2 bg-slate-200">
                         <SheetHeader>
                             <SheetTitle className="text-2xl"></SheetTitle>
                             <SheetDescription>
@@ -118,8 +101,26 @@ export default function Navbar() {
                             </div>
                         </SheetFooter>
                     </SheetContent>
-
                 </Sheet>
+                  <h2 className="font-semibold text-2xl">{viewTitle()}</h2>
+            </section>
+            <section>
+                 <DropdownMenu>
+                <DropdownMenuTrigger className="p-4">
+                    {
+                        authData &&
+                        <UserBadge size={50} user={authData} tooltip={false} />
+                    }
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="-my-10 mx-12">
+                    <DropdownMenuLabel>{authData?.firstname} {authData?.lastname}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>Account</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => handleLogoff()}>Sign Out</DropdownMenuItem>
+                </DropdownMenuContent>
+
+            </DropdownMenu>
             </section>
         </nav>
     )

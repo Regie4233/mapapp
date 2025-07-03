@@ -47,10 +47,23 @@ export default function ShiftCards({ data }: { data: Shift }) {
         <>
             <ShiftDetails shift={data} open={open} setOpen={setOpen} />
             <Card className="m-4">
-                <section onClick={() => setOpen(!open)}>
+                <section onClick={() => setOpen(!open)} className="flex flex-col gap-4">
                     <CardHeader>
+                        <div>
+                            {/* To show how many slots are available */}
+                            <p className="text-sm font-semibolds bg-[#C4D7F1] rounded-full w-fit px-2 flex flex-row gap-1 items-center">
+                                <span>
+                                    {
+                                        data.spots - data.approved.length
+                                    }
+                                </span>
+                                <span>
+                                    Open
+                                </span>
+                            </p>
+                        </div>
                         {
-                            checkRequestPendingStatus(authUser.id, data) === true && <p className="bg-yellow-200 px-2 rounded-full w-fit">Awaiting Approval</p>
+                            checkRequestPendingStatus(authUser.id, data) === true && <p className="bg-[#FEE190] text-sm px-2 rounded-full w-fit">Awaiting Approval</p>
                         }
                         <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
                         <CardDescription className="">
@@ -77,9 +90,9 @@ export default function ShiftCards({ data }: { data: Shift }) {
                 <CardFooter>
                     {
                         !checkRequestPendingStatus(authUser.id, data) ?
-                            <button className="w-full bg-slate-700 text-white py-3 rounded-lg" onClick={() => handleShiftRequest()}>Request Shift</button>
+                            <button className="w-full bg-[#334155] text-white py-3 rounded-lg" onClick={() => handleShiftRequest()}>Request Shift</button>
                             :
-                            <button className="w-full bg-gray-200  py-3 rounded-lg cursor-not-allowed" onClick={() => handleRequestCancel()}>Cancel Shift Request</button>
+                            <button className="w-full bg-[#E2E8F0] py-3 rounded-lg cursor-not-allowed" onClick={() => handleRequestCancel()}>Cancel Shift Request</button>
                     }
 
                 </CardFooter>

@@ -103,6 +103,7 @@ export interface Shift {
   title: string;
   description: string;
   loading: boolean;
+  spots: number
 }
 
 /**

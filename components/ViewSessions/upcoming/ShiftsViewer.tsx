@@ -43,9 +43,9 @@ export default function ShiftsViewer() {
         <>
             <CVTabs defaultValue="upcoming" className="gap-0">
                 <CVTabsList className='w-full rounded-none bg-white'>
-                    <CVTabsTrigger value="upcoming">Upcoming</CVTabsTrigger>
-                    <CVTabsTrigger value="scheduled">Scheduled({numberSched})</CVTabsTrigger>
-                    <CVTabsTrigger value="pastsession">Past Sessions</CVTabsTrigger>
+                    <CVTabsTrigger value="upcoming">Open Shifts</CVTabsTrigger>
+                    <CVTabsTrigger value="scheduled">Scheduled Shifts ({numberSched})</CVTabsTrigger>
+                    <CVTabsTrigger value="pastsession">History</CVTabsTrigger>
                 </CVTabsList>
                 <CVTabsContent value="upcoming">
                     <WeekSelector />

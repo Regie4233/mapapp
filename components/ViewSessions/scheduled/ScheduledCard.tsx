@@ -19,6 +19,7 @@ export default function ScheduledCards({ data }: { data: Shift }) {
             <ShiftDetails shift={data} open={open} setOpen={setOpen} />
             <Card className="m-4 grid grid-cols-6" onClick={() => setOpen(!open)}>
                 <CardHeader className="col-span-6">
+                    <p className="bg-[#FEE190] text-sm px-5 rounded-full w-fit">Scheduled</p>
                     <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
                     <CardDescription className="">
                         <p>{formatDateToMonthYear(new Date(data.shift_date), true)} | {convertTo12HourFormat(data.shift_start)}</p>
@@ -26,7 +27,6 @@ export default function ScheduledCards({ data }: { data: Shift }) {
                             {/* <p>{data.location}</p> */}
                             <MdArrowForwardIos />
                         </section>
-
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="col-span-5">
