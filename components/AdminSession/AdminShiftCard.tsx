@@ -9,15 +9,16 @@ import {
 } from "@/components/ui/card"
 import { Shift } from "@/lib/type"
 import { checkRequestPendingStatus, checkUserOwnedShift, convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
-import ShiftDetails from "./ShiftDetails"
-import UserBadge from "../UserBadge"
+
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 
 import { cancelRequest, requestShift } from "@/lib/store/states/sessionsSlice";
 import { useState } from "react";
 import NotesAccordion from "./NotesAccordion";
+import ShiftDetails from "../ViewSessions/Upcoming/ShiftDetails";
+import UserBadge from "../ViewSessions/UserBadge";
 
-export default function ShiftCards({ data }: { data: Shift }) {
+export default function AdminShiftCard({ data }: { data: Shift }) {
     const [open, setOpen] = useState(false);
     const dispatch = useAppDispatch()
     const authUser = useAppSelector(state => state.sessions.authUser);

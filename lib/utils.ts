@@ -249,3 +249,12 @@ export function checkUserOwnedShift(user: AuthUser, shift: Shift): boolean {
     return false;
   }
 }
+
+// create a function to check if the user is the owner of the shift
+export function checkUserIsOwner(user: AuthUser, shift: Shift): boolean {
+  if (shift.approved.includes(user.id.toString())) {
+    return true;
+  } else {
+    return false;
+  }
+}

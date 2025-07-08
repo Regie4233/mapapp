@@ -5,6 +5,7 @@ import React from 'react'
 import ShiftCards from './ShiftCards';
 import ShiftRendererSkeleton from './ShiftRendererSkeleton';
 import { checkUserOwnedShift } from '@/lib/utils';
+import AdminShiftCard from '@/components/AdminSession/AdminShiftCard';
 
 export default function ShiftRenderer() {
     const selectedDate = useAppSelector(state => state.sessions.selectedDate);
@@ -19,7 +20,13 @@ export default function ShiftRenderer() {
                     if(checkUserOwnedShift(authUser, shift)) return; // Skip shifts that are not owned by the user
                     return(
                         <div key={shift.id}>
-                          <ShiftCards data={shift}/>
+                            {
+                                authUser.privilage === 'admin' || authUser.privilage === 'manager' ?
+                                <AdminShiftCard data={shift} />
+                                :
+                                 <ShiftCards data={shift}/>
+                            }
+                         
                         </div>
                     )
                 })

@@ -10,6 +10,7 @@ import { Shift } from "@/lib/type"
 import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
 import { NotesEditor } from "../notes/NotesEditor";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import NotesAccordion from "./NotesAccordion";
 
 export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, open: boolean, setOpen: (value: boolean) => void }) {
     const authUser = useAppSelector(state => state.sessions.authUser);
@@ -26,7 +27,7 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
             <SheetContent className="h-full" side="bottom">
                 <SheetHeader className="mt-12">
                     <SheetTitle className="text-xl">{shift.title || "Session"}</SheetTitle>
-                    <SheetDescription>
+                    <SheetDescription className="text-black">
                         <span>{formatDateToMonthYear(new Date(shift.shift_date), true)} | {convertTo12HourFormat(shift.shift_start)}</span>
                         {/* <span>{shift.expand.}</span> */}
                     </SheetDescription>
@@ -44,7 +45,7 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
                                 ))
                             }
                         </ul>
-                        <div>
+                        {/* <div>
                             <h5>Notes</h5>
                             {
                                 shift.expand.notes?.id === undefined || shift.expand.notes?.id === null || shift.expand.notes?.id === "" ?
@@ -73,7 +74,8 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
                                     <NotesEditor shiftId={shift.id} hasNotes={shift.expand.notes?.id !== undefined && shift.expand.notes?.id !== null && shift.expand.notes?.id !== "" ? true : false}/>
                                 )
                             }
-                        </div>
+                        </div> */}
+                       
                     </section>
                 </ScrollArea>
             </SheetContent>

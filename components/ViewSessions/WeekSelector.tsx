@@ -27,8 +27,6 @@ export default function WeekSelector() {
         futureDate.setDate(futureDate.getDate() - 7);
         getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: futureDate.toISOString() });
         dispatch(setSelectedDate(futureDate.toISOString()))
-
-
     }
 
 

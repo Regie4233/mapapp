@@ -3,6 +3,10 @@ import { AuthRecord } from "pocketbase";
 
 export interface Notes {
   id: string;
+  students: string;
+  worked_on_today: string;
+  struggle_with_anything: string;
+  any_wins_today: string;
   content: string;
   summarized: NoteSummary;
   shiftId: Shift;

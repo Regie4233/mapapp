@@ -33,8 +33,7 @@ export function useDataFetcher() {
         // const [data, setData] = useState<ShiftOccurencesResponse>();
         try {
             const res = await fetch(`/api/calendar/user/past?id=${query.id}`)
-            const data = await res.json()
-
+            const data = await res.json();
             dispatch(setUserPastShifts(data.shiftp.items))
         } catch (error) {
             console.error("Error fetching weekly shifts:", error);

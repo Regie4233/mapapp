@@ -11,7 +11,7 @@ interface SessionState {
     shiftDatas: ShiftOccurencesResponse | null;
     dateTargetWeek: string | null;
     userScheduledShifts: Shift[];
-    userPastShifts?: Shift[];
+    userPastShifts: Shift[];
     loading: string;
 }
 
@@ -101,10 +101,34 @@ export const createNotes = createAsyncThunk(
     }
 );
 
+export const updateNote = createAsyncThunk(
+    'sessions/createNotes',
+    async (formdata: FormData, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/notes/noai', {
+                method: 'POST',
+                body: formdata,
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to request shift');
+            }
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error creating notes:', error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
 export const getUserScheduledShifts = createAsyncThunk(
     'sessions/getUserScheduledShifts',
     async (authUser: string, { rejectWithValue }) => {
+
+        
         try {
+            
             const res = await fetch(`/api/calendar/user/scheduled?id=${authUser}`)
             const data = await res.json()
 
@@ -117,7 +141,21 @@ export const getUserScheduledShifts = createAsyncThunk(
     }
 );
 
+export const getAllScheduledShifts = createAsyncThunk(
+    'sessions/getUserScheduledShifts',
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`/api/calendar/shift/allshift`)
+            const data = await res.json()
 
+            // dispatch(setUserScheduledShifts(data.shiftp.items))
+            return data.shift.items; // Return the scheduled shifts
+        } catch (error) {
+            console.error("Error fetching weekly shifts:", error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
 
 
 const sessionSlice = createSlice({
@@ -222,7 +260,7 @@ const sessionSlice = createSlice({
                 state.loading = 'Fulfilled State';
                 console.log('Fetched user scheduled shifts:', action.payload);
                 state.userScheduledShifts = action.payload; // Update the userScheduledShifts with the fetched data
-                 state.loading = 'Idle';
+                state.loading = 'Idle';
             })
             .addCase(getUserScheduledShifts.rejected, (state, action) => {
                 state.loading = 'Rejected State';
