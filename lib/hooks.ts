@@ -29,12 +29,18 @@ export function useDataFetcher() {
             console.error("Error fetching weekly shifts:", error);
         }
     }
-    const getUserPastShifts = async (query: AuthUser) => {
+    const getUserPastShifts = async ( query: AuthUser | null ) => {
         // const [data, setData] = useState<ShiftOccurencesResponse>();
         try {
-            const res = await fetch(`/api/calendar/user/past?id=${query.id}`)
-            const data = await res.json();
-            dispatch(setUserPastShifts(data.shiftp.items))
+            if (query === null) {
+                const res = await fetch(`/api/calendar/user/past/all`)
+                const data = await res.json();
+                dispatch(setUserPastShifts(data.shiftp.items));
+            } else {
+                const res = await fetch(`/api/calendar/user/past?id=${query.id}`)
+                const data = await res.json();
+                dispatch(setUserPastShifts(data.shiftp.items));
+            }
         } catch (error) {
             console.error("Error fetching weekly shifts:", error);
         }

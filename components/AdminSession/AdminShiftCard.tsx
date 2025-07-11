@@ -66,14 +66,14 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
                     <CardHeader>
                         <div>
                             {/* To show how many slots are available */}
-                            <p className="text-sm font-semibolds bg-[#C4D7F1] rounded-full w-fit px-2 flex flex-row gap-1 items-center">
+                            <p className="text-sm font-semibolds bg-[#FEE190] rounded-full w-fit px-2 flex flex-row gap-1 items-center">
                                 <span>
                                     {
-                                        data.spots - data.approved.length
+                                        data.pending_approval.length
                                     }
                                 </span>
                                 <span>
-                                    Open
+                                    Requests
                                 </span>
                             </p>
                         </div>
@@ -83,7 +83,7 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
                         <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
                         <CardDescription className="">
                             <p>{formatDateToMonthYear(new Date(data.shift_date), true)} | {convertTo12HourFormat(data.shift_start)}</p>
-                            {/* <p>{data.location}</p> */}
+                            <p>{data.location || "Location"}</p>
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -92,17 +92,18 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
                                 data.approved.length > 0 &&
                                 data.expand.approved.map(mentor => (
                                     <li key={mentor.id}>
-                                        <UserBadge size={33} user={mentor} />
+                                        {/* <UserBadge size={33} user={mentor} /> */}
+                                        <p>{mentor.firstname} {mentor.lastname}</p>
                                     </li>
                                 ))
                             }
-                            <p>{data.approved.length} Attendee{data.approved.length > 1 ? "s" : ""}</p>
+                            {/* <p>{data.approved.length} Attendee{data.approved.length > 1 ? "s" : ""}</p> */}
                         </ul>
 
                     </CardContent>
                 </section>
 
-                <CardFooter className="w-full">
+                {/* <CardFooter className="w-full">
                     {
                         // Check if user owns the shift already Dont Show Request Button
                         !checkUserOwnedShift(authUser, data) &&
@@ -113,7 +114,7 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
                                 <button className="w-full bg-[#E2E8F0] py-3 rounded-lg cursor-not-allowed" onClick={() => handleRequestCancel()}>Cancel Shift Request</button>
                         )
                     }
-                </CardFooter>
+                </CardFooter> */}
             </Card>
         </>
     )

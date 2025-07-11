@@ -26,13 +26,13 @@ export default function ShiftsViewer() {
     useEffect(() => {
         if (!authData) return;
         getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: defaultDate });
-
+        console.log('authData', authData);
         if (authData.privilage === 'admin' || authData.privilage === 'manager') {
             //  dispatch(getAllScheduledShifts())
             // JUST see ALL PAST SHIFTS not just one user change logic
-            // getUserPastShifts(authData);
+            getUserPastShifts(null);
         } else {
-            dispatch(getUserScheduledShifts(authData?.id))
+            dispatch(getUserScheduledShifts(authData.id))
             getUserPastShifts(authData);
         }
 

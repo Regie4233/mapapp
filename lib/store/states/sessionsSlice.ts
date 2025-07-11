@@ -157,6 +157,32 @@ export const getAllScheduledShifts = createAsyncThunk(
     }
 );
 
+export const approveMentorRequest = createAsyncThunk(
+    'sessions/approveMentorRequest',
+    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string |undefined }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/approve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, authUser }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to approve mentor request');
+            }
+
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error approving mentor request:', error);
+            return rejectWithValue(error || 'Failed to approve mentor request');
+        }
+    }
+);
+
+
 
 const sessionSlice = createSlice({
     name: 'sessions',
@@ -300,10 +326,32 @@ const sessionSlice = createSlice({
 
                 }
             })
-            .addCase(createNotes.rejected, (state, action) => {
-                state.loading = 'Rejected State';
-                console.error('Error creating notes:', action.payload);
-            })
+            // // add case approveMentorRequest
+            // .addCase(approveMentorRequest.pending, (state) => {
+            //     state.loading = 'Pending State';
+            //     console.log('PENDING APPROVE REQUEST...');
+            // })
+            // .addCase(approveMentorRequest.fulfilled, (state, action) => {
+            //     state.loading = 'Fulfilled State';
+            //     const shiftData = action.payload.shift;
+            //     console.log('Approved mentor request:', shiftData);
+            //     // Update the shift occurrence with the new notes
+            //     if (state.userScheduledShifts !== null) {
+            //         const tempData: Shift[] = JSON.parse(JSON.stringify(state.userScheduledShifts));
+            //         const updatedItems: Shift[] = tempData.map(shift => {
+            //             if (shift.id === shiftData.id) {
+            //                 return shiftData
+            //             }
+            //             return shift;
+            //         });
+            //         state.userScheduledShifts = updatedItems;
+            //         state.loading = 'Idle';
+            //     }
+            // })
+            // .addCase(approveMentorRequest.rejected, (state, action) => {
+            //     state.loading = 'Rejected State';
+            //     console.error('Error approving mentor request:', action.payload);
+            // })
 
     },
 

@@ -226,6 +226,19 @@ export function filterShifts_by_user(shiftOccurences: ShiftOccurencesResponse | 
   return filteredShifts;
 }
 
+// create a function that takes in a Shifts[] and returns Shifts[] based on a week range
+export function filterShifts_by_week(shifts: Shift[], weekStart: Date, weekEnd: Date): Shift[] {
+  // Ensure weekStart and weekEnd are valid Date objects
+  if (!(weekStart instanceof Date) || isNaN(weekStart.getTime()) ||
+      !(weekEnd instanceof Date) || isNaN(weekEnd.getTime())) {
+    throw new Error("Invalid week start or end date");
+  }
+  return shifts.filter(shift => {
+    const shiftDate = new Date(shift.shift_date);
+    return shiftDate >= weekStart && shiftDate <= weekEnd;
+  });
+}
+
 export function formatDateToYYYYMMDD_UTC(date: Date) {
   if (!(date instanceof Date) || isNaN(date.getDate())) {
     return "Invalid Date"; // Or throw an error, or return null

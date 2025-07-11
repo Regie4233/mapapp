@@ -1,30 +1,36 @@
 import {
     Sheet,
+    SheetClose,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet"
+import { BsArrowLeft } from "react-icons/bs";
 import { useAppSelector } from "@/lib/hooks";
 import { Shift } from "@/lib/type"
 import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
-import { NotesEditor } from "../notes/NotesEditor";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import NotesAccordion from "./NotesAccordion";
+import { PendingRequestsRenderer } from "@/components/AdminSession/PendingRequestsRenderer";
+
 
 export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, open: boolean, setOpen: (value: boolean) => void }) {
     const authUser = useAppSelector(state => state.sessions.authUser);
-      const loadingState = useAppSelector(state => state.sessions.loading);
+    // const loadingState = useAppSelector(state => state.sessions.loading);
     if (authUser === undefined || authUser === null) return null;
-  
+
     // const ddd = notes || "No notes available for this shift.";
     // if (!shift || !shift.expand || !shift.expand.notes) return;
     // console.log(notes.summarized)
     // console.log("ShiftDetails", shift.expand.notes?.original , " ", shift.id, " ", shift.expand.notes?.id);
     return (
         <Sheet open={open} onOpenChange={setOpen}>
+            <SheetContent className="h-[90%]" side="bottom">
+                <SheetClose className="flex items-center flex-row p-4 gap-2">
+                    <BsArrowLeft />
+                    <p className="self-start text-black shadow-none text-md font-light">All Shifts</p>
+                </SheetClose>
 
-            <SheetContent className="h-full" side="bottom">
                 <SheetHeader className="mt-12">
                     <SheetTitle className="text-xl">{shift.title || "Session"}</SheetTitle>
                     <SheetDescription className="text-black">
@@ -34,7 +40,8 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
 
                 </SheetHeader>
                 <ScrollArea className="max-sm:h-3/4 h-10/12 border-b">
-                    <section className="flex flex-col gap-8 px-4">
+                    <section className="flex flex-col px-4">
+                        <p>Mentors:</p>
                         <ul className="flex flex-row gap-2">
                             {
                                 shift.approved.length > 0 &&
@@ -75,8 +82,11 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
                                 )
                             }
                         </div> */}
-                       
+
                     </section>
+                    {
+                        authUser.privilage === "admin" && (<PendingRequestsRenderer shiftData={shift} />)
+                    }
                 </ScrollArea>
             </SheetContent>
 

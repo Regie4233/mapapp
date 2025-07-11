@@ -14,11 +14,10 @@ import { useState } from "react";
 
 export default function NotesAccordion({ shift }: { shift: Shift }) {
     const [editMode, setEditMode] = useState(false);
-    // usestates for the textareas changes
-    const [students, setStudents] = useState(shift.expand.notes.students);
-    const [workedOnToday, setWorkedOnToday] = useState(shift.expand.notes.worked_on_today);
-    const [struggleWithAnything, setStruggleWithAnything] = useState(shift.expand.notes.struggle_with_anything);
-    const [anyWinsToday, setAnyWinsToday] = useState(shift.expand.notes.any_wins_today);
+    const [students, setStudents] = useState(shift.expand.notes === undefined ? "" : shift.expand.notes.students);
+    const [workedOnToday, setWorkedOnToday] = useState(shift.expand.notes === undefined ? "" : shift.expand.notes.worked_on_today);
+    const [struggleWithAnything, setStruggleWithAnything] = useState(shift.expand.notes === undefined ? "" : shift.expand.notes.struggle_with_anything);
+    const [anyWinsToday, setAnyWinsToday] = useState(shift.expand.notes === undefined ? "" : shift.expand.notes.any_wins_today);
     const authUser = useAppSelector(state => state.sessions.authUser);
 
     const dispatch = useAppDispatch();
@@ -63,7 +62,7 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
                         <p>
                             {
                                 !editMode ?
-                                    students || "No notes available for this shift."
+                                    students 
                                     :
                                     <Textarea className="w-full" value={students} onChange={(e) => setStudents(e.target.value)} />
                             }
@@ -79,7 +78,7 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
                         <p>
                             {
                                 !editMode ?
-                                    workedOnToday || "No notes available for this shift."
+                                    workedOnToday 
                                     :
                                     <Textarea className=" w-full" value={workedOnToday} onChange={(e) => setWorkedOnToday(e.target.value)} />
                             }
@@ -90,7 +89,7 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
                         {
                             !editMode ?
                                 <p>
-                                    {struggleWithAnything || "No notes available for this shift."}
+                                    {struggleWithAnything}
                                 </p>
                                 :
                                 <Textarea className="w-full" value={struggleWithAnything} onChange={(e) => setStruggleWithAnything(e.target.value)} />
@@ -103,7 +102,7 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
                         <p>
                             {
                                 !editMode ?
-                                   anyWinsToday|| "No notes available for this shift."
+                                   anyWinsToday
                                     :
                                     <Textarea className="w-full" value={anyWinsToday} onChange={(e) => setAnyWinsToday(e.target.value)} />
                             }
