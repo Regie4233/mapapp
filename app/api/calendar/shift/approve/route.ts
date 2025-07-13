@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Pocketbase from "pocketbase";
 
 // This function handles the approval of a shift by a user
@@ -31,7 +31,13 @@ export async function POST(request: NextRequest) {
             'spots-': 1,
         });
 
-        return new Response(JSON.stringify(res), { status: 200 });
+        const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
+            filter: `shifts.id ?~ "${shiftId}"`,
+            expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
+        });
+
+        return new NextResponse(JSON.stringify({ shift: res, shiftOccurence: shiftOcc }), { status: 200 });
+        // return new Response(JSON.stringify(res), { status: 200 });
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
@@ -52,10 +58,10 @@ export async function DELETE(request: NextRequest) {
         }
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-       await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
 
         const valUser = await pb.collection('mapapp_shift').getOne(shiftId, { expand: 'approved' });
-        if(!valUser.approved.includes(authUser)) {
+        if (!valUser.approved.includes(authUser)) {
             return new Response(JSON.stringify(`User ${authUser} is not approved for this shift`), { status: 401 });
         }
 

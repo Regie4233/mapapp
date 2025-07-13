@@ -1,6 +1,6 @@
-
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerClose, DrawerDescription } from "@/components/ui/drawer";
 import { UserPool } from '@/lib/type';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+
 
 
 // Avatar Placeholder: A simple illustrated avatar.
@@ -26,43 +26,42 @@ const StatusBadge = () => (
 
 export function ShiftApprovalDrawer({ mentor, handleApprove, handleClose }: { mentor: UserPool | null, handleApprove: () => void, handleClose: () => void }) {
   return (
-    <Drawer open={mentor ? true : false} onOpenChange={() => { }}>
-      <DrawerContent className='h-[65%]'>
+<Sheet open={mentor ? true : false} onOpenChange={handleClose}>
+    <SheetContent side="bottom" className='h-[65%]'>
         <div className="mx-auto w-full max-w-sm font-sans">
-          <DrawerHeader>
-            <DrawerTitle className="text-2xl font-bold text-gray-900">
-              Do you want to approve this mentor’s shift request?
-            </DrawerTitle>
-            <DrawerDescription />
-          </DrawerHeader>
-          <div className="p-4 pt-0">
-            <div className="flex items-center justify-between rounded-lg p-3">
-              <div className="flex items-center gap-3">
-                <AvatarPlaceholder />
-                <span className="font-medium text-gray-900">{mentor?.firstname} {mentor?.lastname}</span>
-              </div>
-              <StatusBadge />
-            </div>
-          </div>
+            <SheetHeader>
+                <SheetTitle className="text-2xl font-bold text-gray-900">
+                    Do you want to approve this mentor’s shift request?
+                </SheetTitle>
+                <SheetDescription />
+            </SheetHeader>
 
-          <DrawerFooter>
-            <button
-              onClick={handleClose}
-              className="w-full rounded-xl bg-slate-100 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <DrawerClose asChild>
-              <button
-                onClick={handleApprove}
-                className="w-full rounded-xl bg-sky-700 py-3 text-base font-semibold text-white transition-colors hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-              >
-                Approve
-              </button>
-            </DrawerClose>
-          </DrawerFooter>
+            <div className="p-4 pt-0">
+                <div className="flex items-center justify-between rounded-lg p-3">
+                    <div className="flex items-center gap-3">
+                        <AvatarPlaceholder />
+                        <span className="font-medium text-gray-900">{mentor?.firstname} {mentor?.lastname}</span>
+                    </div>
+                    <StatusBadge />
+                </div>
+            </div>
+
+            <SheetFooter>
+                <button
+                    onClick={handleClose}
+                    className="w-full rounded-xl bg-slate-100 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={handleApprove}
+                    className="w-full rounded-xl bg-sky-700 py-3 text-base font-semibold text-white transition-colors hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                >
+                    Approve
+                </button>
+            </SheetFooter>
         </div>
-      </DrawerContent>
-    </Drawer>
+    </SheetContent>
+</Sheet>
   );
 };

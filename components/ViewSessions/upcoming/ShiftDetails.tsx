@@ -25,10 +25,9 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
     // console.log("ShiftDetails", shift.expand.notes?.original , " ", shift.id, " ", shift.expand.notes?.id);
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetContent className="h-[90%]" side="bottom">
-                <SheetClose className="flex items-center flex-row p-4 gap-2">
-                    <BsArrowLeft />
-                    <p className="self-start text-black shadow-none text-md font-light">All Shifts</p>
+            <SheetContent className="h-[90%]" side="bottom" onFocusOutside={() => setOpen(false)}>
+                <SheetClose className="flex items-center flex-row p-4 gap-2" asChild>
+                    <p className="self-start text-black shadow-none text-md font-light"><BsArrowLeft />All Shifts</p>
                 </SheetClose>
 
                 <SheetHeader className="mt-12">
@@ -85,7 +84,7 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
 
                     </section>
                     {
-                        authUser.privilage === "admin" && (<PendingRequestsRenderer shiftData={shift} />)
+                        authUser.privilage === "admin" || authUser.privilage === "manager" && (<PendingRequestsRenderer shiftData={shift} />)
                     }
                 </ScrollArea>
             </SheetContent>

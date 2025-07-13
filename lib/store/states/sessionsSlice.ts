@@ -158,7 +158,7 @@ export const getAllScheduledShifts = createAsyncThunk(
 );
 
 export const approveMentorRequest = createAsyncThunk(
-    'sessions/approveMentorRequest',
+  'sessions/requestShift',
     async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string |undefined }, { rejectWithValue }) => {
         try {
             const res = await fetch('/api/calendar/shift/approve', {
@@ -333,20 +333,9 @@ const sessionSlice = createSlice({
             // })
             // .addCase(approveMentorRequest.fulfilled, (state, action) => {
             //     state.loading = 'Fulfilled State';
-            //     const shiftData = action.payload.shift;
+            //     state.shiftDatas = action.payload.shift;
             //     console.log('Approved mentor request:', shiftData);
-            //     // Update the shift occurrence with the new notes
-            //     if (state.userScheduledShifts !== null) {
-            //         const tempData: Shift[] = JSON.parse(JSON.stringify(state.userScheduledShifts));
-            //         const updatedItems: Shift[] = tempData.map(shift => {
-            //             if (shift.id === shiftData.id) {
-            //                 return shiftData
-            //             }
-            //             return shift;
-            //         });
-            //         state.userScheduledShifts = updatedItems;
-            //         state.loading = 'Idle';
-            //     }
+              
             // })
             // .addCase(approveMentorRequest.rejected, (state, action) => {
             //     state.loading = 'Rejected State';
