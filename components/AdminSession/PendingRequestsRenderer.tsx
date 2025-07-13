@@ -76,7 +76,7 @@ export const PendingRequestsRenderer = ({ shiftData }: { shiftData: Shift }) => 
                             <StatusBadge status={'Accepted'} />
                             <div className="relative">
                                 <button className="text-gray-400 hover:text-gray-600 focus:outline-none">
-                                    <MoreVertical size={20} />
+                                    <MoreVertical size={20} onClick={() => handleUserClick(user)} />
                                 </button>
                             </div>
                         </div>
