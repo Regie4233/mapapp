@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
         await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
 
-        const res = await pb.collection('mapapp_shift').create({
+        const newShift = await pb.collection('mapapp_shift').create({
             location: location,
             date: date,
             startTime: startTime,
@@ -25,7 +25,20 @@ export async function POST(request: NextRequest) {
             pending_approval: [],
         });
 
-        return new NextResponse(JSON.stringify(res), { status: 201 }); // 201 Created
+        const targetShiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1,1, {
+            filter: 'shiftDate == `"${date}"`',
+        });
+
+        const shiftOcc = await pb.collection('mapapp_shiftOccurences').update(targetShiftOcc.id, {
+            shifts+: [newShift],
+        });
+            
+        //     .getList(1, 1, {
+        //     filter: `shifts.id ?~ "${shiftId}"`,
+        //     expand: 'shiftLocation, shifts.approved, shifts.pending_approval',
+        // });
+
+        return new NextResponse(JSON.stringify(newShift), { status: 201 }); // 201 Created
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
