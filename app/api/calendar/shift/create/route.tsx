@@ -49,12 +49,12 @@ export async function POST(request: NextRequest) {
             `shiftDate ~ '2025-07-30' && shiftLocation.name ~ 'Main Office'`,
         );
      
-         await pb.collection('mapapp_shiftOccurences').update(targetShiftOcc.id, {
+        const updatedShiftOcc = await pb.collection('mapapp_shiftOccurences').update(targetShiftOcc.id, {
             'shifts+': [newShift.id],
         });
 
    
-        return new NextResponse(JSON.stringify(newShift), { status: 201 }); // 201 Created
+        return new NextResponse(JSON.stringify(updatedShiftOcc), { status: 201 }); // 201 Created
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });

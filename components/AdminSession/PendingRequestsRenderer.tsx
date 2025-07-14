@@ -4,7 +4,7 @@ import { MoreVertical, Plus } from 'lucide-react';
 import { Shift, UserPool } from '@/lib/type';
 import { ShiftApprovalDrawer } from './ShiftApprovalDrawer';
 import { useAppDispatch } from '@/lib/hooks';
-import { approveMentorRequest } from '@/lib/store/states/sessionsSlice';
+import { approveMentorRequest, removeMentorRequest } from '@/lib/store/states/sessionsSlice';
 
 
 type MentorRequest = {
@@ -57,9 +57,14 @@ export const PendingRequestsRenderer = ({ shiftData }: { shiftData: Shift }) => 
         handleCloseDrawer();
     };
 
+    const handleRemove = () => {
+        dispatch(removeMentorRequest({ shiftId: targetShift?.id, authUser: targetedUser?.id}));
+        handleCloseDrawer();
+    }
+
 
     return (
-        <div className="w-full rounded-2xl  p-4 font-sans">
+        <div className="w-full rounded-2xl p-4 font-sans">
             <h1 className="text-md font-bold text-gray-900 mb-5">Requests</h1>
             <ul className="space-y-3">
                 {shiftData.expand?.approved?.map((user) => (
@@ -110,7 +115,7 @@ export const PendingRequestsRenderer = ({ shiftData }: { shiftData: Shift }) => 
                 <Plus size={20} />
                 Assign another mentor
             </button>
-            <ShiftApprovalDrawer mentor={targetedUser} handleApprove={handleApprove} handleClose={handleCloseDrawer} />
+            <ShiftApprovalDrawer mentor={targetedUser} handleApprove={handleApprove} handleClose={handleCloseDrawer} handleRemove={handleRemove} matchList={shiftData.expand?.approved}/>
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import { AuthRecord } from "pocketbase";
-import { AuthUser, Shift, ShiftOccurencesResponse, ShiftOccurrence } from "@/lib/type";
+import { AuthUser, Shift, ShiftLocation, ShiftOccurencesResponse, ShiftOccurrence, UserPool } from "@/lib/type";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 const defaultDate = new Date()
 defaultDate.setHours(0, 0, 0, 0);
@@ -13,6 +13,8 @@ interface SessionState {
     userScheduledShifts: Shift[];
     userPastShifts: Shift[];
     loading: string;
+    allMentors: UserPool[];
+    allLocations: ShiftLocation[];
 }
 
 
@@ -24,6 +26,8 @@ const initialState: SessionState = {
     userScheduledShifts: [],
     userPastShifts: [],
     loading: 'Idle',
+    allMentors: [],
+    allLocations: [],
 }
 
 export const requestShift = createAsyncThunk(
@@ -126,9 +130,9 @@ export const getUserScheduledShifts = createAsyncThunk(
     'sessions/getUserScheduledShifts',
     async (authUser: string, { rejectWithValue }) => {
 
-        
+
         try {
-            
+
             const res = await fetch(`/api/calendar/user/scheduled?id=${authUser}`)
             const data = await res.json()
 
@@ -158,8 +162,8 @@ export const getAllScheduledShifts = createAsyncThunk(
 );
 
 export const approveMentorRequest = createAsyncThunk(
-  'sessions/requestShift',
-    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string |undefined }, { rejectWithValue }) => {
+    'sessions/requestShift',
+    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string | undefined }, { rejectWithValue }) => {
         try {
             const res = await fetch('/api/calendar/shift/approve', {
                 method: 'POST',
@@ -182,7 +186,56 @@ export const approveMentorRequest = createAsyncThunk(
     }
 );
 
+export const removeMentorRequest = createAsyncThunk(
+    'sessions/requestShift',
+    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string | undefined }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/approve', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, authUser }),
+            });
 
+            if (!res.ok) {
+                throw new Error('Failed to approve mentor request');
+            }
+
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error approving mentor request:', error);
+            return rejectWithValue(error || 'Failed to approve mentor request');
+        }
+    }
+);
+
+export const createShift = createAsyncThunk(
+    'sessions/requestSihft',
+    async ({ title, date, shift_start, shift_end, location, mentorID }: { title: string, date: Date, shift_start: string, shift_end: string, location: string, mentorID: UserPool[] }, { rejectWithValue }) => {
+        try {
+            console.log(title, date, shift_start, shift_end, location)
+            // const res = await fetch('/api/calendar/shift/create', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ title, date, shift_start, shift_end, location, mentorID }),
+            // });
+
+            // if (!res.ok) {
+            //     throw new Error('Failed to create shift');
+            // }
+
+            // const data = await res.json();
+            // return data;
+        } catch (error) {
+            console.error('Error on creating shift:', error);
+            return rejectWithValue(error || 'Failed to create shift');
+        }
+    }
+)
 
 const sessionSlice = createSlice({
     name: 'sessions',
@@ -229,6 +282,12 @@ const sessionSlice = createSlice({
         },
         clearUserPastShifts: (state) => {
             state.userPastShifts = [];
+        },
+        setAllMentors: (state, action: PayloadAction<UserPool[]>) => {
+            state.allMentors = action.payload;
+        },
+        setAllLocations: (state, action: PayloadAction<ShiftLocation[]>) => {
+            state.allLocations = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -326,21 +385,21 @@ const sessionSlice = createSlice({
 
                 }
             })
-            // // add case approveMentorRequest
-            // .addCase(approveMentorRequest.pending, (state) => {
-            //     state.loading = 'Pending State';
-            //     console.log('PENDING APPROVE REQUEST...');
-            // })
-            // .addCase(approveMentorRequest.fulfilled, (state, action) => {
-            //     state.loading = 'Fulfilled State';
-            //     state.shiftDatas = action.payload.shift;
-            //     console.log('Approved mentor request:', shiftData);
-              
-            // })
-            // .addCase(approveMentorRequest.rejected, (state, action) => {
-            //     state.loading = 'Rejected State';
-            //     console.error('Error approving mentor request:', action.payload);
-            // })
+        // // add case approveMentorRequest
+        // .addCase(approveMentorRequest.pending, (state) => {
+        //     state.loading = 'Pending State';
+        //     console.log('PENDING APPROVE REQUEST...');
+        // })
+        // .addCase(approveMentorRequest.fulfilled, (state, action) => {
+        //     state.loading = 'Fulfilled State';
+        //     state.shiftDatas = action.payload.shift;
+        //     console.log('Approved mentor request:', shiftData);
+
+        // })
+        // .addCase(approveMentorRequest.rejected, (state, action) => {
+        //     state.loading = 'Rejected State';
+        //     console.error('Error approving mentor request:', action.payload);
+        // })
 
     },
 
@@ -351,5 +410,5 @@ const sessionSlice = createSlice({
 
 export const { setAuthUser, clearAuthUser, setSelectedDate,
     clearSelectedDate, setShiftDatas, setDateTargetWeek, setUserPastShifts, clearUserPastShifts,
-    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, } = sessionSlice.actions;
+    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
 export default sessionSlice.reducer;

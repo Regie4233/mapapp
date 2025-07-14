@@ -121,7 +121,7 @@ export interface ShiftLocation {
   created: string; // ISO 8601 date-time string
   id: string;
   name: string;
-  shiftOccurences: string[]; // Array of ShiftOccurrence IDs
+  shiftOccurences: ShiftOccurrence[]; 
   updated: string; // ISO 8601 date-time string
 
 }
@@ -179,9 +179,3 @@ export interface ShiftExpand {
   notes: Notes;
   pending_approval: UserPool[];
 }
-
-// --- Example Usage (how you might type a variable holding this data) ---
-// const myShiftOccurrence: ShiftOccurrence = { ... your JSON data ... };
-
-// If you have an array of these:
-// const myShiftOccurrences: ShiftOccurrence[] = [ ... array of your JSON data ... ];

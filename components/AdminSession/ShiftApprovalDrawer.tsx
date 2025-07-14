@@ -15,53 +15,69 @@ const AvatarPlaceholder = () => (
   </div>
 );
 
-// Status Badge: Styled to match the design.
-const StatusBadge = () => (
-  <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
-    Pending
-  </span>
-);
 
 
+export function ShiftApprovalDrawer({ mentor, handleApprove, handleClose, handleRemove, matchList }:
+  {
+    mentor: UserPool | null, handleApprove: ((user: UserPool) => void) | (() => void),
+    handleRemove: ((user: UserPool) => void), handleClose: () => void, matchList: UserPool[]
+  }) {
+  const onApproveClick = () => {
+    if (handleApprove.length > 0) {
+      if (mentor) {
+        (handleApprove as (user: UserPool) => void)(mentor);
+      }
+    } else {
+      // This is the () => void version.
+      (handleApprove as () => void)();
+    }
+  };
 
-export function ShiftApprovalDrawer({ mentor, handleApprove, handleClose }: { mentor: UserPool | null, handleApprove: () => void, handleClose: () => void }) {
   return (
-<Sheet open={mentor ? true : false} onOpenChange={handleClose}>
-    <SheetContent side="bottom" className='h-[65%]'>
+    <Sheet open={!!mentor} onOpenChange={handleClose}>
+      <SheetContent side="bottom" className='h-[65%]'>
         <div className="mx-auto w-full max-w-sm font-sans">
-            <SheetHeader>
-                <SheetTitle className="text-2xl font-bold text-gray-900">
-                    Do you want to approve this mentor’s shift request?
-                </SheetTitle>
-                <SheetDescription />
-            </SheetHeader>
+          <SheetHeader>
+            <SheetTitle className="text-2xl font-bold text-gray-900">
+              Do you want to approve this mentor’s shift request?
+            </SheetTitle>
+            <SheetDescription />
+          </SheetHeader>
 
-            <div className="p-4 pt-0">
-                <div className="flex items-center justify-between rounded-lg p-3">
-                    <div className="flex items-center gap-3">
-                        <AvatarPlaceholder />
-                        <span className="font-medium text-gray-900">{mentor?.firstname} {mentor?.lastname}</span>
-                    </div>
-                    <StatusBadge />
-                </div>
+          <div className="p-4 pt-0">
+            <div className="flex items-center justify-between rounded-lg p-3">
+              <div className="flex items-center gap-3">
+                <AvatarPlaceholder />
+                <span className="font-medium text-gray-900">{mentor?.firstname} {mentor?.lastname}</span>
+              </div>
+              {/* <StatusBadge /> */}
             </div>
+          </div>
 
-            <SheetFooter>
+          <SheetFooter>
+            {
+              mentor && matchList?.includes(mentor as UserPool) ?
                 <button
-                    onClick={handleClose}
-                    className="w-full rounded-xl bg-slate-100 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
-                >
-                    Cancel
+                  onClick={() => handleRemove(mentor as UserPool)}
+                  className="w-full rounded-xl bg-red-700 py-3 text-base font-semibold text-white transition-colors hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                  Remove
                 </button>
+                :
                 <button
-                    onClick={handleApprove}
-                    className="w-full rounded-xl bg-sky-700 py-3 text-base font-semibold text-white transition-colors hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                >
-                    Approve
+                  onClick={onApproveClick}
+                  className="w-full rounded-xl bg-sky-700 py-3 text-base font-semibold text-white transition-colors hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                  Approve
                 </button>
-            </SheetFooter>
+            }
+
+            <button
+              onClick={handleClose}
+              className="w-full rounded-xl bg-slate-100 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2">
+              Cancel
+            </button>
+          </SheetFooter>
         </div>
-    </SheetContent>
-</Sheet>
+      </SheetContent>
+    </Sheet>
   );
 };

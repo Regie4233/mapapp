@@ -5,13 +5,14 @@ import ShiftRenderer from './ShiftRenderer'
 import ScheduledRenderer from '../scheduled/ScheduledRenderer'
 import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks'
 import { formatDateToYYYYMMDD_UTC } from '@/lib/utils'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import PastShiftRenderer from '../PastShifts/PastShiftRenderer'
-import { getAllScheduledShifts, getUserScheduledShifts } from '@/lib/store/states/sessionsSlice'
+import {  getUserScheduledShifts } from '@/lib/store/states/sessionsSlice'
+// import AddShiftButton from '@/components/AdminSession/Shift/AddShiftButton'
 // import { pb } from '@/lib/server/pocketbase'
 
 export default function ShiftsViewer() {
-    const { getShiftsWeekly, getUserPastShifts } = useDataFetcher();
+    const { getShiftsWeekly, getUserPastShifts, getAllLocations, getAllMentors } = useDataFetcher();
     const dispatch = useAppDispatch();
     const authData = useAppSelector(state => state.sessions.authUser);
     const defaultDate = formatDateToYYYYMMDD_UTC(new Date());
@@ -31,6 +32,8 @@ export default function ShiftsViewer() {
             //  dispatch(getAllScheduledShifts())
             // JUST see ALL PAST SHIFTS not just one user change logic
             getUserPastShifts(null);
+            getAllLocations();
+            getAllMentors();
         } else {
             dispatch(getUserScheduledShifts(authData.id))
             getUserPastShifts(authData);
@@ -51,7 +54,7 @@ export default function ShiftsViewer() {
 
     return (
         <>
-            <CVTabs defaultValue="upcoming" className="gap-0">
+            <CVTabs defaultValue="upcoming" className="gap-0 relative">
                 <CVTabsList className='w-full rounded-none bg-white'>
                     <CVTabsTrigger value="upcoming">Open Shifts</CVTabsTrigger>
                     <CVTabsTrigger value="scheduled">Scheduled Shifts ({numberSched})</CVTabsTrigger>
@@ -68,7 +71,6 @@ export default function ShiftsViewer() {
                     <PastShiftRenderer filteredShifts={pastShifts} />
                 </CVTabsContent>
             </CVTabs>
-
         </>
     )
 }

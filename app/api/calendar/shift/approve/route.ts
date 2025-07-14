@@ -71,7 +71,12 @@ export async function DELETE(request: NextRequest) {
             'spots+': 1,
         });
 
-        return new Response(JSON.stringify(res), { status: 200 });
+     const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
+            filter: `shifts.id ?~ "${shiftId}"`,
+            expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
+        });
+
+        return new NextResponse(JSON.stringify({ shift: res, shiftOccurence: shiftOcc }), { status: 200 });
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });

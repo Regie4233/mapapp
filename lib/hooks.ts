@@ -2,7 +2,7 @@
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
 import { AuthUser, TargetWeekQuery } from './type';
-import { setShiftDatas, setUserPastShifts, setUserScheduledShifts } from './store/states/sessionsSlice';
+import { setAllLocations, setAllMentors, setShiftDatas, setUserPastShifts, setUserScheduledShifts } from './store/states/sessionsSlice';
 
 
 export function useDataFetcher() {
@@ -29,7 +29,7 @@ export function useDataFetcher() {
             console.error("Error fetching weekly shifts:", error);
         }
     }
-    const getUserPastShifts = async ( query: AuthUser | null ) => {
+    const getUserPastShifts = async (query: AuthUser | null) => {
         // const [data, setData] = useState<ShiftOccurencesResponse>();
         try {
             if (query === null) {
@@ -43,6 +43,26 @@ export function useDataFetcher() {
             }
         } catch (error) {
             console.error("Error fetching weekly shifts:", error);
+        }
+    }
+
+    const getAllLocations = async () => {
+        try {
+            const res = await fetch(`/api/locations`);
+            const data = await res.json();
+            dispatch(setAllLocations(data.locations.items))
+        } catch (error) {
+            console.error("Error fetching locations:", error);
+        }
+    }
+
+    const getAllMentors = async () => {
+        try {
+            const res = await fetch(`/api/mentors`);
+            const data = await res.json();
+            dispatch(setAllMentors(data.users.items))
+        } catch (error) {
+            console.error("Error fetching Users:", error);
         }
     }
 
@@ -83,7 +103,7 @@ export function useDataFetcher() {
 
 
     return {
-        getShiftsWeekly, getUserShifts, getUserPastShifts, approveShift, checkPendingApproval
+        getShiftsWeekly, getUserShifts, getUserPastShifts, approveShift, checkPendingApproval, getAllLocations, getAllMentors
     }
 }
 
