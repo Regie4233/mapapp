@@ -29,7 +29,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { format } from "date-fns";
-import {  UserPool } from "@/lib/type";
+import { UserPool } from "@/lib/type";
 import { createShift } from "@/lib/store/states/sessionsSlice";
 
 
@@ -60,7 +60,7 @@ export function AddShiftSheet() {
   const locations = useAppSelector(state => state.sessions.allLocations);
   const incrementSpots = () => setSpots((prev) => prev + 1);
   const decrementSpots = () => setSpots((prev) => (prev > 1 ? prev - 1 : 1));
- const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const unassignedMentors = mentors.filter(m => !assignedMentors.some(am => am.id === m.id));
 
   // const handleUserClick = (user: UserPool) => {
@@ -82,7 +82,7 @@ export function AddShiftSheet() {
 
     }
     dispatch(createShift(data))
-    console.log(data)
+    // console.log(data)
     setShitTitle("");
     setShiftLocation("");
     setDate(new Date)
@@ -96,9 +96,9 @@ export function AddShiftSheet() {
     setAssignedMentors(prev => prev.filter(mentor => mentor.id !== user.id));
   }
 
-  useEffect(() => {
-    console.log(assignedMentors)
-  }, [assignedMentors])
+  // useEffect(() => {
+  //   console.log(assignedMentors)
+  // }, [assignedMentors])
 
   return (
     <Sheet>
@@ -165,7 +165,16 @@ export function AddShiftSheet() {
             <FormGroup>
               <Label className="text-gray-800">Time</Label>
               <div className="flex items-center space-x-2">
-                <Input type="time" value={shiftStart} onChange={(e) => setShiftStart(e.target.value)} className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none" />
+                <Input type="time"
+                  value={shiftStart} onChange=
+                  {
+                    (e) =>
+                    (
+                      setShiftStart(e.target.value),
+                      setShiftEnd(`${parseInt(e.target.value.slice(0, 2)) + 1 < 10 ? `0${parseInt(e.target.value.slice(0, 2)) + 1}` : parseInt(e.target.value.slice(0, 2)) + 1}:${e.target.value.slice(3, 5)}` || `${parseInt(e.target.value.slice(0, 2)) + 1}`)
+                    )
+                  }
+                  className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none" />
                 <span className="text-gray-500">to</span>
                 <Input type="time" value={shiftEnd} onChange={(e) => setShiftEnd(e.target.value)} className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none" />
               </div>
@@ -239,12 +248,14 @@ export function AddShiftSheet() {
             </section>
           </div>
           <SheetFooter className="pt-6 relative">
+            <SheetClose asChild>
             <Button
               type="submit"
               onClick={() => handleCreate()}
               className="fixed bottom-3 bg-[#4A6A9A] text-white font-bold w-11/12 m-auto py-6 rounded-md text-base hover:bg-[#3e5a89] focus:ring-[#4A6A9A]">
               Create shift
             </Button>
+            </SheetClose>
           </SheetFooter>
         </ScrollArea>
       </SheetContent>

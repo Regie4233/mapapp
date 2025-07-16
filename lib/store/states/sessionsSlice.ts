@@ -212,24 +212,26 @@ export const removeMentorRequest = createAsyncThunk(
 );
 
 export const createShift = createAsyncThunk(
-    'sessions/requestSihft',
-    async ({ title, date, shift_start, shift_end, location, mentorID }: { title: string, date: Date, shift_start: string, shift_end: string, location: string, mentorID: UserPool[] }, { rejectWithValue }) => {
+    'sessions/requestShift',
+    async ({ title, date, shift_start, shift_end, location, spots, mentorID }: { title: string, date: Date, shift_start: string, shift_end: string, location: string, spots: number, mentorID: UserPool[] }, { rejectWithValue }) => {
         try {
-            console.log(title, date, shift_start, shift_end, location)
-            // const res = await fetch('/api/calendar/shift/create', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ title, date, shift_start, shift_end, location, mentorID }),
-            // });
+            console.log(title, date, shift_start, shift_end, location);
+            const mentorIds = mentorID.map(mentor => mentor.id).join(", ")
+            console.log(mentorIds)
+            const res = await fetch('/api/calendar/shift/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, date, shift_start, shift_end, location, spots, mentorIds }),
+            });
 
-            // if (!res.ok) {
-            //     throw new Error('Failed to create shift');
-            // }
+            if (!res.ok) {
+                throw new Error('Failed to create shift');
+            }
 
-            // const data = await res.json();
-            // return data;
+            const data = await res.json();
+            return data;
         } catch (error) {
             console.error('Error on creating shift:', error);
             return rejectWithValue(error || 'Failed to create shift');

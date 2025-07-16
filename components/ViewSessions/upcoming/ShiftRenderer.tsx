@@ -18,7 +18,7 @@ export default function ShiftRenderer() {
     return (
         <section className='mb-25'>
             {
-                selectedShiftOccurences?.expand.shifts.map((shift) => {
+                selectedShiftOccurences?.expand.shifts?.map((shift) => {
                     if (checkUserOwnedShift(authUser, shift)) return; // Skip shifts that are not owned by the user
                     return (
                         <div key={shift.id}>

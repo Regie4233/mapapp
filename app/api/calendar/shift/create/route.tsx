@@ -18,20 +18,24 @@ import Pocketbase from "pocketbase";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { location, shift_date, shift_start, shift_end, title, mentorId, spots } = body;
-
+        const { location, date, shift_start, shift_end, title, mentorIds, spots } = body;
+        const mentorsToAssign = mentorIds.split(", ")
         // Validate input
-        if (!location || !shift_date || !shift_start || !shift_end) {
+        if (!location || !date || !shift_start || !shift_end) {
             return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 });
         }
 
+        console.log(location, shift_start, shift_end, date, title, spots);
+        console.log(mentorsToAssign)
+
+
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
         await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
-        const shiftDate = new Date(shift_date);
-        // shiftDate.setHours(4, 0, 0, 0);
+        const shiftDate = new Date(date);
+        shiftDate.setHours(4, 0, 0, 0);
 
         const targetLocation = await pb.collection('mapapp_location').getFirstListItem(`name ~ '${location}'`);
-       
+
         const data = {
             "location": targetLocation.id,
             "shift_date": shiftDate,
@@ -39,22 +43,48 @@ export async function POST(request: NextRequest) {
             "shift_end": shift_end,
             "spots": spots || 2,
             "title": title || "Session",
-            "approved+": [mentorId]
+            "approved+": mentorsToAssign
         };
- 
 
-        const newShift = await pb.collection('mapapp_shift').create(data);
-
-        const targetShiftOcc = await pb.collection('mapapp_shiftOccurences').getFirstListItem(
-            `shiftDate ~ '2025-07-30' && shiftLocation.name ~ 'Main Office'`,
+        const targetShiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
+            filter:
+                `shiftDate ~ '${shiftDate.toISOString().split('T')[0]}' && shiftLocation.id ~ '${targetLocation.id}'`,
+        }
         );
-     
-        const updatedShiftOcc = await pb.collection('mapapp_shiftOccurences').update(targetShiftOcc.id, {
-            'shifts+': [newShift.id],
-        });
+        console.log(targetShiftOcc)
+        if (targetShiftOcc.items.length <= 0) {
+            const newShiftOcc = await pb.collection('mapapp_shiftOccurences').create({
+                "shiftDate": shiftDate,
+                "shiftLocation": targetLocation.id,
+                "shifts": []
+            });
+            const newShift = await pb.collection('mapapp_shift').create(data);
+            await pb.collection('mapapp_shiftOccurences').update(newShiftOcc.id, {
+                'shifts+': [newShift.id],
+            });
 
-   
-        return new NextResponse(JSON.stringify(updatedShiftOcc), { status: 201 }); // 201 Created
+            const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
+                filter: `shifts.id ?~ "${newShift.id}"`,
+                expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
+            });
+            return new NextResponse(JSON.stringify({ shift: newShift, shiftOccurence: shiftOcc }), { status: 200 });
+
+        } else {
+
+            const newShift = await pb.collection('mapapp_shift').create(data);
+
+            await pb.collection('mapapp_shiftOccurences').update(targetShiftOcc.items[0].id, {
+                'shifts+': [newShift.id],
+            });
+            const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
+                filter: `shifts.id ?~ "${newShift.id}"`,
+                expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
+            });
+            console.log(shiftOcc)
+
+            return new NextResponse(JSON.stringify({ shift: newShift, shiftOccurence: shiftOcc }), { status: 200 });
+        }
+
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
