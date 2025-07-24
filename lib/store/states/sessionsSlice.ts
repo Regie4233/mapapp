@@ -11,10 +11,13 @@ interface SessionState {
     shiftDatas: ShiftOccurencesResponse | null;
     dateTargetWeek: string | null;
     userScheduledShifts: Shift[];
+    userScheduledShiftsWeek: Shift[];
     userPastShifts: Shift[];
+    userPastShiftsWeek: Shift[];
     loading: string;
     allMentors: UserPool[];
     allLocations: ShiftLocation[];
+    selectedLocation: ShiftLocation | null;
 }
 
 
@@ -24,10 +27,13 @@ const initialState: SessionState = {
     shiftDatas: null,
     dateTargetWeek: null,
     userScheduledShifts: [],
+    userScheduledShiftsWeek: [],
     userPastShifts: [],
+    userPastShiftsWeek: [],
     loading: 'Idle',
     allMentors: [],
     allLocations: [],
+    selectedLocation: null,
 }
 
 export const requestShift = createAsyncThunk(
@@ -291,38 +297,70 @@ const sessionSlice = createSlice({
         setAllLocations: (state, action: PayloadAction<ShiftLocation[]>) => {
             state.allLocations = action.payload;
         },
+        setSelectedLocation: (state, action: PayloadAction<ShiftLocation | null>) => {
+            state.selectedLocation = action.payload;
+        },
+        clearSelectedLocation: (state) => {
+            state.selectedLocation = null;
+        },
+        setUserPastShiftsWeek: (state, action: PayloadAction<Shift[]>) => {
+            state.userPastShiftsWeek = action.payload;
+        },
+        clearUserPastShiftsWeek: (state) => {
+            state.userPastShiftsWeek = [];
+        },
+        setScheduledShiftsWeek: (state, action: PayloadAction<Shift[]>) => {
+            state.userScheduledShiftsWeek = action.payload;
+        },
+        clearScheduledShiftsWeek: (state) => {
+            state.userScheduledShiftsWeek = [];
+        },
     },
     extraReducers: (builder) => {
-        builder.addCase(requestShift.pending, (state) => {
-            state.loading = 'Pending State';
-            console.log('Requesting shift...');
-        })
+        builder
             .addCase(requestShift.fulfilled, (state, action) => {
-                state.loading = 'Fulfilled State';
                 const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
                 const targetId = action.payload.shiftOccurence.items[0].id;
-
-                if (state.shiftDatas !== null) {
-                    const tempData: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
-                    const updatedItems: ShiftOccurrence[] = tempData.items.map(occurence => {
-                        if (occurence.id === targetId) {
-                            return shiftOccurence;
-                        }
-                        return occurence;
-                    });
-                    console.log('Updated items after request:', updatedItems);
-                    console.log('Shift occurrence after request:', shiftOccurence);
-                    state.shiftDatas.items = updatedItems
-                    state.loading = 'Idle';
+                state.loading = 'Fulfilled State';
+                //update the shifts
+                if (state.shiftDatas) {
+                    const index = state.shiftDatas.items.findIndex(item => item.id === targetId);
+                    if (index !== -1) {
+                        // Directly mutate the draft state (Immer handles immutability)
+                        state.shiftDatas.items[index] = shiftOccurence;
+                    } else {
+                        // If it doesn't exist, push it.
+                        state.shiftDatas.items.push(shiftOccurence);
+                    }
                 }
             })
-            .addCase(requestShift.rejected, (state, action) => {
-                state.loading = 'Rejected State';
-                console.error('Error requesting shift:', action.payload);
-            })
-            .addCase(cancelRequest.pending, (state) => {
-                state.loading = 'Pending State';
-            })
+            // .addCase(requestShift.fulfilled, (state, action) => {
+            //     state.loading = 'Fulfilled State';
+            //     const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
+            //     const targetId = action.payload.shiftOccurence.items[0].id;
+
+            //     //update the shifts
+            //     if (state.shiftDatas !== null) {
+            //         const tempData: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
+
+            //         if (!tempData.items.some(item => item.id === targetId)) {
+            //             console.log('Slice: no shift found')
+            //             tempData.items.push(shiftOccurence);
+            //             state.shiftDatas = tempData
+            //             state.loading = 'Idle';
+            //         } else {
+            //             console.log('Slice: shift found')
+            //             const updatedItems: ShiftOccurrence[] = tempData.items.map(occurence => {
+            //                 if (occurence.id === targetId) {
+            //                     return shiftOccurence;
+            //                 }
+            //                 return occurence;
+            //             });
+            //             state.shiftDatas.items = updatedItems
+            //             state.loading = 'Idle';
+            //         }
+            //     }
+            // })
             .addCase(cancelRequest.fulfilled, (state, action) => {
                 state.loading = 'Fulfilled State';
                 const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
@@ -337,72 +375,22 @@ const sessionSlice = createSlice({
                     });
 
                     state.shiftDatas.items = updatedItems
-                    state.loading = 'Idle';
                 }
-            })
-            .addCase(getUserScheduledShifts.pending, (state) => {
-                state.loading = 'Pending State';
             })
             .addCase(getUserScheduledShifts.fulfilled, (state, action) => {
                 state.loading = 'Fulfilled State';
                 console.log('Fetched user scheduled shifts:', action.payload);
                 state.userScheduledShifts = action.payload; // Update the userScheduledShifts with the fetched data
-                state.loading = 'Idle';
-            })
-            .addCase(getUserScheduledShifts.rejected, (state, action) => {
-                state.loading = 'Rejected State';
-                console.error('Error fetching user scheduled shifts:', action.payload);
-            })
-            // create addcase for createNotes that updates the scheduled shifts
-            .addCase(createNotes.pending, (state) => {
-                state.loading = 'Pending State';
-                console.log('PENDING NOTE CREATION...');
             })
             .addCase(createNotes.fulfilled, (state, action) => {
                 state.loading = 'Fulfilled State';
                 const shiftData = action.payload.shift;
-                // const targetOccurence = action.payload.shiftOccurence.items[0];
                 console.log('Created notes:', shiftData);
-                // Update the shift occurrence with the new notes
-                if (state.userScheduledShifts !== null) {
-                    const tempData: Shift[] = JSON.parse(JSON.stringify(state.userScheduledShifts));
-                    const updatedItems: Shift[] = tempData.map(shift => {
-                        if (shift.id === shiftData.id) {
-                            return shiftData
-                        }
-                        return shift;
-                    });
-                    state.userScheduledShifts = updatedItems;
-                    state.loading = 'Idle';
-                    // const tempOccu: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
-                    // const updatedOccu: ShiftOccurrence[] = tempOccu.items.map(occurence => {
-                    //     if (occurence.id === targetOccurence.id) {
-                    //         return targetOccurence;
-                    //     }
-                    //     return occurence;
-                    // });
-                    // if (state.shiftDatas !== null) {
-                    //     state.shiftDatas.items = updatedOccu;
-                    // }
 
-                }
+                const index = state.userPastShiftsWeek.findIndex(item => item.id === shiftData.id);
+
+                state.userPastShiftsWeek[index] = shiftData;
             })
-        // // add case approveMentorRequest
-        // .addCase(approveMentorRequest.pending, (state) => {
-        //     state.loading = 'Pending State';
-        //     console.log('PENDING APPROVE REQUEST...');
-        // })
-        // .addCase(approveMentorRequest.fulfilled, (state, action) => {
-        //     state.loading = 'Fulfilled State';
-        //     state.shiftDatas = action.payload.shift;
-        //     console.log('Approved mentor request:', shiftData);
-
-        // })
-        // .addCase(approveMentorRequest.rejected, (state, action) => {
-        //     state.loading = 'Rejected State';
-        //     console.error('Error approving mentor request:', action.payload);
-        // })
-
     },
 
 });
@@ -410,7 +398,7 @@ const sessionSlice = createSlice({
 
 
 
-export const { setAuthUser, clearAuthUser, setSelectedDate,
-    clearSelectedDate, setShiftDatas, setDateTargetWeek, setUserPastShifts, clearUserPastShifts,
-    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
+export const { setAuthUser, clearAuthUser, setSelectedDate, setUserPastShiftsWeek, clearUserPastShiftsWeek, setSelectedLocation, clearSelectedLocation,
+    clearSelectedDate, setShiftDatas, setDateTargetWeek, setUserPastShifts, clearUserPastShifts, setScheduledShiftsWeek, clearScheduledShiftsWeek,
+     clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
 export default sessionSlice.reducer;

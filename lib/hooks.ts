@@ -2,7 +2,7 @@
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
 import { AuthUser, TargetWeekQuery } from './type';
-import { setAllLocations, setAllMentors, setShiftDatas, setUserPastShifts, setUserScheduledShifts } from './store/states/sessionsSlice';
+import { setAllLocations, setAllMentors, setScheduledShiftsWeek, setShiftDatas, setUserPastShifts, setUserPastShiftsWeek, setUserScheduledShifts } from './store/states/sessionsSlice';
 
 
 export function useDataFetcher() {
@@ -40,6 +40,40 @@ export function useDataFetcher() {
                 const res = await fetch(`/api/calendar/user/past?id=${query.id}`)
                 const data = await res.json();
                 dispatch(setUserPastShifts(data.shiftp.items));
+            }
+        } catch (error) {
+            console.error("Error fetching weekly shifts:", error);
+        }
+    }
+
+    const getScheduledShiftsWeek = async (date: string | null, query: AuthUser | null) => {
+         try {
+            if (query === null) {
+                const res = await fetch(`/api/calendar/user/past/all`)
+                const data = await res.json();
+                dispatch(setScheduledShiftsWeek(data.shiftp.items));
+            } else {
+                const res = await fetch(`/api/calendar/user/scheduled/week?id=${query.id}&&date=${date}`)
+                const data = await res.json();
+                // console.log(data)
+                dispatch(setScheduledShiftsWeek(data.shiftp.items));
+            }
+        } catch (error) {
+            console.error("Error fetching weekly shifts:", error);
+        }
+    }
+
+    const getUserPastShiftsWeek = async (date: string | null, query: AuthUser | null) => {
+        try {
+            if (query === null) {
+                const res = await fetch(`/api/calendar/user/past/all`)
+                const data = await res.json();
+                dispatch(setUserPastShiftsWeek(data.shiftp.items));
+            } else {
+                const res = await fetch(`/api/calendar/user/past/week?id=${query.id}&&date=${date}`)
+                const data = await res.json();
+                // console.log(data)
+                dispatch(setUserPastShiftsWeek(data.shiftp.items));
             }
         } catch (error) {
             console.error("Error fetching weekly shifts:", error);
@@ -103,7 +137,8 @@ export function useDataFetcher() {
 
 
     return {
-        getShiftsWeekly, getUserShifts, getUserPastShifts, approveShift, checkPendingApproval, getAllLocations, getAllMentors
+        getShiftsWeekly, getUserShifts, getUserPastShifts, approveShift, getScheduledShiftsWeek,
+        getUserPastShiftsWeek, checkPendingApproval, getAllLocations, getAllMentors
     }
 }
 

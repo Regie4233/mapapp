@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         const res = await pb.collection('mapapp_shift').update(shiftId, {
             'approved+': [authUser],
             'pending_approval-': [authUser],
-            'spots-': 1,
+            // 'spots-': 1,
         });
 
         const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
@@ -68,7 +68,7 @@ export async function DELETE(request: NextRequest) {
 
         const res = await pb.collection('mapapp_shift').update(shiftId, {
             'approved-': [authUser],
-            'spots+': 1,
+            // 'spots+': 1,
         });
 
      const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {

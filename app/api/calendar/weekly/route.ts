@@ -13,11 +13,14 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
     const resLocation = request.nextUrl.searchParams.get('location');
     const resDate = request.nextUrl.searchParams.get('date') as ISOStringFormat;
+    // console.log(resDate)
     const targetDate = new Date(resDate);
+    // console.log(targetDate)
+    targetDate.setUTCHours(4, 0, 0, 0);
     //  console.log(targetDate)
     const weekMinMax = FindWeek(targetDate);
-   
-    const monday =  weekMinMax.weekmonday.toISOString().replace('T', ' ');
+
+    const monday = weekMinMax.weekmonday.toISOString().replace('T', ' ');
     const sunday = weekMinMax.weeksunday.toISOString().replace('T', ' ');
     // console.log(monday, sunday);
 
@@ -25,10 +28,9 @@ export async function GET(request: NextRequest) {
 
     const locationRecord = await pb.collection('mapapp_shiftOccurences').getList(1, 60, {
         filter: `shiftDate >= "${monday}" && shiftDate <= "${sunday}" && shiftLocation.name ?~ "${resLocation}"`,
-        expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
+        expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes, shifts.location',
         sort: 'shiftDate',
     });
-    // console.log(monday)
-    // console.log(locationRecord.items[0])
+
     return new NextResponse(JSON.stringify(locationRecord));
 }

@@ -178,4 +178,5 @@ export interface ShiftExpand {
   approved: UserPool[];
   notes: Notes;
   pending_approval: UserPool[];
+  location: ShiftLocation;
 }

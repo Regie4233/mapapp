@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const date = new Date().toISOString().split('T')[0];
     const shift = await pb.collection('mapapp_shift').getList(1, 60, {
         filter: `approved ?~ "${id}" && shift_date >= "${date}"`,
-        expand: 'approved, notes, pending_approval',
+        expand: 'approved, notes, pending_approval, location',
         sort: '-created'
     });
 

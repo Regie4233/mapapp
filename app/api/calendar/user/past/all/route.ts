@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const date = new Date().toISOString().split('T')[0];
     const shiftp = await pb.collection('mapapp_shift').getList(1, 60, {
         filter: `shift_date < "${date}"`,
-        expand: 'approved, notes',
+        expand: 'approved, notes, location',
         sort: '-created'
     });
 

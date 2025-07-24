@@ -1,10 +1,6 @@
-// components/AddShiftSheet.tsx
-
-"use client";
 
 import { useEffect, useState } from "react";
 import { Calendar1Icon, Minus, Plus, X } from "lucide-react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -21,6 +17,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -31,6 +28,8 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { format } from "date-fns";
 import { UserPool } from "@/lib/type";
 import { createShift } from "@/lib/store/states/sessionsSlice";
+import { toast } from "sonner";
+import AssignMentorCommand from "./AssignMentorCommand";
 
 
 const AvatarPlaceholder = () => (
@@ -45,7 +44,9 @@ const FormGroup = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-export function AddShiftSheet() {
+export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: boolean) => void}) {
+  const selectedDate = useAppSelector(state => state.sessions.selectedDate);
+  const locations = useAppSelector(state => state.sessions.allLocations);
   const [spots, setSpots] = useState(2);
   const [date, setDate] = useState<Date>(new Date());
   const [assignedMentors, setAssignedMentors] = useState<UserPool[]>([]);
@@ -53,15 +54,16 @@ export function AddShiftSheet() {
   const [shiftLocation, setShiftLocation] = useState<string>("");
   const [shiftStart, setShiftStart] = useState<string>("17:00:00");
   const [shiftEnd, setShiftEnd] = useState<string>("18:00:00");
+  const [hasEmptyFields, setHasEmptyFields] = useState(false);
   // const [targetedUser, setTargetedUser] = useState<UserPool | null>(null);
   // const [targetShift, setTargetShift] = useState<Shift | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const mentors = useAppSelector(state => state.sessions.allMentors);
-  const locations = useAppSelector(state => state.sessions.allLocations);
+  // const [searchQuery, setSearchQuery] = useState("");
+
   const incrementSpots = () => setSpots((prev) => prev + 1);
   const decrementSpots = () => setSpots((prev) => (prev > 1 ? prev - 1 : 1));
+
   const dispatch = useAppDispatch();
-  const unassignedMentors = mentors.filter(m => !assignedMentors.some(am => am.id === m.id));
+  // const unassignedMentors = mentors.filter(m => !assignedMentors.some(am => am.id === m.id));
 
   // const handleUserClick = (user: UserPool) => {
   //   setTargetedUser(user);
@@ -71,6 +73,9 @@ export function AddShiftSheet() {
   //   setTargetedUser(null);
   // };
   const handleCreate = () => {
+    if (shiftTitle === "" || shiftLocation === "" || date === null || shiftStart === "" || shiftEnd === "")
+      return (toast.error("Error: Please fill in all fields"), setHasEmptyFields(true))
+
     const data = {
       title: shiftTitle,
       location: shiftLocation,
@@ -90,21 +95,24 @@ export function AddShiftSheet() {
     setShiftEnd("18:00:00");
     setSpots(2);
     setAssignedMentors([]);
+    toast.success("Shift created successfully");
+    setHasEmptyFields(false);
+    setOpen(false);
   };
 
   const handleRemove = (user: UserPool) => {
     setAssignedMentors(prev => prev.filter(mentor => mentor.id !== user.id));
   }
 
-  // useEffect(() => {
-  //   console.log(assignedMentors)
-  // }, [assignedMentors])
+  useEffect(() => {
+    setDate(new Date(selectedDate));
+  }, [selectedDate])
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
+    <Sheet open={open} onOpenChange={(open) => setOpen(open)}>
+      <SheetTrigger asChild className="flex flex-center justify-center">
         {/* You can use the "Add a shift" button from the previous step here */}
-        <Button variant="outline">Open Add Shift Form</Button>
+        <button className=" bg-[#4A6A9A] text-white w-11/12 m-auto py-4 rounded-md hover:bg-[#3e5a89] focus:ring-[#4A6A9A] flex flex-row gap-2"><Plus /> Add A Shift</button>
       </SheetTrigger>
 
       {/* Set a max-width to match the design */}
@@ -119,19 +127,21 @@ export function AddShiftSheet() {
               <X className="h-6 w-6" />
               <span className="sr-only">Close</span>
             </SheetClose>
+            <SheetDescription />
           </SheetHeader>
 
           {/* Main form content with vertical padding */}
           <div className="px-6 py-4 space-y-5">
             <FormGroup>
               <Label htmlFor="shift-name" className="text-gray-800">Shift Name</Label>
-              <Input id="shift-name" value={shiftTitle} onChange={(e) => setShitTitle(e.target.value)} className="rounded-lg py-7 border-2 border-slate-200 shadow-none" />
+              <Input id="shift-name" value={shiftTitle} onChange={(e) => setShitTitle(e.target.value)} className="rounded-lg py-7 border-2 border-slate-200 shadow-none"
+                style={hasEmptyFields && shiftTitle === "" ? { border: "2px solid red" } : {}} />
             </FormGroup>
 
             <FormGroup>
               <Label htmlFor="site" className="text-gray-800">Site</Label>
               <Select onValueChange={(value) => setShiftLocation(value)} value={shiftLocation}>
-                <SelectTrigger id="site" className="rounded-lg w-full py-7 border-2 border-slate-200 shadow-none">
+                <SelectTrigger id="site" className="rounded-lg w-full py-7 border-2 border-slate-200 shadow-none" style={hasEmptyFields && shiftLocation === "" ? { border: "2px solid red" } : {}}>
                   <SelectValue placeholder="Select location" />
                 </SelectTrigger>
                 <SelectContent>
@@ -151,13 +161,14 @@ export function AddShiftSheet() {
                     variant="outline"
                     data-empty={!date}
                     className="data-[empty=true]:text-muted-foreground justify-start text-left font-normal rounded-lg w-full py-7 border-2 border-slate-200 shadow-none"
+                    style={hasEmptyFields && date === null ? { border: "2px solid red" } : {}}
                   >
                     <Calendar1Icon />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
-                  <Calendar mode="single" selected={date} required onSelect={setDate} />
+                  <Calendar mode="single" selected={date} required onSelect={e => setDate(e)} />
                 </PopoverContent>
               </Popover>
             </FormGroup>
@@ -174,9 +185,13 @@ export function AddShiftSheet() {
                       setShiftEnd(`${parseInt(e.target.value.slice(0, 2)) + 1 < 10 ? `0${parseInt(e.target.value.slice(0, 2)) + 1}` : parseInt(e.target.value.slice(0, 2)) + 1}:${e.target.value.slice(3, 5)}` || `${parseInt(e.target.value.slice(0, 2)) + 1}`)
                     )
                   }
-                  className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none" />
+                  className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none"
+                  style={hasEmptyFields && shiftStart === "" ? { border: "2px solid red" } : {}}
+                />
                 <span className="text-gray-500">to</span>
-                <Input type="time" value={shiftEnd} onChange={(e) => setShiftEnd(e.target.value)} className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none" />
+                <Input type="time" value={shiftEnd} onChange={(e) => setShiftEnd(e.target.value)}
+                  style={hasEmptyFields && shiftEnd === "" ? { border: "2px solid red" } : {}}
+                  className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none" />
               </div>
             </FormGroup>
 
@@ -217,45 +232,16 @@ export function AddShiftSheet() {
                   </li>
                 ))}
               </ul>
-              <Command className="mb-12">
-                <CommandInput placeholder="Search for a mentor to assign..." value={searchQuery} onValueChange={setSearchQuery} />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup>
-                    {searchQuery.length > 0 &&
-                      unassignedMentors.map((mentor) => (
-                        <CommandItem
-                          key={mentor.id}
-                          value={mentor.firstname}
-                          className="p-2 mb-2 bg-white border border-gray-200/80 rounded-xl shadow-sm"
-                          onSelect={(currentValue) => {
-                            const mentorToAdd = unassignedMentors.find((m) => m.firstname === currentValue);
-                            if (mentorToAdd) {
-                              setAssignedMentors((prev) => [...prev, mentorToAdd]);
-                              setSearchQuery("");
-                            }
-                          }}
-                        >
-                          <div className="mb-1 flex items-center gap-2">
-                            <AvatarPlaceholder />
-                            <span className="font-medium">{mentor.firstname} {mentor.lastname}</span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
+              <AssignMentorCommand assignedMentors={assignedMentors} setAssignedMentors={setAssignedMentors} />
             </section>
           </div>
           <SheetFooter className="pt-6 relative">
-            <SheetClose asChild>
-            <Button
-              type="submit"
-              onClick={() => handleCreate()}
-              className="fixed bottom-3 bg-[#4A6A9A] text-white font-bold w-11/12 m-auto py-6 rounded-md text-base hover:bg-[#3e5a89] focus:ring-[#4A6A9A]">
-              Create shift
-            </Button>
-            </SheetClose>
+              <Button
+                type="submit"
+                onClick={() => handleCreate()}
+                className="fixed bottom-3 bg-[#4A6A9A] text-white font-bold w-11/12 m-auto py-6 rounded-md text-base hover:bg-[#3e5a89] focus:ring-[#4A6A9A]">
+                Create shift
+              </Button>
           </SheetFooter>
         </ScrollArea>
       </SheetContent>

@@ -83,7 +83,7 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
                         <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
                         <CardDescription className="">
                             <p>{formatDateToMonthYear(new Date(data.shift_date), true)} | {convertTo12HourFormat(data.shift_start)}</p>
-                            <p>{data.location || "Location"}</p>
+                            <p>{data.expand.location?.name}</p>
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -99,7 +99,6 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
                             }
                             {/* <p>{data.approved.length} Attendee{data.approved.length > 1 ? "s" : ""}</p> */}
                         </ul>
-
                     </CardContent>
                 </section>
 

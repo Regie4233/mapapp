@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
         // If noteId is provided, update the existing note
         const res = await pb.collection('mapapp_shift').getOne(shiftId, {
-            expand: 'notes',
+            expand: 'notes, approved, pending_approval, location',
         });
         console.log(res);
         return new Response(JSON.stringify({ shift: res, shiftOccurence: shiftOcc }), { status: 200 });

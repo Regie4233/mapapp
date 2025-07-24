@@ -15,7 +15,6 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 
 import { cancelRequest, requestShift } from "@/lib/store/states/sessionsSlice";
 import { useState } from "react";
-import NotesAccordion from "./NotesAccordion";
 
 export default function ShiftCards({ data }: { data: Shift }) {
     const [open, setOpen] = useState(false);
@@ -43,17 +42,17 @@ export default function ShiftCards({ data }: { data: Shift }) {
         }
     }
 
-    const handleCancelShift = async () => {
-        try {
-            if (!authUser) return;
-            const shiftId = data.id.toString();
-            const authUserId = authUser?.id;
-            console.log("Cancel Shift", shiftId, authUserId);
-            // dispatch(cancelShift({ shiftId, authUser: authUserId }));
-        } catch (e) {
-            console.error("Shift Cancel error " + e)
-        }
-    }
+    // const handleCancelShift = async () => {
+    //     try {
+    //         if (!authUser) return;
+    //         const shiftId = data.id.toString();
+    //         const authUserId = authUser?.id;
+    //         console.log("Cancel Shift", shiftId, authUserId);
+    //         // dispatch(cancelShift({ shiftId, authUser: authUserId }));
+    //     } catch (e) {
+    //         console.error("Shift Cancel error " + e)
+    //     }
+    // }
 
 
     if (!authUser) return;
@@ -107,7 +106,7 @@ export default function ShiftCards({ data }: { data: Shift }) {
                         !checkUserOwnedShift(authUser, data) &&
                         (
                             !checkRequestPendingStatus(authUser.id, data) ?
-                                <button className="w-full bg-[#334155] text-white py-3 rounded-lg" onClick={() => handleShiftRequest()}>Request Shift</button>
+                                <button className="w-full bg-[#0A5FA3] text-white py-3 rounded-lg" style={data.spots - data.approved.length <= 0 ? { background: "#E2E8F0" }: {}} disabled={data.spots - data.approved.length <= 0} onClick={() => handleShiftRequest()}>Request Shift</button>
                                 :
                                 <button className="w-full bg-[#E2E8F0] py-3 rounded-lg cursor-not-allowed" onClick={() => handleRequestCancel()}>Cancel Shift Request</button>
                         )

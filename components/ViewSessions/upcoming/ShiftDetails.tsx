@@ -39,7 +39,7 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
 
                 </SheetHeader>
                 <ScrollArea className="max-sm:h-3/4 h-10/12 border-b">
-                    <section className="flex flex-col px-4">
+                    <section className="flex flex-col px-4 gap-2">
                         <p>Mentors:</p>
                         <ul className="flex flex-row gap-2">
                             {
@@ -51,6 +51,10 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
                                 ))
                             }
                         </ul>
+                        <p className="flex flex-col">
+                            <span>Capacity</span>
+                            <span className="font-semibold">{shift.spots} Spot{shift.spots > 1 ? "s" : ""}</span>
+                        </p>
                         {/* <div>
                             <h5>Notes</h5>
                             {
@@ -84,7 +88,7 @@ export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, o
 
                     </section>
                     {
-                        authUser.privilage === "admin" || authUser.privilage === "manager" && (<PendingRequestsRenderer shiftData={shift} />)
+                        authUser.privilage === "admin" || authUser.privilage === "manager" ? (<PendingRequestsRenderer shiftData={shift} />) : null
                     }
                 </ScrollArea>
             </SheetContent>

@@ -13,16 +13,14 @@ export function cn(...inputs: ClassValue[]) {
  * @returns returns 7 days of the week of the input date returns YYYY-MM-DD
  */
 export const FindWeek = (initalDate: Date) => {
-  // console.log(initalDate.getDate())
-  const startdifference = initalDate.getDay() - 1;
-  // console.log(startdifference)
-  // console.log(initalDate.getDate() - startdifference)
+  let targetDay = initalDate.getDay() ;
+  if(targetDay === 0){
+    targetDay = 7;
+  }
+  const startdifference = targetDay - 1;
   const weekStart = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() - startdifference);
-
   const enddifference = 7 - initalDate.getDay();
   const weekEnd = new Date(initalDate.getFullYear(), initalDate.getMonth(), initalDate.getDate() + enddifference);
-  // console.log(weekStart)
-  // console.log(weekEnd)
   return ({ weekmonday: weekStart, weeksunday: weekEnd })
 }
 
@@ -153,12 +151,12 @@ export function convertTo12HourFormat(time24: string): string {
 
   // 5. Format minutes (and seconds if present) to always be two digits
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
-  let formattedTime = `${hours}:${formattedMinutes}`;
+  const formattedTime = `${hours}:${formattedMinutes}`;
 
-  if (seconds !== undefined) {
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
-    formattedTime += `:${formattedSeconds}`;
-  }
+  // if (seconds !== undefined) {
+  //   const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+  //   formattedTime += `:${formattedSeconds}`;
+  // }
 
   // 6. Combine and return
   return `${formattedTime} ${period}`;
@@ -243,6 +241,7 @@ export function formatDateToYYYYMMDD_UTC(date: Date) {
   if (!(date instanceof Date) || isNaN(date.getDate())) {
     return "Invalid Date"; // Or throw an error, or return null
   }
+  // console.log(date.toISOString().slice(0, 10))
   // toISOString() returns a string in the format "YYYY-MM-DDTHH:mm:ss.sssZ" (Z indicates UTC)
   return date.toISOString().slice(0, 10);
 }

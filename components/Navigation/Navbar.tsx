@@ -56,11 +56,11 @@ export default function Navbar() {
     const viewTitle = () => {
         switch (searchParams.get('view')) {
             case '0':
-                return <span className="flex flex-row gap-2 items-center justify-center"> Shifts</span>
+                return <span className="flex flex-row gap-2 items-center justify-center">Shifts</span>
             case '1':
-                return <span className="flex flex-row gap-2 items-center justify-center"> Notes</span>
+                return <span className="flex flex-row gap-2 items-center justify-center">Notes</span>
             case '2':
-                return <span className="flex flex-row gap-2 items-center justify-center"> Mentor</span>
+                return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
             default:
                 return <span className="flex flex-row gap-2 items-center justify-center">Shifts</span>
         }
@@ -73,10 +73,10 @@ export default function Navbar() {
     if(!authData) return;
     return (
         <nav className="flex flex-row justify-between items-center">
-            <section className="flex flex-row gap-5 p-4">
+            <section className="flex flex-row gap-5 px-4">
                 <Sheet>
-                    <SheetTrigger><TfiAlignRight size={24} /></SheetTrigger>
-                    <SheetContent side="left" className="w-1/2 bg-slate-200">
+                    <SheetTrigger><TfiAlignRight size={42} className="bg-[#FDC52A] p-2 rounded-md"/></SheetTrigger>
+                    <SheetContent side="left" className="w-1/2 bg-[#FDC52A]">
                         <SheetHeader>
                             <SheetTitle className="text-2xl"></SheetTitle>
                             <SheetDescription>
@@ -87,7 +87,7 @@ export default function Navbar() {
                                 viewTags.map((tag, index) => {
                                     return (
                                         <SheetClose key={index} className="flex flex-row justify-end gap-2 items-center" onClick={() => router.push(pathname + '?' + createQueryString('view', index.toString()))}>
-                                            <p >{tag.tag}</p>
+                                            <p>{tag.tag}</p>
                                             {tag.icon}
                                         </SheetClose>
                                     )
@@ -97,12 +97,12 @@ export default function Navbar() {
                         {/*  */}
                         <SheetFooter>
                             <div className="h-15 w-15 rounded-full bg-amber-300 flex items-center justify-center text-xl">
-                                Ic
+                                Icon
                             </div>
                         </SheetFooter>
                     </SheetContent>
                 </Sheet>
-                  <h2 className="font-semibold text-2xl">{viewTitle()}</h2>
+                  <h2 className="font-semibold text-3xl flex items-center">{viewTitle()}</h2>
             </section>
             <section>
                  <DropdownMenu>
