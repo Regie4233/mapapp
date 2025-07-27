@@ -47,6 +47,7 @@ const FormGroup = ({ children }: { children: React.ReactNode }) => (
 export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: boolean) => void}) {
   const selectedDate = useAppSelector(state => state.sessions.selectedDate);
   const locations = useAppSelector(state => state.sessions.allLocations);
+  const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
   const [spots, setSpots] = useState(2);
   const [date, setDate] = useState<Date>(new Date());
   const [assignedMentors, setAssignedMentors] = useState<UserPool[]>([]);
@@ -104,9 +105,34 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
     setAssignedMentors(prev => prev.filter(mentor => mentor.id !== user.id));
   }
 
+   const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const startTime = e.target.value;
+    setShiftStart(startTime);
+
+    // Automatically set the end time to one hour after the start time
+    if (!startTime) {
+      setShiftEnd("");
+      return;
+    }
+
+    const [hourStr, minuteStr] = startTime.split(':');
+    const hour = parseInt(hourStr, 10);
+
+    if (isNaN(hour) || minuteStr === undefined) {
+      return; // Exit if the time value is not yet valid
+    }
+
+    const nextHour = (hour + 1) % 24; // Handle 24-hour wraparound (23 -> 00)
+    const nextHourStr = nextHour.toString().padStart(2, '0');
+    setShiftEnd(`${nextHourStr}:${minuteStr}`);
+  };
+
   useEffect(() => {
     setDate(new Date(selectedDate));
   }, [selectedDate])
+
+  useEffect(() => {console.log(locations)}, [locations])
+
 
   return (
     <Sheet open={open} onOpenChange={(open) => setOpen(open)}>
@@ -177,14 +203,8 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
               <Label className="text-gray-800">Time</Label>
               <div className="flex items-center space-x-2">
                 <Input type="time"
-                  value={shiftStart} onChange=
-                  {
-                    (e) =>
-                    (
-                      setShiftStart(e.target.value),
-                      setShiftEnd(`${parseInt(e.target.value.slice(0, 2)) + 1 < 10 ? `0${parseInt(e.target.value.slice(0, 2)) + 1}` : parseInt(e.target.value.slice(0, 2)) + 1}:${e.target.value.slice(3, 5)}` || `${parseInt(e.target.value.slice(0, 2)) + 1}`)
-                    )
-                  }
+               
+                   value={shiftStart} onChange={handleStartTimeChange}
                   className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none"
                   style={hasEmptyFields && shiftStart === "" ? { border: "2px solid red" } : {}}
                 />

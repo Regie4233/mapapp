@@ -26,12 +26,15 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import UserBadge from "../ViewSessions/UserBadge";
 import { signOut } from "@/lib/server/auth";
 import { clearAuthUser } from "@/lib/store/states/sessionsSlice";
+import { Building2, PersonStandingIcon } from "lucide-react";
 
 
 const viewTags = [
-    { tag: "Shifts", icon: <LuCalendar /> },
-    { tag: "Notes", icon: <LuScroll /> },
-    { tag: "Mentors", icon: <LuUsers /> },
+    { tag: "Shifts", icon: <LuCalendar size={26}/> },
+    { tag: "Notes", icon: <LuScroll size={26}/> },
+    { tag: "Mentors", icon: <LuUsers size={26}/> },
+     { tag: "Students", icon: <PersonStandingIcon size={26}/> },
+     { tag: "Sites", icon: <Building2 size={26}/> },
     // {tag: "Settings", icon: <LuScroll /> }
 ]
 
@@ -61,6 +64,10 @@ export default function Navbar() {
                 return <span className="flex flex-row gap-2 items-center justify-center">Notes</span>
             case '2':
                 return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
+            case '3':
+                return <span className="flex flex-row gap-2 items-center justify-center">Students</span>
+                  case '4':
+                return <span className="flex flex-row gap-2 items-center justify-center">Sites</span>
             default:
                 return <span className="flex flex-row gap-2 items-center justify-center">Shifts</span>
         }
@@ -70,12 +77,12 @@ export default function Navbar() {
         dispatch(clearAuthUser());
         signOut();
     }
-    if(!authData) return;
+    if (!authData) return;
     return (
         <nav className="flex flex-row justify-between items-center">
             <section className="flex flex-row gap-5 px-4">
                 <Sheet>
-                    <SheetTrigger><TfiAlignRight size={42} className="bg-[#FDC52A] p-2 rounded-md"/></SheetTrigger>
+                    <SheetTrigger><TfiAlignRight size={42} className="bg-[#FDC52A] p-2 rounded-md" /></SheetTrigger>
                     <SheetContent side="left" className="w-1/2 bg-[#FDC52A]">
                         <SheetHeader>
                             <SheetTitle className="text-2xl"></SheetTitle>
@@ -102,25 +109,25 @@ export default function Navbar() {
                         </SheetFooter>
                     </SheetContent>
                 </Sheet>
-                  <h2 className="font-semibold text-3xl flex items-center">{viewTitle()}</h2>
+                <h2 className="font-semibold text-3xl flex items-center">{viewTitle()}</h2>
             </section>
             <section>
-                 <DropdownMenu>
-                <DropdownMenuTrigger className="p-4">
-                    {
-                        authData &&
-                        <UserBadge size={50} user={authData} tooltip={false} />
-                    }
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="-my-10 mx-12">
-                    <DropdownMenuLabel>{authData?.firstname} {authData?.lastname}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Account</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleLogoff()}>Sign Out</DropdownMenuItem>
-                </DropdownMenuContent>
+                <DropdownMenu>
+                    <DropdownMenuTrigger className="p-4">
+                        {
+                            authData &&
+                            <UserBadge size={50} initials={[authData.firstname[0], authData.lastname[0]]} tooltip={false} />
+                        }
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="-my-10 mx-12">
+                        <DropdownMenuLabel>{authData?.firstname} {authData?.lastname}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Account</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => handleLogoff()}>Sign Out</DropdownMenuItem>
+                    </DropdownMenuContent>
 
-            </DropdownMenu>
+                </DropdownMenu>
             </section>
         </nav>
     )

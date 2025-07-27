@@ -45,6 +45,7 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
                 formData.append('shiftId', shift.id.toString());
                 formData.append('noteId', shift.expand.notes.id);
             }
+            formData.append('location', shift.expand.location.id);
             dispatch(updateNote(formData))
             setEditMode(false);
         } catch (error) {

@@ -13,7 +13,6 @@ export default function ScheduleShiftRenderer({showPast, shifts, targetDate, set
     // useEffect(() => {
     //     getUserPastShiftsWeek(targetDate.toISOString(), authUser)
     // }, [targetDate])
-    console.log(shifts)
     if(loading === 'pending') {
         return <PastShiftRendererSkeleton />
     }
@@ -26,12 +25,12 @@ export default function ScheduleShiftRenderer({showPast, shifts, targetDate, set
                     <ul>
                         {shifts.map((shift, i) => (
                             <li key={i}>
-                                <PastShiftCard data={shift} />
+                                <PastShiftCard data={shift} allowAddNotes={showPast}/>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p className="text-center text-muted-foreground mt-10">No completed shifts for this week.</p>
+                    <p className="text-center text-muted-foreground mt-10">No shifts for this week.</p>
                 )
             }
         </section>

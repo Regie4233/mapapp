@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
     await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
     const shiftp = await pb.collection('mapapp_shift').getList(1, 60, {
-        filter: `approved ?~ "${id}" && shift_date >= "${startDate}" && shift_date <= "${endDate}" && shift_date <= "${todayDate}"`,
+        filter: `approved ?~ "${id}" && shift_date >= "${startDate}" && shift_date <= "${endDate}" && (shift_date <= "${todayDate}" || shift_date ~ "${todayDate}")`,
         expand: 'pending_approval, approved, notes, location',
         sort: '-created'
     });

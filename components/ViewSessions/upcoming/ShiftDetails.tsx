@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Sheet,
     SheetClose,
@@ -6,96 +7,172 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { BsArrowLeft } from "react-icons/bs";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Shift } from "@/lib/type"
 import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PendingRequestsRenderer } from "@/components/AdminSession/PendingRequestsRenderer";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
+import { deleteShift } from "@/lib/store/states/sessionsSlice";
 
-
-export default function ShiftDetails({ shift, open, setOpen }: { shift: Shift, open: boolean, setOpen: (value: boolean) => void }) {
-    const authUser = useAppSelector(state => state.sessions.authUser);
-    // const loadingState = useAppSelector(state => state.sessions.loading);
-    if (authUser === undefined || authUser === null) return null;
-
-    // const ddd = notes || "No notes available for this shift.";
-    // if (!shift || !shift.expand || !shift.expand.notes) return;
-    // console.log(notes.summarized)
-    // console.log("ShiftDetails", shift.expand.notes?.original , " ", shift.id, " ", shift.expand.notes?.id);
-    return (
-        <Sheet open={open} onOpenChange={setOpen}>
-            <SheetContent className="h-[90%]" side="bottom" onFocusOutside={() => setOpen(false)}>
-                <SheetClose className="flex items-center flex-row p-4 gap-2" asChild>
-                    <p className="self-start text-black shadow-none text-md font-light"><BsArrowLeft />All Shifts</p>
-                </SheetClose>
-
-                <SheetHeader className="mt-12">
-                    <SheetTitle className="text-xl">{shift.title || "Session"}</SheetTitle>
-                    <SheetDescription className="text-black">
-                        <span>{formatDateToMonthYear(new Date(shift.shift_date), true)} | {convertTo12HourFormat(shift.shift_start)}</span>
-                        {/* <span>{shift.expand.}</span> */}
-                    </SheetDescription>
-
-                </SheetHeader>
-                <ScrollArea className="max-sm:h-3/4 h-10/12 border-b">
-                    <section className="flex flex-col px-4 gap-2">
-                        <p>Mentors:</p>
-                        <ul className="flex flex-row gap-2">
-                            {
-                                shift.approved.length > 0 &&
-                                shift.expand.approved.map(mentor => (
-                                    <li key={mentor.id}>
-                                        {mentor.firstname} {mentor.lastname}
-                                    </li>
-                                ))
-                            }
-                        </ul>
-                        <p className="flex flex-col">
-                            <span>Capacity</span>
-                            <span className="font-semibold">{shift.spots} Spot{shift.spots > 1 ? "s" : ""}</span>
-                        </p>
-                        {/* <div>
-                            <h5>Notes</h5>
-                            {
-                                shift.expand.notes?.id === undefined || shift.expand.notes?.id === null || shift.expand.notes?.id === "" ?
-                                    <p className="text-gray-500">No notes available for this shift.</p>
-                                    :
-                                    <section >
-                                        <p className="">{shift.expand.notes.summarized.keyNotes}</p>
-                                        <ul>
-                                            {
-                                                shift.expand.notes.summarized.students.map((student, index) => {
-                                                    return (
-                                                        <li key={index} className="mb-2 border-b pb-2">
-                                                            <strong>{student.name}</strong>
-                                                            <p>Strengths: {student.strengths.join(', ')}</p>
-                                                            <p>Challenges: {student.challenges.join(', ')}</p>
-                                                            <p>Notes: {student.notes.join(', ')}</p>
-                                                        </li>
-                                                    )
-                                                })
-                                            }
-                                        </ul>
-                                    </section>
-                            }
-                            {
-                                (shift.approved.includes(authUser?.id)) && (
-                                    <NotesEditor shiftId={shift.id} hasNotes={shift.expand.notes?.id !== undefined && shift.expand.notes?.id !== null && shift.expand.notes?.id !== "" ? true : false}/>
-                                )
-                            }
-                        </div> */}
-
-                    </section>
-                    {
-                        authUser.privilage === "admin" || authUser.privilage === "manager" ? (<PendingRequestsRenderer shiftData={shift} />) : null
-                    }
-                </ScrollArea>
-            </SheetContent>
-
-        </Sheet>
-
-    )
+// Prop interface for clarity
+interface ShiftDetailsProps {
+    shift: Shift;
+    open: boolean;
+    setOpen: (value: boolean) => void;
+    // Callback to notify the parent component of deletion
+    // onShiftDeleted: (shiftId: string) => void;
 }
 
+export default function ShiftDetails({ shift, open, setOpen, onShiftDeleted }: ShiftDetailsProps) {
+    const authUser = useAppSelector(state => state.sessions.authUser);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const dispatch = useAppDispatch();
+    const handleDeleteShift = async () => {
+        if (!shift) return;
 
+        setIsDeleting(true);
+        const toastId = toast.loading("Deleting shift...");
+
+        try {
+            // const response = await fetch('/api/calendar/shift/create', {
+            //     method: 'DELETE',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ shiftId: shift.id }),
+            // });
+
+            // if (!response.ok) {
+            //     const errorData = await response.json();
+            //     throw new Error(errorData.error || "Failed to delete shift.");
+            // }
+            const res = dispatch(deleteShift({ shiftId: shift.id.toString() }));
+            if (deleteShift.rejected.match(res)) {
+                const errorData = res.error.message || "Failed to delete shift.";
+                throw new Error(errorData);
+            }
+            console.log('Delete response:', res);
+            //  if (!res) {
+            //     const errorData = await res.json();
+            //     throw new Error(errorData.error || "Failed to delete shift.");
+            // }
+            toast.success("Shift deleted successfully.", { id: toastId });
+            // onShiftDeleted(shift.id.toString()); // Notify parent to update its list
+            setOpen(false); // Close the sheet
+
+        } catch (error: any) {
+            toast.error(error.message, { id: toastId });
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    if (!authUser) return null;
+
+    return (
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetContent className="h-[90%]" side="bottom">
+                <SheetClose className="flex items-center flex-row p-4 gap-2" asChild>
+                    <button className="self-start text-black shadow-none text-md font-light flex items-center gap-2 hover:text-gray-700">
+                        <BsArrowLeft />All Shifts
+                    </button>
+                </SheetClose>
+
+                <SheetHeader className="mt-8 flex flex-row justify-between items-start px-4">
+                    <div className="text-left">
+                        <SheetTitle className="text-xl">{shift.title || "Session"}</SheetTitle>
+                        <SheetDescription className="text-black">
+                            <span>{formatDateToMonthYear(new Date(shift.shift_date), true)} | {convertTo12HourFormat(shift.shift_start)}</span>
+                        </SheetDescription>
+                    </div>
+
+                    {/* --- NEW: Dropdown Menu for Admins --- */}
+                    {authUser.privilage === 'admin' && (
+                        <AlertDialog>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" disabled={isDeleting}>
+                                        <MoreHorizontal className="h-4 w-4" />
+                                        <span className="sr-only">Open options</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
+                                        Shift ID: {shift.id}
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem className="text-red-500 focus:bg-red-500 focus:text-white" onSelect={(e) => e.preventDefault()}>
+                                            Delete Shift
+                                        </DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete this shift and all of its data.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleDeleteShift} disabled={isDeleting} className="bg-red-600 hover:bg-red-700">
+                                        {isDeleting ? 'Deleting...' : 'Continue'}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                </SheetHeader>
+
+                <ScrollArea className="max-sm:h-3/4 h-10/12 border-b mt-4">
+                    <section className="flex flex-col px-4 gap-4">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Mentors:</p>
+                            <ul className="flex flex-wrap gap-x-2 text-sm">
+                                {shift.expand?.approved && shift.expand.approved.length > 0 ? (
+                                    shift.expand.approved.map(mentor => (
+                                        <li key={mentor.id} className="font-medium">
+                                            {mentor.firstname} {mentor.lastname}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="text-sm text-gray-500">No mentors approved.</li>
+                                )}
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-sm text-muted-foreground">Capacity</p>
+                            <span className="font-semibold">{shift.spots} Spot{shift.spots !== 1 ? "s" : ""}</span>
+                        </div>
+                    </section>
+                    {(authUser.privilage === "admin" || authUser.privilage === "manager") && (
+                        <PendingRequestsRenderer shiftData={shift} />
+                    )}
+                </ScrollArea>
+            </SheetContent>
+        </Sheet>
+    );
+}

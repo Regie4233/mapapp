@@ -5,7 +5,7 @@ import { pb } from '@/lib/server/pocketbase';
 import { useEffect } from 'react';
 
 // export default function ShiftActionButton({ shift, isPending }: { shift: Shift, isPending?: boolean | null }) {
-export default function ShiftActionButton({isPending}: { isPending: boolean | null }) {
+  function ShiftActionButton({isPending}: { isPending: boolean | null }) {
     // const [isPending, setIsPending] = useState(null as boolean | null); // null means loading, true means pending, false means not pending
     // const { requestShift } = useDataFetcher();
     // const authUser = useAppSelector(state => state.sessions.authUser);

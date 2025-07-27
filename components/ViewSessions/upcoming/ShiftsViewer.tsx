@@ -1,16 +1,14 @@
 'use client'
-import { CVTabs, CVTabsContent, CVTabsList, CVTabsTrigger } from '../../ui/cvtabs'
-import WeekSelector from '../WeekSelector'
-import ShiftRenderer from './ShiftRenderer'
-import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks'
-import { formatDateToYYYYMMDD_UTC } from '@/lib/utils'
-import { useEffect, useState } from 'react'
-import ScheduleShiftRenderer from '../PastShifts/ScheduleShiftRenderer'
-import { ReviewReminder } from '../notes/ReviewReminder'
-import { Shift } from '@/lib/type'
-import { getUserScheduledShifts } from '@/lib/store/states/sessionsSlice'
-// import AddShiftButton from '@/components/AdminSession/Shift/AddShiftButton'
-// import { pb } from '@/lib/server/pocketbase'
+import { CVTabs, CVTabsContent, CVTabsList, CVTabsTrigger } from '../../ui/cvtabs';
+import WeekSelector from '../WeekSelector';
+import ShiftRenderer from './ShiftRenderer';
+import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks';
+import { formatDateToYYYYMMDD_UTC } from '@/lib/utils';
+import { useEffect, useState } from 'react';
+import { ReviewReminder } from '../notes/ReviewReminder';
+import { Shift } from '@/lib/type';
+import { getUserScheduledShifts } from '@/lib/store/states/sessionsSlice';
+import ScheduleShiftRenderer from '../PastShifts/ScheduleShiftRenderer';
 
 export default function ShiftsViewer() {
     const { getShiftsWeekly, getUserPastShifts, getAllLocations, getAllMentors, getUserPastShiftsWeek, getScheduledShiftsWeek } = useDataFetcher();
@@ -28,6 +26,8 @@ export default function ShiftsViewer() {
     const [reminderOpen, setReminderOpen] = useState(false);
     const [mostRecentEmptyNote, setMostRecentEmptyNote] = useState<Shift | null>(null);
     const [tabValue, setTabValue] = useState<string>('available');
+    const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
+    const allLocations = useAppSelector(state => state.sessions.allLocations);
 
     const [completedShiftsDate, setCompletedShiftsDate] = useState<Date>(new Date());
     const [scheduledShiftDate, setScheduledShiftsDate] = useState<Date>(new Date());
@@ -42,7 +42,7 @@ export default function ShiftsViewer() {
 
     useEffect(() => {
         if (!authData) return;
-        getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: defaultDate });
+
         if (authData.privilage === 'admin' || authData.privilage === 'manager') {
             //  dispatch(getAllScheduledShifts())
             // JUST see ALL PAST SHIFTS not just one user change logic
@@ -51,16 +51,23 @@ export default function ShiftsViewer() {
             getAllMentors();
         } else {
             dispatch(getUserScheduledShifts(authData.id))
+            getAllLocations();
             // getUserPastShifts(authData);
         }
+        getShiftsWeekly({ targetLocation: selectedLocation?.name || allLocations[0]?.name, targetDate: defaultDate });
 
     }, [])
 
     useEffect(() => {
         if (!authData) return;
+        getShiftsWeekly({ targetLocation: selectedLocation?.name || allLocations[0]?.name, targetDate: defaultDate });
+    }, [selectedLocation])
+
+    useEffect(() => {
+        if (!authData) return;
         pastShifts.forEach(shift => {
             if (shift.expand.notes === undefined || shift.expand.notes === null) {
-                console.log(shift)
+                // console.log(shift)
                 setMostRecentEmptyNote(shift);
                 setReminderOpen(true);
                 return;
@@ -74,7 +81,7 @@ export default function ShiftsViewer() {
 
     useEffect(() => {
         getScheduledShiftsWeek(scheduledShiftDate.toISOString(), authData)
-    },[scheduledShiftDate]);
+    }, [scheduledShiftDate]);
 
 
     //    useEffect(() => { THIS WORKS
@@ -105,14 +112,14 @@ export default function ShiftsViewer() {
                     <ShiftRenderer />
                 </CVTabsContent>
                 <CVTabsContent value="scheduled">
-                    <ScheduleShiftRenderer shifts={scheduledShiftsWeek} 
-                    targetDate={scheduledShiftDate} 
-                    setTargetDate={setScheduledShiftsDate} showPast={false}/>
+                    <ScheduleShiftRenderer shifts={scheduledShiftsWeek}
+                        targetDate={scheduledShiftDate}
+                        setTargetDate={setScheduledShiftsDate} showPast={false} />
                 </CVTabsContent>
                 <CVTabsContent value="completed">
-                    <ScheduleShiftRenderer shifts={pastShiftsWeek} 
-                    targetDate={completedShiftsDate} 
-                    setTargetDate={setCompletedShiftsDate} showPast={true}/>
+                    <ScheduleShiftRenderer shifts={pastShiftsWeek}
+                        targetDate={completedShiftsDate}
+                        setTargetDate={setCompletedShiftsDate} showPast={true} />
                 </CVTabsContent>
             </CVTabs>
         </main>

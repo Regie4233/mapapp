@@ -2,7 +2,7 @@ import { FindWeek } from '@/lib/utils';
 import {  ChevronLeft, ChevronRight } from 'lucide-react'
 import React from 'react'
 
-export default function WeekCycler({showPast, date, dateSetter }: {showPast: boolean, date: Date, dateSetter: (date: Date) => void }) {
+export default function WeekCycler({showPast = false, date, dateSetter }: {showPast?: boolean, date: Date, dateSetter: (date: Date) => void }) {
   // const [selectedDate, setSelectedDate] = useState<Date>(date);
   const nextWeekNext = () => {
     const futureDate = new Date(date);

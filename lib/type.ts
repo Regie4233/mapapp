@@ -17,17 +17,20 @@ export interface Notes {
 
 export interface NoteSummary {
   workedOn: string;
-  students: StudentNotes[];
+  students: Student[];
   keyNotes: string;
 }
 
 
 
-export interface StudentNotes {
+export interface Student {
+  id: string;
+  created: string;
   name: string;
-  strengths: string[];
-  challenges: string[];
+  expand: StudentExpand;
+  location: ShiftLocation
   notes: string[];
+  updated: string;
 }
 
 // export interface Shift {
@@ -126,6 +129,11 @@ export interface ShiftLocation {
 
 }
 
+export interface StudentExpand {
+  location: ShiftLocation;
+  notes: Notes[];
+}
+
 /**
  * Represents the 'expand' object within a ShiftOccurrence.
  * This contains the fully resolved related records.
@@ -172,6 +180,7 @@ export interface UserPool {
   title: string;
   updated: string;
   verified: boolean;
+  authorized: boolean;
 }
 
 export interface ShiftExpand {
@@ -179,4 +188,13 @@ export interface ShiftExpand {
   notes: Notes;
   pending_approval: UserPool[];
   location: ShiftLocation;
+}
+
+
+export interface ListResult<T> {
+    page: number;
+    perPage: number;
+    totalItems: number;
+    totalPages: number;
+    items: T[];
 }

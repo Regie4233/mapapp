@@ -12,19 +12,20 @@ export default function WeekSelector() {
     const { getShiftsWeekly } = useDataFetcher();
     const [daysofWeek, setDaysOfWeek] = useState<Date[]>()
     const selectedDate = useAppSelector(state => state.sessions.selectedDate);
+    const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
     // const shiftOccurences = useAppSelector(state => state.sessions.shiftDatas);
 
 
     const nextWeekNext = () => {
         const futureDate = new Date(selectedDate);
         futureDate.setDate(futureDate.getDate() + 7);
-        getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: futureDate.toISOString() });
+        getShiftsWeekly({ targetLocation: selectedLocation?.name || '', targetDate: futureDate.toISOString() });
         dispatch(setSelectedDate(futureDate.toISOString()))
     }
     const nextWeekPrev = () => {
         const futureDate = new Date(selectedDate);
         futureDate.setDate(futureDate.getDate() - 7);
-        getShiftsWeekly({ targetLocation: 'Main%Office', targetDate: futureDate.toISOString() });
+        getShiftsWeekly({ targetLocation: selectedLocation?.name || '', targetDate: futureDate.toISOString() });
         dispatch(setSelectedDate(futureDate.toISOString()))
     }
     useEffect(() => {

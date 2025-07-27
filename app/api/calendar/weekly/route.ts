@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     // console.log(resDate)
     const targetDate = new Date(resDate);
     // console.log(targetDate)
-    targetDate.setUTCHours(4, 0, 0, 0);
+    targetDate.setUTCHours(0, 0, 0, 0);
     //  console.log(targetDate)
     const weekMinMax = FindWeek(targetDate);
 

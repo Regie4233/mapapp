@@ -84,7 +84,7 @@ export function useDataFetcher() {
         try {
             const res = await fetch(`/api/locations`);
             const data = await res.json();
-            dispatch(setAllLocations(data.locations.items))
+            dispatch(setAllLocations(data))
         } catch (error) {
             console.error("Error fetching locations:", error);
         }

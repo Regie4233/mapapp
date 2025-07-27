@@ -1,4 +1,3 @@
-'use client'
 import {
     Card,
     CardContent,
@@ -7,16 +6,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Shift } from "@/lib/type" // Assuming 'Shift' type is also applicable here
-import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
-import { useState } from "react"
-import NotesDetail from "../Upcoming/NotesButtonSheet"
-import UserBadge from "../UserBadge"
+import { Shift } from "@/lib/type"
+import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils";
+import UserBadge from "../ViewSessions/UserBadge";
 
-export default function PastShiftCard({ data, allowAddNotes }: { data: Shift, allowAddNotes: boolean }) {
-    const [open, setOpen] = useState(false);
-    return (
-            <Card className="m-4 " onClick={() => setOpen(!open)}>
+export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handleOpenSheet: (value: Shift) => void }) {
+  
+  return (
+    <Card className="" onClick={() => handleOpenSheet(data)}>
                 <CardHeader className="col-span-6">
                     <CardTitle className="text-xl">{data.title || "Session"}</CardTitle>
                     <CardDescription className="text-black">
@@ -49,13 +46,8 @@ export default function PastShiftCard({ data, allowAddNotes }: { data: Shift, al
 
                 </CardContent>
                 <CardFooter>
-                    {
-                        allowAddNotes && data.expand.notes === undefined && (
-                            <NotesDetail shift={data} />
-                        )
-                    }
-
+                
                 </CardFooter>
             </Card>
-    )
+  )
 }

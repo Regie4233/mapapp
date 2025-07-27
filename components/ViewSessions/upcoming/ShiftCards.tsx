@@ -90,7 +90,7 @@ export default function ShiftCards({ data }: { data: Shift }) {
                                 data.approved.length > 0 &&
                                 data.expand.approved.map(mentor => (
                                     <li key={mentor.id}>
-                                        <UserBadge size={33} user={mentor} />
+                                        <UserBadge size={33} initials={[mentor.firstname[0], mentor.lastname[0]]} tooltip={false} />
                                     </li>
                                 ))
                             }

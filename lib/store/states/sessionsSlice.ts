@@ -245,6 +245,32 @@ export const createShift = createAsyncThunk(
     }
 )
 
+export const deleteShift = createAsyncThunk(
+    'sessions/deleteShift',
+    async ({ shiftId }: { shiftId: string }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/create', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to delete shift');
+            }
+
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.error('Error on deleting shift:', error);
+            return rejectWithValue(error || 'Failed to delete shift');
+        }
+    }
+)
+
+
 const sessionSlice = createSlice({
     name: 'sessions',
     initialState,
@@ -304,6 +330,26 @@ const sessionSlice = createSlice({
             state.selectedLocation = null;
         },
         setUserPastShiftsWeek: (state, action: PayloadAction<Shift[]>) => {
+            const todayDate = new Date();
+            // const todayTime = todayDate.getHours();
+
+            action.payload.forEach(element => {
+                const targetDate = new Date(element.shift_date);
+                const targetString = targetDate.toISOString().split('T')[0];
+
+                if (targetString === todayDate.toISOString().split('T')[0]) {
+                    targetDate.setHours(parseInt(element.shift_end));
+                    const index = state.userPastShiftsWeek.findIndex(item => item.id === element.id)
+
+                    if (todayDate.getTime() > targetDate.getTime()) {
+                        if (index !== -1) {
+                            state.userPastShiftsWeek[index] = element;
+                        } else {
+                            state.userPastShiftsWeek.push(element);
+                        }
+                    }
+                } 
+            });
             state.userPastShiftsWeek = action.payload;
         },
         clearUserPastShiftsWeek: (state) => {
@@ -334,33 +380,6 @@ const sessionSlice = createSlice({
                     }
                 }
             })
-            // .addCase(requestShift.fulfilled, (state, action) => {
-            //     state.loading = 'Fulfilled State';
-            //     const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
-            //     const targetId = action.payload.shiftOccurence.items[0].id;
-
-            //     //update the shifts
-            //     if (state.shiftDatas !== null) {
-            //         const tempData: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
-
-            //         if (!tempData.items.some(item => item.id === targetId)) {
-            //             console.log('Slice: no shift found')
-            //             tempData.items.push(shiftOccurence);
-            //             state.shiftDatas = tempData
-            //             state.loading = 'Idle';
-            //         } else {
-            //             console.log('Slice: shift found')
-            //             const updatedItems: ShiftOccurrence[] = tempData.items.map(occurence => {
-            //                 if (occurence.id === targetId) {
-            //                     return shiftOccurence;
-            //                 }
-            //                 return occurence;
-            //             });
-            //             state.shiftDatas.items = updatedItems
-            //             state.loading = 'Idle';
-            //         }
-            //     }
-            // })
             .addCase(cancelRequest.fulfilled, (state, action) => {
                 state.loading = 'Fulfilled State';
                 const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
@@ -391,6 +410,22 @@ const sessionSlice = createSlice({
 
                 state.userPastShiftsWeek[index] = shiftData;
             })
+            .addCase(deleteShift.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                const shiftId = action.payload.deletedShiftId;
+                const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence;
+                console.log('Deleted shift:', shiftId);
+                console.log('action.payload.shiftOccurence:',shiftOccurence);
+                
+              if (state.shiftDatas) {
+                    const index = state.shiftDatas.items.findIndex(item => item.id === shiftOccurence.id);
+                    const shiftIndex = state.shiftDatas.items[index].shifts.findIndex(item => item === shiftId);
+                    if (shiftIndex !== -1) {
+                        // Directly mutate the draft state (Immer handles immutability)
+                        state.shiftDatas.items[index].expand.shifts.splice(shiftIndex, 1);;
+                    } 
+                }
+            })
     },
 
 });
@@ -400,5 +435,5 @@ const sessionSlice = createSlice({
 
 export const { setAuthUser, clearAuthUser, setSelectedDate, setUserPastShiftsWeek, clearUserPastShiftsWeek, setSelectedLocation, clearSelectedLocation,
     clearSelectedDate, setShiftDatas, setDateTargetWeek, setUserPastShifts, clearUserPastShifts, setScheduledShiftsWeek, clearScheduledShiftsWeek,
-     clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
+    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
 export default sessionSlice.reducer;

@@ -32,10 +32,10 @@ export async function POST(request: NextRequest) {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
         await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
         const shiftDate = new Date(date);
-        // shiftDate.setHours(4, 0, 0, 0);
+        shiftDate.setHours(0, 0, 0, 0);
 
         const targetLocation = await pb.collection('mapapp_location').getFirstListItem(`name ~ '${location}'`);
-
+        console.log(targetLocation)
         const data = {
             "location": targetLocation.id,
             "shift_date": shiftDate,
@@ -63,18 +63,26 @@ export async function POST(request: NextRequest) {
                 'shifts+': [newShift.id],
             });
 
+
             const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
                 filter: `shifts.id ?~ "${newShift.id}"`,
                 expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes',
             });
+            await pb.collection('mapapp_location').update(targetLocation.id, {
+                'shiftOccurences+': [shiftOcc.items[0].id],
+            });
+
             return new NextResponse(JSON.stringify({ shift: newShift, shiftOccurence: shiftOcc }), { status: 200 });
 
         } else {
-
             const newShift = await pb.collection('mapapp_shift').create(data);
 
             await pb.collection('mapapp_shiftOccurences').update(targetShiftOcc.items[0].id, {
                 'shifts+': [newShift.id],
+            });
+
+            await pb.collection('mapapp_location').update(targetLocation.id, {
+                'shiftOccurences+': [targetShiftOcc.items[0].id],
             });
             const shiftOcc = await pb.collection('mapapp_shiftOccurences').getList(1, 1, {
                 filter: `shifts.id ?~ "${newShift.id}"`,
@@ -104,10 +112,15 @@ export async function DELETE(request: NextRequest) {
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
         await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
-
+        const shiftOccurence = await pb.collection('mapapp_shiftOccurences').getFirstListItem(`shifts.id ?~ "${shiftId}"`,
+            {
+                expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes, shifts.location',
+                sort: 'shiftDate',
+            });
         await pb.collection('mapapp_shift').delete(shiftId);
 
-        return new NextResponse(JSON.stringify({ message: 'Shift deleted successfully' }), { status: 200 });
+
+        return new NextResponse(JSON.stringify({ message: 'Shift deleted successfully', deletedShiftId: shiftId, shiftOccurence: shiftOccurence }), { status: 200 });
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });

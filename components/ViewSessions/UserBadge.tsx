@@ -1,4 +1,3 @@
-import { AuthUser, UserPool } from '@/lib/type'
 import { getLetterColor } from '@/lib/utils'
 import {
     Tooltip,
@@ -8,8 +7,8 @@ import {
 } from "@/components/ui/tooltip"
 
 
-export default function UserBadge({ size, user, tooltip = true }: { size: number, user: UserPool | AuthUser | null, tooltip?: boolean }) {
-    if (user === null) return;
+export default function UserBadge({ size, initials, tooltip = true }: { size: number, initials: string[], tooltip?: boolean }) {
+    
     return (
         <>
             {
@@ -17,17 +16,29 @@ export default function UserBadge({ size, user, tooltip = true }: { size: number
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <div className={`flex flex-row items-center font-semibold justify-center rounded-full `} style={{height: `${size}px`, width: `${size}px` ,backgroundColor: getLetterColor(user.lastname[0]) }}>
-                                    {user.firstname[0]}{user.lastname[0]}
+                                <div className={`flex flex-row items-center font-semibold justify-center rounded-full `} style={{ height: `${size}px`, width: `${size}px`, backgroundColor: getLetterColor(initials[0]) }}>
+                                    {
+                                        initials.map((initial, index) => (
+                                            <span key={index} className="text-white text-lg">{initial}</span>
+                                        ))
+                                    }
                                 </div></TooltipTrigger>
                             <TooltipContent>
-                                {user.firstname} {user.lastname}
+                                {
+                                    initials.map((initial, index) => (
+                                        <span key={index} className="text-white text-lg">{initial}</span>
+                                    ))
+                                }
                             </TooltipContent>
                         </Tooltip>
-                    </TooltipProvider> 
+                    </TooltipProvider>
                     :
-                    <div className={`flex flex-row items-center font-semibold justify-center h-[${size}px] w-[${size}px] rounded-full `} style={{height: `${size}px`, width: `${size}px` ,backgroundColor: getLetterColor(user.lastname[0]) }}>
-                        {user.firstname[0]}{user.lastname[0]}
+                    <div className={`flex flex-row items-center font-semibold justify-center h-[${size}px] w-[${size}px] rounded-full `} style={{ height: `${size}px`, width: `${size}px`, backgroundColor: getLetterColor(initials[0]) }}>
+                        {
+                            initials.map((initial, index) => (
+                                <span key={index} className="text-white text-lg">{initial}</span>
+                            ))
+                        }
                     </div>
             }
         </>
