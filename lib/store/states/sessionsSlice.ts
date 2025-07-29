@@ -114,8 +114,9 @@ export const createNotes = createAsyncThunk(
 export const updateNote = createAsyncThunk(
     'sessions/createNotes',
     async (formdata: FormData, { rejectWithValue }) => {
+        console.log("FormData in updateNote:", formdata.get('location'));
         try {
-            const res = await fetch('/api/notes/noai', {
+            const res = await fetch('/api/notes', {
                 method: 'POST',
                 body: formdata,
             });

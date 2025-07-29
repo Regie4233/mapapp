@@ -7,6 +7,7 @@ export interface Notes {
   worked_on_today: string;
   struggle_with_anything: string;
   any_wins_today: string;
+  other_notes: string;
   content: string;
   summarized: NoteSummary;
   shiftId: Shift;
@@ -29,7 +30,7 @@ export interface Student {
   name: string;
   expand: StudentExpand;
   location: ShiftLocation
-  notes: string[];
+  note: string;
   updated: string;
 }
 

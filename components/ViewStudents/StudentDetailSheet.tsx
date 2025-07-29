@@ -97,7 +97,7 @@ export default function StudentDetailsSheet({ student, open, onOpenChange }: Stu
                         <h2 className="text-lg font-semibold text-gray-800 mb-2">Academic snapshot</h2>
                         <div className="bg-[#FEFCE8] border-l-4 border-[#60A5FA] p-4 rounded-r-lg">
                             <p className="text-sm text-gray-700 leading-relaxed">
-                                {student.notes || "This student does not have an academic snapshot summary yet. Information can be added by an administrator to see AI insights."}
+                                {student.note || "This student does not have an academic snapshot summary yet. Information can be added by an administrator to see AI insights."}
                             </p>
                             <div className="mt-4 pt-3 border-t border-yellow-200/80 flex items-center gap-2 text-xs text-gray-500">
                                 <Sparkles className="h-4 w-4 text-blue-500 flex-shrink-0" />

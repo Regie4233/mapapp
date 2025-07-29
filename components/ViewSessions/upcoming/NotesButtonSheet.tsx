@@ -45,7 +45,7 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
 
     const handleSubmit = async () => {
         try {
-            if(!shift) return;
+            if (!shift) return;
             const formData = new FormData()
             formData.append("shiftId", shift.id.toString())
             formData.append("students", students)
@@ -54,7 +54,11 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
             formData.append("any_wins_today", anyWinsToday)
             formData.append("noteId", shift.expand?.notes?.id ?? '0')
             shift.approved.forEach(mentorId => formData.append("mentors", mentorId))
-
+            // formData.append('otherNotes', shift.expand.notes.other_notes);
+            formData.append('noteDate', `${shift.shift_date} Time: ${shift.shift_start}`);
+            console.log("Submitting notes for shift", shift);
+            
+            formData.append('location', shift.expand.location.id);
             dispatch(updateNote(formData))
 
             setEditMode(false)
@@ -65,7 +69,7 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
     }
 
     const handleCancel = () => {
-          if(!shift) return;
+        if (!shift) return;
         setStudents(shift.expand?.notes?.students ?? "")
         setWorkedOnToday(shift.expand?.notes?.worked_on_today ?? "")
         setStruggleWithAnything(shift.expand?.notes?.struggle_with_anything ?? "")
@@ -96,8 +100,8 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
                 <Button variant="outline" className="w-full text-white bg-[#0A5FA3]">
-                        Add Session Notes
-                    </Button>
+                    Add Session Notes
+                </Button>
             </SheetTrigger>
 
             {/* Set padding to 0 and manage it internally for better control over layout */}

@@ -22,11 +22,11 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
 
     const dispatch = useAppDispatch();
 
-
+    console.log(shift.expand.location.id)
     // a handler that creates a formdata based on the textareas
-    const handleSubmit = async () => {
-
+    const handleSubmit = () => {
         try {
+            console.log("Submitting notes for shift", shift.id);
             const formData = new FormData();
             formData.append('shift_id', shift.id.toString())
             formData.append('students', students);
@@ -34,6 +34,8 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
             formData.append('struggle_with_anything', struggleWithAnything);
             formData.append('any_wins_today', anyWinsToday);
             formData.append('noteId', shift.expand.notes.id);
+            formData.append('otherNotes', shift.expand.notes.other_notes);
+            formData.append('noteDate', shift.shift_date);
             shift.approved.forEach(element => {
                 formData.append('mentors', element);
             });
@@ -45,6 +47,7 @@ export default function NotesAccordion({ shift }: { shift: Shift }) {
                 formData.append('shiftId', shift.id.toString());
                 formData.append('noteId', shift.expand.notes.id);
             }
+           
             formData.append('location', shift.expand.location.id);
             dispatch(updateNote(formData))
             setEditMode(false);
