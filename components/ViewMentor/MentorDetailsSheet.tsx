@@ -117,7 +117,7 @@ export default function MentorDetailsSheet({ mentor, open, onOpenChange, onMento
             <SheetContent className="w-full max-w-md p-0 bg-white flex flex-col" side="right">
                 <SheetHeader className="p-6 sticky top-0  z-10 flex flex-row justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <UserBadge initials={[mentor.firstname[0], mentor.lastname[0]]} size={40} tooltip={false} />
+                        <UserBadge initials={[mentor.firstname[0], mentor.lastname[0]]} person={mentor} size={40} tooltip={false} />
                         <div>
                             <SheetTitle className="text-xl font-semibold text-gray-900">
                                 {mentor.firstname} {mentor.lastname}

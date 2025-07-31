@@ -11,6 +11,8 @@ import NotesViewer from "@/components/ViewNotes/NotesViewer";
 import MentorViewer from "@/components/ViewMentor/MentorViewer";
 import StudentsViewer from "@/components/ViewStudents/StudentsViewer";
 import SitesViewer from "@/components/ViewSites/SiteViewer";
+import AccountView from "@/components/ViewAccount/AccountView";
+import NotAuthorized from "@/components/authentication/NotAuthorized";
 
 export default function DashboardPage() {
     const dispatch = useDispatch();
@@ -44,6 +46,8 @@ export default function DashboardPage() {
 
    
 if (!authUser) return <DashboardSkeleton />
+if(!authUser.authorized) return <NotAuthorized />
+
 return (
     <ViewController>
         <ShiftsViewer />
@@ -51,6 +55,7 @@ return (
         <MentorViewer />
         <StudentsViewer />
         <SitesViewer />
+        <AccountView />
     </ViewController>
 );
 }

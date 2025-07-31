@@ -18,6 +18,7 @@ interface SessionState {
     allMentors: UserPool[];
     allLocations: ShiftLocation[];
     selectedLocation: ShiftLocation | null;
+    error: string | null;
 }
 
 
@@ -34,6 +35,7 @@ const initialState: SessionState = {
     allMentors: [],
     allLocations: [],
     selectedLocation: null,
+    error: null,
 }
 
 export const requestShift = createAsyncThunk(
@@ -271,6 +273,45 @@ export const deleteShift = createAsyncThunk(
     }
 )
 
+export const updateUser = createAsyncThunk(
+    'sessions/updateUser',
+    async ({ userId, userData }: { userId: string; userData: FormData }, { rejectWithValue }) => {
+        try {
+            // This will call our new API route
+            const response = await fetch(`/api/auth/user/${userId}`, {
+                method: 'PATCH',
+                body: userData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return rejectWithValue(errorData.message || 'Failed to update profile.');
+            }
+
+            const updatedUser = await response.json();
+            return updatedUser as AuthUser;
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+// export const realtimeUpdateShift = createAsyncThunk(
+//     'sessions/realtimeUpdateShift',
+//     async ({shift, shiftOccurence}:{ shift: Shift, shiftOccurence: ShiftOccurrence }, { rejectWithValue }) => {
+//         try {
+//             console.log('Realtime update shift:', shift);
+//             console.log('Realtime update shiftOccurence:', shiftOccurence);
+
+//             return { targetShift: shift, targetShiftOccurences: shiftOccurence };
+//         } catch (error) {
+//             console.error('Error on realtime update shift:', error);
+//             return rejectWithValue(error || 'Failed to realtime update shift');
+//         }
+//     }
+// )
+
+
 
 const sessionSlice = createSlice({
     name: 'sessions',
@@ -349,7 +390,7 @@ const sessionSlice = createSlice({
                             state.userPastShiftsWeek.push(element);
                         }
                     }
-                } 
+                }
             });
             state.userPastShiftsWeek = action.payload;
         },
@@ -362,6 +403,34 @@ const sessionSlice = createSlice({
         clearScheduledShiftsWeek: (state) => {
             state.userScheduledShiftsWeek = [];
         },
+        realtimeShiftUpdate: (state, action: PayloadAction<Shift>) => {
+            const  targetShift  = action.payload;
+            // console.log('Realtime shift update:', targetShift);
+            // console.log('Realtime sdate:', targetShift.shift_date);
+            const selectedShiftOccurences: ShiftOccurrence | undefined = state.shiftDatas?.items.find(shift => shift.shiftDate === targetShift.shift_date?.replace('T', ' '));
+            // console.log('Selected Shift Occurences:', selectedShiftOccurences);
+
+            if (state.shiftDatas && selectedShiftOccurences !== undefined) {
+                const index = state.shiftDatas.items.findIndex(item => item.id === selectedShiftOccurences.id);
+                if (index !== -1) {
+                    // console.log('Updating existing shift occurrence at index:', index);
+                    // find the shift in the expand.shifts array and replace
+                    const shiftIndex = state.shiftDatas.items[index].expand.shifts.findIndex(shift => shift.id === targetShift.id);
+                    //   console.log('Updating existing shift at index:', shiftIndex);
+                    if (shiftIndex !== -1) {
+                      
+                        state.shiftDatas.items[index].expand.shifts[shiftIndex] = targetShift;
+                    } else {
+                        state.shiftDatas.items[index].expand.shifts.push(targetShift);
+                    }
+                    // Directly mutate the draft state (Immer handles immutability)
+                 
+                } else {
+                    // If it doesn't exist, push it.
+                    state.shiftDatas.items.push(selectedShiftOccurences);
+                }
+            }
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -416,17 +485,25 @@ const sessionSlice = createSlice({
                 const shiftId = action.payload.deletedShiftId;
                 const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence;
                 console.log('Deleted shift:', shiftId);
-                console.log('action.payload.shiftOccurence:',shiftOccurence);
-                
-              if (state.shiftDatas) {
+                console.log('action.payload.shiftOccurence:', shiftOccurence);
+
+                if (state.shiftDatas) {
                     const index = state.shiftDatas.items.findIndex(item => item.id === shiftOccurence.id);
                     const shiftIndex = state.shiftDatas.items[index].shifts.findIndex(item => item === shiftId);
                     if (shiftIndex !== -1) {
                         // Directly mutate the draft state (Immer handles immutability)
                         state.shiftDatas.items[index].expand.shifts.splice(shiftIndex, 1);;
-                    } 
+                    }
                 }
             })
+
+
+            .addCase(updateUser.fulfilled, (state, action: PayloadAction<AuthUser>) => {
+                state.authUser = action.payload;
+            })
+            .addCase(updateUser.rejected, (state, action) => {
+                state.error = action.payload as string;
+            });
     },
 
 });
@@ -436,5 +513,5 @@ const sessionSlice = createSlice({
 
 export const { setAuthUser, clearAuthUser, setSelectedDate, setUserPastShiftsWeek, clearUserPastShiftsWeek, setSelectedLocation, clearSelectedLocation,
     clearSelectedDate, setShiftDatas, setDateTargetWeek, setUserPastShifts, clearUserPastShifts, setScheduledShiftsWeek, clearScheduledShiftsWeek,
-    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
+    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations, realtimeShiftUpdate } = sessionSlice.actions;
 export default sessionSlice.reducer;

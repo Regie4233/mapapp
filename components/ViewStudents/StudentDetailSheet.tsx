@@ -53,7 +53,7 @@ export default function StudentDetailsSheet({ student, open, onOpenChange }: Stu
                 <div className="flex-1 overflow-y-auto p-6">
                     {/* Large Avatar */}
                     <div className="flex justify-center mb-4">
-                        <UserBadge initials={[student.name[0]]} size={96} tooltip={false} />
+                        <UserBadge initials={[student.name[0]]} person={student} size={96} tooltip={false} />
                     </div>
 
                     {/* Name and Options Menu */}

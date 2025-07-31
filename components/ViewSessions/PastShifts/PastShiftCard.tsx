@@ -6,12 +6,12 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import { Shift } from "@/lib/type" // Assuming 'Shift' type is also applicable here
-import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
-import { useState } from "react"
-import NotesDetail from "../Upcoming/NotesButtonSheet"
-import UserBadge from "../UserBadge"
+import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils";
+import { useState } from "react";
+import NotesDetail from "../Upcoming/NotesButtonSheet";
+import AnimatedBadgeRow from "../AnimatedBadgeRow";
 
 export default function PastShiftCard({ data, allowAddNotes }: { data: Shift, allowAddNotes: boolean }) {
     const [open, setOpen] = useState(false);
@@ -25,26 +25,7 @@ export default function PastShiftCard({ data, allowAddNotes }: { data: Shift, al
                 </CardHeader>
                 <CardContent className="col-span-5">
                     <section className="flex flex-row gap-16">
-                        <div className="relative">
-                            {
-                                data.approved.length > 0 &&
-                                data.expand.approved?.map((mentor, index) => (
-                                    <div key={mentor.id} className={`absolute left-[${10 * index}px]`}>
-                                        <UserBadge size={30} initials={[mentor.firstname[0], mentor.lastname[0]]} tooltip={false} />
-                                    </div>
-                                ))
-                            }
-                        </div>
-
-                        <ul className="flex flex-row gap-2 items-center text-muted-foreground">
-
-                            {data.approved.length > 0 &&
-                                data.expand.approved?.map((mentor, index) => (
-                                    <li key={mentor.id} className="text-sm">
-                                        {mentor.firstname} {mentor.lastname}{index % 2 ? '' : ', '}
-                                    </li>
-                                ))}
-                        </ul>
+                       <AnimatedBadgeRow users={data.expand.approved}/>
                     </section>
 
                 </CardContent>

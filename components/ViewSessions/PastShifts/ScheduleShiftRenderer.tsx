@@ -3,16 +3,17 @@ import { Shift } from "@/lib/type";
 import WeekCycler from "../WeekCycler";
 import {useAppSelector } from "@/lib/hooks";
 import PastShiftRendererSkeleton from "./PastShiftRendererSkeleton";
+import { pb } from "@/lib/server/pocketbase";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { realtimeShiftUpdate } from "@/lib/store/states/sessionsSlice";
 
 export default function ScheduleShiftRenderer({showPast, shifts, targetDate, setTargetDate}:{ showPast: boolean, shifts: Shift[], targetDate: Date, setTargetDate: (date: Date) => void}) {
     // const [targetDate, setTargetDate] = useState<Date>(new Date());
     // const {getUserPastShiftsWeek} = useDataFetcher();
     // const pastShifts = useAppSelector(state => state.sessions.userPastShiftsWeek);
     const loading = useAppSelector(state => state.sessions.loading);
-    
-    // useEffect(() => {
-    //     getUserPastShiftsWeek(targetDate.toISOString(), authUser)
-    // }, [targetDate])
+  
     if(loading === 'pending') {
         return <PastShiftRendererSkeleton />
     }

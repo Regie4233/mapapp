@@ -30,11 +30,11 @@ import { Building2, PersonStandingIcon } from "lucide-react";
 
 
 const viewTags = [
-    { tag: "Shifts", icon: <LuCalendar size={26}/> },
-    { tag: "Notes", icon: <LuScroll size={26}/> },
-    { tag: "Mentors", icon: <LuUsers size={26}/> },
-     { tag: "Students", icon: <PersonStandingIcon size={26}/> },
-     { tag: "Sites", icon: <Building2 size={26}/> },
+    { tag: "Shifts", icon: <LuCalendar size={26} /> },
+    { tag: "Notes", icon: <LuScroll size={26} /> },
+    { tag: "Mentors", icon: <LuUsers size={26} /> },
+    { tag: "Students", icon: <PersonStandingIcon size={26} /> },
+    { tag: "Sites", icon: <Building2 size={26} /> },
     // {tag: "Settings", icon: <LuScroll /> }
 ]
 
@@ -66,8 +66,10 @@ export default function Navbar() {
                 return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
             case '3':
                 return <span className="flex flex-row gap-2 items-center justify-center">Students</span>
-                  case '4':
+            case '4':
                 return <span className="flex flex-row gap-2 items-center justify-center">Sites</span>
+            case '5':
+                return <span className="flex flex-row gap-2 items-center justify-center">Account</span>
             default:
                 return <span className="flex flex-row gap-2 items-center justify-center">Shifts</span>
         }
@@ -116,13 +118,13 @@ export default function Navbar() {
                     <DropdownMenuTrigger className="p-4">
                         {
                             authData &&
-                            <UserBadge size={50} initials={[authData.firstname[0], authData.lastname[0]]} tooltip={false} />
+                            <UserBadge size={50} initials={[authData.firstname[0], authData.lastname[0]]} person={authData} tooltip={false} />
                         }
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="-my-10 mx-12">
                         <DropdownMenuLabel>{authData?.firstname} {authData?.lastname}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Account</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(pathname + '?' + createQueryString('view', '5'))}>Account</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleLogoff()}>Sign Out</DropdownMenuItem>
                     </DropdownMenuContent>

@@ -1,6 +1,5 @@
 import { pb } from "@/lib/server/pocketbase";
 import { atob } from "buffer";
-import { ClientResponseError } from "pocketbase";
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,48 +21,6 @@ export async function GET() {
         }
     }
 
-}
-
-export async function POST(request: NextRequest) {
-    try {
-        const formData = await request.formData();
-
-        // Basic validation
-        const firstname = formData.get('firstname');
-        const lastname = formData.get('lastname');
-        const phone = formData.get('phone');
-        const email = formData.get('email');
-        const password = formData.get('password');
-        const passwordConfirm = formData.get('passwordConfirm');
-
-        if (!email || !password || !passwordConfirm) {
-            return NextResponse.json({ message: 'Email, password, and password confirmation are required.' }, { status: 400 });
-        }
-
-        if (password !== passwordConfirm) {
-            return NextResponse.json({ message: 'Passwords do not match.' }, { status: 400 });
-        }
-
-        // Add default privilege if not provided
-        if (!formData.has('privilage')) {
-            formData.set('privilage', 'limited');
-        }
-
-        const newRecord = await pb.collection('mapapp_users').create(formData);
-
-        return NextResponse.json(newRecord, { status: 201 });
-    } catch (error) {
-        console.error('Error creating user:', error);
-        if (error instanceof ClientResponseError) {
-            // Provide more specific error messages from PocketBase
-            return NextResponse.json(
-                { message: error.response.message, data: error.response.data },
-                { status: error.status }
-            );
-        }
-
-        return NextResponse.json({ message: 'Failed to create user account.' }, { status: 500 });
-    }
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { userId: string } }) {
@@ -105,13 +62,12 @@ export async function PATCH(request: NextRequest, { params }: { params: { userId
         }
 
         return NextResponse.json(updatedRecord, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error updating user:', error);
-        if (error instanceof ClientResponseError) {
-            // Provide more specific error messages from PocketBase
-            return NextResponse.json({ message: error.response.message }, { status: error.status });
-        }
-
-        return NextResponse.json({ message: 'Failed to update user profile.' }, { status: 500 });
+        const response = error.response || {};
+        const message = response.message || 'Failed to update user profile.';
+        const status = response.status || 500;
+        return NextResponse.json({ message }, { status });
     }
 }
+

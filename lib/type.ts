@@ -32,6 +32,7 @@ export interface Student {
   location: ShiftLocation
   note: string;
   updated: string;
+  avatar: string;
 }
 
 // export interface Shift {
@@ -82,6 +83,8 @@ export interface AuthUser {
   updated: Date;
   title: string;
   about: string;
+  avatar: string;
+  authorized: boolean;
 }
 
 export interface TargetWeekQuery {
@@ -102,7 +105,7 @@ export interface Shift {
   collectionName: string;
   created: string; // ISO 8601 date-time string
   expand: ShiftExpand; // In your example, it's empty {}, but could contain more
-  id: number;
+  id: string;
   pending_approval: string[]; // Assuming these are IDs or some string identifiers
   shift_date: string; // ISO 8601 date-time string (date part might be most relevant)
   shift_end: string; // Time string, e.g., "HH:mm"
@@ -182,6 +185,7 @@ export interface UserPool {
   updated: string;
   verified: boolean;
   authorized: boolean;
+  avatar: string;
 }
 
 export interface ShiftExpand {

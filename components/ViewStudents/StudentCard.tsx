@@ -12,7 +12,7 @@ export const StudentCard = ({ student, handleSelectStudent }: { student: Student
     onClick={() => handleSelectStudent(student)}
   >
     <div className='flex flex-row items-center gap-4'>
-      <UserBadge size={40} initials={[student.name[0]]} tooltip={false} />
+      <UserBadge size={40} initials={[student.name[0]]} person={student} tooltip={false} />
       <div>
         <p className="font-semibold text-gray-800">{student.name}</p>
         <p className="text-sm text-gray-500">{student.expand.location.name}</p>

@@ -7,7 +7,7 @@ export const MentorCard = ({ mentor, handleSelectMentor }: { mentor: UserPool, h
   <li className="bg-[#F5F7F8] hover:bg-gray-100 transition-colors duration-200 p-4 rounded-xl flex flex-col gap-3 cursor-pointer relative" onClick={() => handleSelectMentor(mentor)}>
     <div className="flex items-center justify-between">
       <div className='flex flex-row items-center gap-4'>
-        <UserBadge size={40} initials={[mentor.firstname[0], mentor.lastname[0]]} tooltip={false} />
+        <UserBadge size={40} initials={[mentor.firstname[0], mentor.lastname[0]]} person={mentor} tooltip={false} />
         <div>
           <p className="font-semibold text-gray-900">{mentor.firstname} {mentor.lastname}</p>
           <p className="text-sm text-gray-600">{mentor.email}</p>

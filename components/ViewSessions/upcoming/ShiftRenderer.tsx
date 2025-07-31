@@ -1,6 +1,6 @@
 'use client';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { ShiftLocation, ShiftOccurrence } from '@/lib/type';
+import { Shift, ShiftLocation, ShiftOccurrence } from '@/lib/type';
 import { useEffect, useState } from 'react'
 import ShiftCards from './ShiftCards';
 import ShiftRendererSkeleton from './ShiftRendererSkeleton';
@@ -14,7 +14,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { setSelectedLocation } from '@/lib/store/states/sessionsSlice';
+import { realtimeShiftUpdate, setSelectedLocation } from '@/lib/store/states/sessionsSlice';
+import { pb } from '@/lib/server/pocketbase';
 
 
 
@@ -33,7 +34,7 @@ export default function ShiftRenderer() {
     const handleChangeLocation = (e: string) => {
         const location = JSON.parse(e);
         dispatch(setSelectedLocation(location));
-        return location.name;   
+        return location.name;
     }
     useEffect(() => {
         console.log(selectedLocation)
@@ -43,7 +44,24 @@ export default function ShiftRenderer() {
     //     console.log('all occurence', shiftOccurences)
     //     console.log(selectedDate)
     //     console.log('selected Occurence', selectedShiftOccurences)
-    // }, [selectedDate])
+    // }, [selectedDate]);
+
+    useEffect(() => {
+        pb.realtime.subscribe('mapapp_shift',  async function (e) {
+            console.log('Realtime update received:', e.record);
+            
+            const res = await pb.collection('mapapp_shift').getOne(e.record.id, {
+                    expand: 'location, approved, pending_approval, notes',
+                });
+            // console.log('xx', res)
+            dispatch(realtimeShiftUpdate(res as Shift));
+        });
+
+        return () => {
+            console.log('Unsubscribing from realtime updates');
+            pb.realtime.unsubscribe(); 
+        };
+    }, []);
     if (authUser === null) return <ShiftRendererSkeleton />
     return (
         <section className='mb-32'>

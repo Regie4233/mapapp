@@ -56,6 +56,7 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
         }
     }
 
+    // console.log('Admin Shift Card Data:', data);
 
     if (!authUser) return;
     return (

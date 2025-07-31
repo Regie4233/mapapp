@@ -3,6 +3,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -10,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from '@/lib/server/auth'; // Assuming this is your server action
+import Image from "next/image";
+import Link from "next/link";
 
 // The Zod schema can still be useful for validation within your `signIn` server action.
 // import * as z from 'zod';
@@ -40,7 +43,17 @@ export async function SignInForm() {
     // Then in the form: <SubmitButton />
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+        <div className="flex items-center justify-center flex-col min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+            <div className="text-center">
+                    <Image
+                        src="/logo3.png" // Make sure you have a logo in your `public` folder
+                        alt="Mentor A Promise Logo"
+                        width={120}
+                        height={120}
+                        className="mx-auto border-2 rounded-full"
+                        priority
+                    />
+                </div>
             <Card className="w-full max-w-sm"> {/* max-w-sm for better responsiveness */}
                 <CardHeader>
                     <CardTitle className="text-2xl text-center">Sign In</CardTitle>
@@ -81,17 +94,13 @@ export async function SignInForm() {
                         </Button>
                     </form>
                 </CardContent>
-                {/* Optional: Add links for forgot password, sign up, etc.
                 <CardFooter className="flex flex-col items-center space-y-2 pt-4">
-                    <a href="/forgot-password" // Example link
+                    {/* <a href="/forgot-password" className="text-sm text-blue-600 hover:underline dark:text-blue-400"> Forgot Password? </a> */}
+                    <Link href="/signup"
                        className="text-sm text-blue-600 hover:underline dark:text-blue-400">
-                        Forgot Password?
-                    </a>
-                    <a href="/signup" // Example link
-                       className="text-sm text-blue-600 hover:underline dark:text-blue-400">
-                        Don't have an account? Sign Up
-                    </a>
-                </CardFooter> */}
+                        Don&apos;t have an account? Sign Up
+                    </Link>
+                </CardFooter>
             </Card>
         </div>
     );

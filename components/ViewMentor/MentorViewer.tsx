@@ -16,7 +16,7 @@ export default function MentorViewer() {
   const [mentors, setMentors] = useState<UserPool[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [authorizedFilter, setAuthorizedFilter] = useState('all');
-  const [verifiedFilter, setVerifiedFilter] = useState('verified');
+  const [verifiedFilter, setVerifiedFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<boolean>(false);
   const [selectedMentor, setSelectedMentor] = useState<UserPool | null>(null);

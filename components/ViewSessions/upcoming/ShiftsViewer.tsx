@@ -7,7 +7,7 @@ import { formatDateToYYYYMMDD_UTC } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { ReviewReminder } from '../notes/ReviewReminder';
 import { Shift } from '@/lib/type';
-import { getUserScheduledShifts } from '@/lib/store/states/sessionsSlice';
+import { getUserScheduledShifts, realtimeUpdateShift } from '@/lib/store/states/sessionsSlice';
 import ScheduleShiftRenderer from '../PastShifts/ScheduleShiftRenderer';
 
 export default function ShiftsViewer() {
@@ -31,7 +31,6 @@ export default function ShiftsViewer() {
 
     const [completedShiftsDate, setCompletedShiftsDate] = useState<Date>(new Date());
     const [scheduledShiftDate, setScheduledShiftsDate] = useState<Date>(new Date());
-
 
     const handleDismiss = () => {
         setReminderOpen(false);
@@ -83,16 +82,7 @@ export default function ShiftsViewer() {
         getScheduledShiftsWeek(scheduledShiftDate.toISOString(), authData)
     }, [scheduledShiftDate]);
 
-
-    //    useEffect(() => { THIS WORKS
-    //     pb.realtime.subscribe('mapapp_shift', function (e) {
-    //         console.log('realtime', e.record);
-    //         console.log('YETETTEET')
-    //     });
-    //     return () => {
-    //         pb.realtime.unsubscribe(); // don't forget to unsubscribe
-    //     };
-    // });
+   
 
     if (!authData) return;
     return (

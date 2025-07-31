@@ -27,7 +27,7 @@ export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handl
                                 data.approved.length > 0 &&
                                 data.expand.approved?.map((mentor, index) => (
                                     <div key={mentor.id} className={`absolute left-[${10 * index}px]`}>
-                                        <UserBadge size={30} initials={[mentor.firstname[0], mentor.lastname[0]]} tooltip={false} />
+                                        <UserBadge size={30} initials={[mentor.firstname[0], mentor.lastname[0]]} person={mentor} tooltip={false} />
                                     </div>
                                 ))
                             }

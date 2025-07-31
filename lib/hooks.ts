@@ -2,7 +2,8 @@
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
 import { AuthUser, TargetWeekQuery } from './type';
-import { setAllLocations, setAllMentors, setScheduledShiftsWeek, setShiftDatas, setUserPastShifts, setUserPastShiftsWeek, setUserScheduledShifts } from './store/states/sessionsSlice';
+import { realtimeUpdateShift, setAllLocations, setAllMentors, setScheduledShiftsWeek, setShiftDatas, setUserPastShifts, setUserPastShiftsWeek, setUserScheduledShifts } from './store/states/sessionsSlice';
+import { pb } from './server/pocketbase';
 
 
 export function useDataFetcher() {
@@ -133,7 +134,6 @@ export function useDataFetcher() {
             console.error('Error checking pending approval:', error);
         }
     }
-
 
 
     return {
