@@ -7,14 +7,14 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('pb_auth');
-    
+
     if (sessionCookie) {
         try {
             const [header, payload] = sessionCookie.value?.split('.');
-         
+            console.log(header)
             const decodedPayload = JSON.parse(atob(payload));
             const user = await pb.collection("mapapp_users").getOne(decodedPayload.id!);
-          
+
             return new Response(JSON.stringify({ userData: user }))
         } catch (error) {
             console.error("Failed to parse cookie payload:", error);
@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
 
         // Basic validation
-        const firstname = formData.get('firstname');
-        const lastname = formData.get('lastname');
-        const phone = formData.get('phone');
+        formData.get('firstname');
+        formData.get('lastname');
+        formData.get('phone');
         const email = formData.get('email');
         const password = formData.get('password');
         const passwordConfirm = formData.get('passwordConfirm');
@@ -66,9 +66,9 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
-        const { userId } = params;
+        const { userId } = await params;
         const cookieStore = await cookies();
         const pb_auth = cookieStore.get('pb_auth');
 
@@ -77,13 +77,13 @@ export async function PATCH(request: NextRequest, { params }: { params: { userId
 
         try {
             // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
-            if(!pb.authStore.isValid) return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
+            if (!pb.authStore.isValid) return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
             await pb.collection('mapapp_users').authRefresh();
         } catch (_) {
             // clear the auth store on failed refresh
             pb.authStore.clear();
             console.log("Auth store cleared due to failed refresh", _);
-            
+
             return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
         }
 
@@ -93,7 +93,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { userId
 
         const isAdmin = pb.authStore.model.privilage === 'admin' || pb.authStore.model.privilage === 'manager';
         if (pb.authStore.model.id !== userId && !isAdmin) {
-             return new NextResponse(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
+            return new NextResponse(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
         }
 
         const formData = await request.formData();

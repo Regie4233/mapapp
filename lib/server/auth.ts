@@ -4,8 +4,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function signIn(formData: FormData) {
-
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    try{
+ const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     const email = formData.get("email")?.toString() || "";
     const password = formData.get("password")?.toString() || "";
     await pb.collection("mapapp_users").authWithPassword(email, password);
@@ -21,6 +21,11 @@ export async function signIn(formData: FormData) {
         path: '/',
     })
     redirect('/dashboard');
+    }catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+        redirect(`/login?error=${encodeURIComponent(errorMessage)}`);
+    }
+   
 }
 
 // make signout function that also remove the jwt cookie

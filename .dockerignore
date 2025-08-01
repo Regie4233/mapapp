@@ -1,0 +1,21 @@
+# Docker files
+.dockerignore
+Dockerfile
+
+# Environment variables
+.env*
+!/.env.example
+
+# Git and node
+.git
+.gitignore
+node_modules
+
+# Next.js build output
+.next
+
+# Logs and local files
+npm-debug.log
+README.md
+
+maphub.tar

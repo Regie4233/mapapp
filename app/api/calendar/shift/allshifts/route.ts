@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     try {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
         // It's recommended to use an admin API key instead of authenticating with email/password on each request.
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+        await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
         
         const filterParts: string[] = [];
         if (notesOnly) {

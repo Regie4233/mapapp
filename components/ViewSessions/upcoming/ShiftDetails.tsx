@@ -46,7 +46,7 @@ interface ShiftDetailsProps {
     // onShiftDeleted: (shiftId: string) => void;
 }
 
-export default function ShiftDetails({ shift, open, setOpen, onShiftDeleted }: ShiftDetailsProps) {
+export default function ShiftDetails({ shift, open, setOpen }: ShiftDetailsProps) {
     const authUser = useAppSelector(state => state.sessions.authUser);
     const [isDeleting, setIsDeleting] = useState(false);
     const dispatch = useAppDispatch();
@@ -81,8 +81,12 @@ export default function ShiftDetails({ shift, open, setOpen, onShiftDeleted }: S
             // onShiftDeleted(shift.id.toString()); // Notify parent to update its list
             setOpen(false); // Close the sheet
 
-        } catch (error: any) {
-            toast.error(error.message, { id: toastId });
+        } catch (error) {
+              console.error('Error canceling shift request:', error);
+            if (error instanceof Error) {
+                 toast.error(error.message, { id: toastId });
+            }
+           
         } finally {
             setIsDeleting(false);
         }

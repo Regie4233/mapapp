@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import PocketBase, { ClientResponseError } from 'pocketbase';
 
 const NOTES_COLLECTION = 'mapapp_notes';
-const SHIFTS_COLLECTION = 'mapapp_shift';
+// const SHIFTS_COLLECTION = 'mapapp_shift';
 
 type NoteResponse = {
     students: StudentNote[];
@@ -23,7 +23,7 @@ async function getAuthenticatedPbClient() {
     const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
     // It's a good practice to check if auth is still valid before re-authenticating
     if (!pb.authStore.isValid) {
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+ await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
     }
     return pb;
 }

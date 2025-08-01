@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         }
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+        await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
 
 
         const shift = await pb.collection('mapapp_shift').getOne(shiftId, { expand: 'spots' });
@@ -58,7 +58,7 @@ export async function DELETE(request: NextRequest) {
         }
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+       await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
 
         const valUser = await pb.collection('mapapp_shift').getOne(shiftId, { expand: 'approved' });
         if (!valUser.approved.includes(authUser)) {

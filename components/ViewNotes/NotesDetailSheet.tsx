@@ -37,7 +37,6 @@ import { updateNote } from "@/lib/store/states/sessionsSlice"
 import { Shift } from "@/lib/type"
 import { convertTo12HourFormat } from "@/lib/utils"
 import { BsArrowLeft } from "react-icons/bs"
-import { toast } from "sonner"
 
 // A helper component for displaying metadata with an icon
 const MetaItem = ({ icon: Icon, children }: { icon: React.ElementType, children: React.ReactNode }) => (

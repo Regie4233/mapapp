@@ -37,17 +37,20 @@ export function SignUpForm() {
             if (!response.ok) {
                 // PocketBase often returns validation errors in `data`
                 if (result.data) {
-                    const fieldErrors = Object.values(result.data).map((err: any) => err.message).join('\n');
+                    const fieldErrors = Object.values(result.data).map((err) => { if (err instanceof Error) return err.message }).join('\n');
                     throw new Error(fieldErrors || result.message || 'An unknown error occurred.');
                 }
                 throw new Error(result.message || 'Failed to create account.');
             }
-            
+
             toast.success("Account created successfully! Please sign in.");
             router.push('/login');
 
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+
         } finally {
             setLoading(false);
         }

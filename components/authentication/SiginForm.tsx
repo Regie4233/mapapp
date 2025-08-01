@@ -29,9 +29,17 @@ import Link from "next/link";
  * e.g., redirect('/login?error=CredentialsSignin')
  */
 
+const errorMessages: { [key: string]: string } = {
+  CredentialsSignin: "Invalid email or password. Please try again.",
+  // You can add other known error codes from your authentication logic here.
+  // For example:
+  // UserNotFound: "No account found with that email.",
+  default: "An unexpected error occurred. Please try again.",
+};
 
-export async function SignInForm() {
-
+export async function SignInForm({ error }: { error?: string }) {
+  const errorMessage = error ? errorMessages[error] || errorMessages.default : null;
+  
     // For a pending state on the button (e.g., "Signing In..."),
     // you would typically create a small client component that uses `useFormStatus`
     // from `react-dom` and use it in place of the current <Button>.
@@ -61,6 +69,11 @@ export async function SignInForm() {
                         Enter your email and password to access your account.
                     </CardDescription>
                 </CardHeader>
+                {errorMessage && (
+                    <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center mx-6" role="alert">
+                        {errorMessage}
+                    </div>
+                )}
                 <CardContent>
                     {/* The form action directly calls your server action */}
                     <form action={signIn} className="space-y-6">

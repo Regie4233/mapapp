@@ -59,7 +59,10 @@ export const requestShift = createAsyncThunk(
             return data;  // Return the response data here
         } catch (error) {
             console.error('Error requesting shift:', error);
-            return rejectWithValue(error || 'Failed to request shift');
+            if (error instanceof Error) {
+                return rejectWithValue(error.message);
+            }
+            return rejectWithValue('An unknown error occurred while requesting a shift.');
         }
     }
 );
@@ -83,8 +86,11 @@ export const cancelRequest = createAsyncThunk(
 
             return data;  // Return the response data here
         } catch (error) {
-            console.error('Error requesting shift:', error);
-            return rejectWithValue(error || 'Failed to request shift');
+            console.error('Error canceling shift request:', error);
+            if (error instanceof Error) {
+                return rejectWithValue(error.message);
+            }
+            return rejectWithValue('An unknown error occurred while canceling a shift request.');
         }
     }
 );
@@ -108,13 +114,16 @@ export const createNotes = createAsyncThunk(
             return data;  // Return the response data here
         } catch (error) {
             console.error('Error creating notes:', error);
-            return rejectWithValue(error || 'Failed to create notes');
+            if (error instanceof Error) {
+                return rejectWithValue(error.message);
+            }
+            return rejectWithValue('An unknown error occurred while creating notes.');
         }
     }
 );
 
 export const updateNote = createAsyncThunk(
-    'sessions/createNotes',
+    'sessions/updateNote',
     async (formdata: FormData, { rejectWithValue }) => {
         console.log("FormData in updateNote:", formdata.get('location'));
         try {
@@ -129,8 +138,8 @@ export const updateNote = createAsyncThunk(
             const data = await res.json();
             return data;  // Return the response data here
         } catch (error) {
-            console.error('Error creating notes:', error);
-            return rejectWithValue(error || 'Failed to create notes');
+            console.error('Error updating notes:', error);
+            return rejectWithValue(error || 'Failed to updating notes');
         }
     }
 );
@@ -172,7 +181,7 @@ export const getAllScheduledShifts = createAsyncThunk(
 
 export const approveMentorRequest = createAsyncThunk(
     'sessions/requestShift',
-    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string | undefined }, { rejectWithValue }) => {
+    async ({ shiftId, authUser }: { shiftId: string | undefined, authUser: string | undefined }, { rejectWithValue }) => {
         try {
             const res = await fetch('/api/calendar/shift/approve', {
                 method: 'POST',
@@ -197,7 +206,7 @@ export const approveMentorRequest = createAsyncThunk(
 
 export const removeMentorRequest = createAsyncThunk(
     'sessions/requestShift',
-    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string | undefined }, { rejectWithValue }) => {
+    async ({ shiftId, authUser }: { shiftId: string | undefined, authUser: string | undefined }, { rejectWithValue }) => {
         try {
             const res = await fetch('/api/calendar/shift/approve', {
                 method: 'DELETE',
@@ -290,8 +299,8 @@ export const updateUser = createAsyncThunk(
 
             const updatedUser = await response.json();
             return updatedUser as AuthUser;
-        } catch (error: any) {
-            return rejectWithValue(error.message);
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 );
@@ -404,7 +413,7 @@ const sessionSlice = createSlice({
             state.userScheduledShiftsWeek = [];
         },
         realtimeShiftUpdate: (state, action: PayloadAction<Shift>) => {
-            const  targetShift  = action.payload;
+            const targetShift = action.payload;
             // console.log('Realtime shift update:', targetShift);
             // console.log('Realtime sdate:', targetShift.shift_date);
             const selectedShiftOccurences: ShiftOccurrence | undefined = state.shiftDatas?.items.find(shift => shift.shiftDate === targetShift.shift_date?.replace('T', ' '));
@@ -418,13 +427,13 @@ const sessionSlice = createSlice({
                     const shiftIndex = state.shiftDatas.items[index].expand.shifts.findIndex(shift => shift.id === targetShift.id);
                     //   console.log('Updating existing shift at index:', shiftIndex);
                     if (shiftIndex !== -1) {
-                      
+
                         state.shiftDatas.items[index].expand.shifts[shiftIndex] = targetShift;
                     } else {
                         state.shiftDatas.items[index].expand.shifts.push(targetShift);
                     }
                     // Directly mutate the draft state (Immer handles immutability)
-                 
+
                 } else {
                     // If it doesn't exist, push it.
                     state.shiftDatas.items.push(selectedShiftOccurences);

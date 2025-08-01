@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
     const endDate = formatDateToYYYYMMDD_UTC(weeksunday);
     // console.log(startDate, endDate)
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-    await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+    console.log(process.env.NEXT_PB_ADMIN_COLLECTION, process.env.NEXT_PB_ADMIN_EMAIL, process.env.NEXT_PB_ADMIN_PASSWORD);
+   await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
     const shiftp = await pb.collection('mapapp_shift').getList(1, 60, {
         filter: `approved ?~ "${id}" && shift_date >= "${startDate}" && shift_date <= "${endDate}" && (shift_date <= "${todayDate}" || shift_date ~ "${todayDate}")`,
         expand: 'pending_approval, approved, notes, location',

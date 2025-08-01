@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+      await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
         const shiftDate = new Date(date);
         shiftDate.setHours(0, 0, 0, 0);
 
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest) {
         }
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+     await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
         const shiftOccurence = await pb.collection('mapapp_shiftOccurences').getFirstListItem(`shifts.id ?~ "${shiftId}"`,
             {
                 expand: 'shiftLocation, shifts.approved, shifts.pending_approval, shifts.notes, shifts.location',

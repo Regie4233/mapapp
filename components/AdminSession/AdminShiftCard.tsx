@@ -3,58 +3,55 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
 import { Shift } from "@/lib/type"
-import { checkRequestPendingStatus, checkUserOwnedShift, convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
+import { checkRequestPendingStatus, convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks"
+import { useAppSelector } from "@/lib/hooks"
 
-import { cancelRequest, requestShift } from "@/lib/store/states/sessionsSlice";
+// import { cancelRequest, requestShift } from "@/lib/store/states/sessionsSlice";
 import { useState } from "react";
-import NotesAccordion from "./NotesAccordion";
 import ShiftDetails from "../ViewSessions/Upcoming/ShiftDetails";
-import UserBadge from "../ViewSessions/UserBadge";
 
 export default function AdminShiftCard({ data }: { data: Shift }) {
     const [open, setOpen] = useState(false);
-    const dispatch = useAppDispatch()
+    // const dispatch = useAppDispatch()
     const authUser = useAppSelector(state => state.sessions.authUser);
 
-    const handleShiftRequest = async () => {
-        try {
-            if (!authUser) return;
-            const shiftId = data.id.toString();
-            const authUserId = authUser?.id;
-            dispatch(requestShift({ shiftId, authUser: authUserId }));
-        } catch (e) {
-            console.error("Shift Request error " + e)
-        }
-    }
-    const handleRequestCancel = async () => {
-        try {
-            if (!authUser) return;
-            const shiftId = data.id.toString();
-            const authUserId = authUser?.id;
-            dispatch(cancelRequest({ shiftId, authUser: authUserId }));
-        } catch (e) {
-            console.error("Shift Request error " + e)
-        }
-    }
+    // const handleShiftRequest = async () => {
+    //     try {
+    //         if (!authUser) return;
+    //         const shiftId = data.id.toString();
+    //         const authUserId = authUser?.id;
+    //         dispatch(requestShift({ shiftId, authUser: authUserId }));
+    //     } catch (e) {
+    //         console.error("Shift Request error " + e)
+    //     }
+    // }
+    // const handleRequestCancel = async () => {
+    //     try {
+    //         if (!authUser) return;
+    //         const shiftId = data.id.toString();
+    //         const authUserId = authUser?.id;
+    //         dispatch(cancelRequest({ shiftId, authUser: authUserId }));
+    //     } catch (e) {
+    //         console.error("Shift Request error " + e)
+    //     }
+    // }
 
-    const handleCancelShift = async () => {
-        try {
-            if (!authUser) return;
-            const shiftId = data.id.toString();
-            const authUserId = authUser?.id;
-            console.log("Cancel Shift", shiftId, authUserId);
-            // dispatch(cancelShift({ shiftId, authUser: authUserId }));
-        } catch (e) {
-            console.error("Shift Cancel error " + e)
-        }
-    }
+    // const handleCancelShift = async () => {
+    //     try {
+    //         if (!authUser) return;
+    //         const shiftId = data.id.toString();
+    //         const authUserId = authUser?.id;
+    //         console.log("Cancel Shift", shiftId, authUserId);
+    //         // dispatch(cancelShift({ shiftId, authUser: authUserId }));
+    //     } catch (e) {
+    //         console.error("Shift Cancel error " + e)
+    //     }
+    // }
 
     // console.log('Admin Shift Card Data:', data);
 

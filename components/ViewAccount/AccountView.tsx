@@ -70,8 +70,11 @@ export default function AccountView() {
         const errorMessage = resultAction.payload as string || "Update failed. Please try again.";
         toast.error(errorMessage, { id: toastId });
       }
-    } catch (error: any) {
-      toast.error(`An error occurred: ${error.message}`, { id: toastId });
+    } catch (error) {
+      if( error instanceof Error) {
+     toast.error(`An error occurred: ${error.message}`, { id: toastId });
+      }
+     
     }
   };
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import StoreProvider from "@/components/shared/StoreProvider";
 import Navbar from "@/components/Navigation/Navbar";
@@ -38,7 +39,9 @@ export default function RootLayout({
       >
         <StoreProvider>
           <Toaster position="top-right" toastOptions={{style: {backgroundColor: "#FDC52A"}}}/>
-          <Navbar />
+          <Suspense>
+            <Navbar />
+          </Suspense>
           {children}
         </StoreProvider>
       </body>

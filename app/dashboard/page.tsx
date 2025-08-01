@@ -1,7 +1,7 @@
 'use client';
 
 import { useDispatch } from "react-redux"
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { setAuthUser } from "@/lib/store/states/sessionsSlice";
 import ShiftsViewer from "@/components/ViewSessions/Upcoming/ShiftsViewer";
 import ViewController from "@/components/Navigation/ViewController";
@@ -13,6 +13,7 @@ import StudentsViewer from "@/components/ViewStudents/StudentsViewer";
 import SitesViewer from "@/components/ViewSites/SiteViewer";
 import AccountView from "@/components/ViewAccount/AccountView";
 import NotAuthorized from "@/components/authentication/NotAuthorized";
+import NoAccess from "@/components/authentication/NoAccess";
 
 export default function DashboardPage() {
     const dispatch = useDispatch();
@@ -44,18 +45,20 @@ export default function DashboardPage() {
     }, [dispatch])
 
 
-   
-if (!authUser) return <DashboardSkeleton />
-if(!authUser.authorized) return <NotAuthorized />
 
-return (
-    <ViewController>
-        <ShiftsViewer />
-        <NotesViewer />
-        <MentorViewer />
-        <StudentsViewer />
-        <SitesViewer />
-        <AccountView />
-    </ViewController>
-);
+    if (!authUser) return <DashboardSkeleton />
+    if (!authUser.authorized) return <NotAuthorized />
+
+    return (
+        <Suspense fallback={<DashboardSkeleton />}>
+            <ViewController>
+                <ShiftsViewer />
+                <NotesViewer />
+                <StudentsViewer />
+                {authUser.privilage === 'admin' ? <MentorViewer /> : <NoAccess />}
+                {authUser.privilage === 'admin' ? <SitesViewer /> : <NoAccess />}
+                <AccountView />
+            </ViewController>
+        </Suspense>
+    );
 }

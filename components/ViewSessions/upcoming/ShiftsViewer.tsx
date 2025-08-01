@@ -6,8 +6,7 @@ import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks';
 import { formatDateToYYYYMMDD_UTC } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { ReviewReminder } from '../notes/ReviewReminder';
-import { Shift } from '@/lib/type';
-import { getUserScheduledShifts, realtimeUpdateShift } from '@/lib/store/states/sessionsSlice';
+import { getUserScheduledShifts } from '@/lib/store/states/sessionsSlice';
 import ScheduleShiftRenderer from '../PastShifts/ScheduleShiftRenderer';
 
 export default function ShiftsViewer() {
@@ -24,7 +23,7 @@ export default function ShiftsViewer() {
     const numberSched = filteredShifts.length;
 
     const [reminderOpen, setReminderOpen] = useState(false);
-    const [mostRecentEmptyNote, setMostRecentEmptyNote] = useState<Shift | null>(null);
+    // const [mostRecentEmptyNote, setMostRecentEmptyNote] = useState<Shift | null>(null);
     const [tabValue, setTabValue] = useState<string>('available');
     const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
     const allLocations = useAppSelector(state => state.sessions.allLocations);
@@ -67,7 +66,7 @@ export default function ShiftsViewer() {
         pastShifts.forEach(shift => {
             if (shift.expand.notes === undefined || shift.expand.notes === null) {
                 // console.log(shift)
-                setMostRecentEmptyNote(shift);
+                // setMostRecentEmptyNote(shift); xxxxxxxxxxxxxxxxx
                 setReminderOpen(true);
                 return;
             }

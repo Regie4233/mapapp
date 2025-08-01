@@ -11,7 +11,7 @@ import { AuthUser, Student, UserPool } from '@/lib/type';
 export default function UserBadge({ size, initials, person, tooltip = true }: { size: number, initials: string[], person: AuthUser | Student | UserPool, tooltip?: boolean }) {
 
     // const imageSource = avatarUrl ? process.env.NEXT_PUBLIC_PB_IMAGE_URL + avatarUrl : '';
-    const imageSource = person.avatar ? process.env.NEXT_PUBLIC_PB_IMAGE_URL + person.id + '/' + person.avatar : '';
+    const imageSource = person.avatar.length > 0 ? process.env.NEXT_PUBLIC_PB_IMAGE_URL + person.id + '/' + person.avatar : '';
     return (
         <>
             {

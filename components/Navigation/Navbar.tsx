@@ -32,8 +32,8 @@ import { Building2, PersonStandingIcon } from "lucide-react";
 const viewTags = [
     { tag: "Shifts", icon: <LuCalendar size={26} /> },
     { tag: "Notes", icon: <LuScroll size={26} /> },
+     { tag: "Students", icon: <PersonStandingIcon size={26} /> },
     { tag: "Mentors", icon: <LuUsers size={26} /> },
-    { tag: "Students", icon: <PersonStandingIcon size={26} /> },
     { tag: "Sites", icon: <Building2 size={26} /> },
     // {tag: "Settings", icon: <LuScroll /> }
 ]
@@ -63,9 +63,9 @@ export default function Navbar() {
             case '1':
                 return <span className="flex flex-row gap-2 items-center justify-center">Notes</span>
             case '2':
-                return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
-            case '3':
                 return <span className="flex flex-row gap-2 items-center justify-center">Students</span>
+            case '3':
+                return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
             case '4':
                 return <span className="flex flex-row gap-2 items-center justify-center">Sites</span>
             case '5':
@@ -94,6 +94,8 @@ export default function Navbar() {
                         <ul className="p-4 text-3xl flex flex-col gap-5 my-22">
                             {
                                 viewTags.map((tag, index) => {
+                                    if(tag.tag === "Mentors" && authData.privilage !== 'admin') return null;
+                                    if(tag.tag === "Sites" && authData.privilage !== 'admin') return null;
                                     return (
                                         <SheetClose key={index} className="flex flex-row justify-end gap-2 items-center" onClick={() => router.push(pathname + '?' + createQueryString('view', index.toString()))}>
                                             <p>{tag.tag}</p>

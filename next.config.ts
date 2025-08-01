@@ -28,6 +28,18 @@ const nextConfig: NextConfig = {
         port: "8080",
         pathname: "/api/files/**",
       },
+      {
+        protocol: "https",
+        hostname: "b.simon.us.com",
+        port: "",
+        pathname: "/api/files/**",
+      },
+      {
+        protocol: "https",
+        hostname: "simon.us.com",
+        port: "",
+        pathname: "/api/files/**",
+      },
     ],
   },
 };

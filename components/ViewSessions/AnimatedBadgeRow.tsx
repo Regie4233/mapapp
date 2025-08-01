@@ -81,11 +81,11 @@ const AnimatedBadgeRow = ({ users }: { users: UserPool[] }) => {
                     })}
             </ul>
 
-            <ul className={`flex flex-row gap-2 items-center text-muted-foreground col-span-4`}>
+            <ul className={`flex flex-row gap-2 items-center text-muted-foreground col-span-4 flex-wrap`}>
                 {users.length > 0 &&
                     users.map((mentor, index) => (
                         <li key={mentor.id} className="text-sm">
-                            {mentor.firstname} {mentor.lastname}{index % 2 ? '' : ', '}
+                            {mentor.firstname} {mentor.lastname}{index + 1 === users.length ? '' : ', '}
                         </li>
                     ))}
             </ul>

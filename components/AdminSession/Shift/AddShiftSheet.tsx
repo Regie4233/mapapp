@@ -47,7 +47,7 @@ const FormGroup = ({ children }: { children: React.ReactNode }) => (
 export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: boolean) => void}) {
   const selectedDate = useAppSelector(state => state.sessions.selectedDate);
   const locations = useAppSelector(state => state.sessions.allLocations);
-  const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
+  // const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
   const [spots, setSpots] = useState(2);
   const [date, setDate] = useState<Date>(new Date());
   const [assignedMentors, setAssignedMentors] = useState<UserPool[]>([]);

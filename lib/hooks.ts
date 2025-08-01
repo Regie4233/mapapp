@@ -2,8 +2,8 @@
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
 import { AuthUser, TargetWeekQuery } from './type';
-import { realtimeUpdateShift, setAllLocations, setAllMentors, setScheduledShiftsWeek, setShiftDatas, setUserPastShifts, setUserPastShiftsWeek, setUserScheduledShifts } from './store/states/sessionsSlice';
-import { pb } from './server/pocketbase';
+import { setAllLocations, setAllMentors, setScheduledShiftsWeek, setShiftDatas, setUserPastShifts, setUserPastShiftsWeek, setUserScheduledShifts } from './store/states/sessionsSlice';
+
 
 
 export function useDataFetcher() {

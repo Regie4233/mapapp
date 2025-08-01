@@ -128,8 +128,11 @@ export default function NotesRenderer() {
 
             // Optionally dispatch a Redux action to remove the note from the state
 
-        } catch (error: any) {
-            toast.error(error.message, { id: toastId });
+        } catch (error) {
+            if (error instanceof Error) {
+  toast.error(error.message, { id: toastId });
+            }
+          
         } finally {
             setIsDeleting(false);
         }
