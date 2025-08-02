@@ -15,17 +15,18 @@ export async function signIn(formData: FormData) {
 
     cookieStore.set('pb_auth', authCookie, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
     })
-    redirect('/dashboard');
+   
     }catch (error) {
+        console.error('Sign-in error:', error);
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
         redirect(`/login?error=${encodeURIComponent(errorMessage)}`);
     }
-   
+    redirect('/dashboard');
 }
 
 // make signout function that also remove the jwt cookie

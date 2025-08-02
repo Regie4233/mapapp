@@ -27,7 +27,7 @@ import UserBadge from "../ViewSessions/UserBadge";
 import { signOut } from "@/lib/server/auth";
 import { clearAuthUser } from "@/lib/store/states/sessionsSlice";
 import { Building2, PersonStandingIcon } from "lucide-react";
-
+import Image from "next/image";
 
 const viewTags = [
     { tag: "Shifts", icon: <LuCalendar size={26} /> },
@@ -91,7 +91,7 @@ export default function Navbar() {
                             <SheetDescription>
                             </SheetDescription>
                         </SheetHeader>
-                        <ul className="p-4 text-3xl flex flex-col gap-5 my-22">
+                        <ul className="p-4 text-2xl flex flex-col gap-5 my-22">
                             {
                                 viewTags.map((tag, index) => {
                                     if(tag.tag === "Mentors" && authData.privilage !== 'admin') return null;
@@ -107,8 +107,9 @@ export default function Navbar() {
                         </ul>
                         {/*  */}
                         <SheetFooter>
-                            <div className="h-15 w-15 rounded-full bg-amber-300 flex items-center justify-center text-xl">
-                                Icon
+                            <div className="flex flex-col ">
+                            <Image src="/logo.png" alt="Company Logo" width={50} height={50} className="rounded-full mb-2" />
+                                
                             </div>
                         </SheetFooter>
                     </SheetContent>

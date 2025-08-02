@@ -1,5 +1,5 @@
 'use client';
-
+import { toast } from 'sonner';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Shift, ListResult } from '@/lib/type';
 import NotesCard from './NotesCard';
@@ -10,6 +10,7 @@ import { Label } from '../ui/label';
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -21,9 +22,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Filter, X } from 'lucide-react';
+import { Filter, X, List, ChevronLeft, ChevronRight } from 'lucide-react';
 import NotesDetailSheet from './NotesDetailSheet';
-import { toast } from 'sonner';
+import { DateRange } from 'react-day-picker';
+import { Calendar } from '../ui/calendar';
+import { ChevronDownIcon } from 'lucide-react'
+import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
+import { Input } from '../ui/input';
 
 // Skeleton component for loading state, styled to match NotesCard
 const NotesCardSkeleton = () => (
@@ -48,12 +53,14 @@ export default function NotesRenderer() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
-    const [filters, setFilters] = useState({ notesOnly: true, location: '' });
+    const [filters, setFilters] = useState({ notesOnly: true, location: '', studentName: '' });
     const [sort, setSort] = useState('newest');
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [isSortModalOpen, setIsSortModalOpen] = useState(false);
     const [openDetails, setOpenDetails] = useState(false);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const [isDeleting, setIsDeleting] = useState(false)
+    const [date, setDate] = useState<DateRange | undefined>();
 
     const allLocations = useAppSelector(state => state.sessions.allLocations);
     const { getAllLocations: fetchAllLocations } = useDataFetcher();
@@ -79,6 +86,15 @@ export default function NotesRenderer() {
             if (filters.location) {
                 params.append('location', filters.location);
             }
+            if (filters.studentName) {
+                params.append('studentName', filters.studentName);
+            }
+            if (date?.from) {
+                params.append('startDate', date.from.toISOString());
+            }
+            if (date?.to) {
+                params.append('endDate', date.to.toISOString());
+            }
             const response = await fetch(`/api/calendar/shift/allshifts?${params.toString()}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch shifts with notes');
@@ -90,7 +106,7 @@ export default function NotesRenderer() {
         } finally {
             setLoading(false);
         }
-    }, [page, perPage, filters, sort]);
+    }, [page, perPage, filters, sort, date]);
 
     const handleDeleteNote = async (shift: Shift) => {
         if (!shift?.expand?.notes?.id || !shift?.id) {
@@ -130,9 +146,9 @@ export default function NotesRenderer() {
 
         } catch (error) {
             if (error instanceof Error) {
-  toast.error(error.message, { id: toastId });
+                toast.error(error.message, { id: toastId });
             }
-          
+
         } finally {
             setIsDeleting(false);
         }
@@ -167,7 +183,7 @@ export default function NotesRenderer() {
         <main className="p-4 md:p-6">
             <NotesDetailSheet shift={selectedShift} isOpen={openDetails} setIsOpen={setOpenDetails} isDeleting={isDeleting} handleDeleteNote={handleDeleteNote} />
             {/* Controls Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <section className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-4">
                     {/* Filter Modal */}
                     <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
@@ -176,11 +192,21 @@ export default function NotesRenderer() {
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader><DialogTitle>Filter Notes</DialogTitle></DialogHeader>
+                            <DialogDescription />
                             <div className="py-4 grid gap-4">
                                 <label className="flex items-center gap-2">
                                     <input type="checkbox" checked={filters.notesOnly} onChange={(e) => handleFilterChange('notesOnly', e.target.checked)} />
                                     <span>Show only shifts with notes</span>
                                 </label>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="student-filter">Student Name</Label>
+                                    <Input
+                                        id="student-filter"
+                                        placeholder="Enter student name"
+                                        value={filters.studentName}
+                                        onChange={(e) => handleFilterChange('studentName', e.target.value)}
+                                    />
+                                </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="location-filter">Location</Label>
                                     <Select
@@ -200,53 +226,118 @@ export default function NotesRenderer() {
                                         </SelectContent>
                                     </Select>
                                 </div>
+                                <div className="grid gap-2">
+                                    <Label>Date Range</Label>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className="w-full justify-start font-normal"
+                                            >
+                                                <span>
+                                                    {date?.from ? (
+                                                        date.to ? (
+                                                            `${date.from.toLocaleDateString()} - ${date.to.toLocaleDateString()}`
+                                                        ) : (
+                                                            date.from.toLocaleDateString()
+                                                        )
+                                                    ) : (
+                                                        "Select date range"
+                                                    )}
+                                                </span>
+                                                <ChevronDownIcon className="ml-auto h-4 w-4" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                initialFocus
+                                                mode="range"
+                                                defaultMonth={date?.from}
+                                                selected={date}
+                                                onSelect={setDate}
+                                                numberOfMonths={1}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
                             </div>
                         </DialogContent>
                     </Dialog>
-                    {/* Active Filter Badge */}
-                    {filters.notesOnly && (
-                        <div className="flex items-center gap-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                            Notes Only <button onClick={() => handleFilterChange('notesOnly', false)}><X className="h-3 w-3" /></button>
-                        </div>
-                    )}
-                    {filters.location && (
-                        <div className="flex items-center gap-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                            {getLocationName(filters.location)} <button onClick={() => handleFilterChange('location', '')}><X className="h-3 w-3" /></button>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-4">
-                    {/* Sort Select */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Sort by:</span>
-                        <Select value={sort} onValueChange={(value) => { setSort(value); setPage(1); }}>
-                            <SelectTrigger className="w-[150px]">
-                                <SelectValue placeholder="Sort by" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="newest">Newest to Oldest</SelectItem>
-                                <SelectItem value="oldest">Oldest to Newest</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    {/* Per Page Select */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Show:</span>
-                        <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
-                            <SelectTrigger className="w-[80px]">
-                                <SelectValue placeholder={perPage} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="5">5</SelectItem>
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    <div className="flex items-center gap-4">
+                        <Dialog open={isSortModalOpen} onOpenChange={setIsSortModalOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline"><List className="mr-2 h-4 w-4" />Sort</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader><DialogTitle>Sort Notes</DialogTitle></DialogHeader>
+                                <div className="py-4 grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="sort-by">Sort by</Label>
+                                        <Select value={sort} onValueChange={(value) => { setSort(value); setPage(1); setIsSortModalOpen(false); }}>
+                                            <SelectTrigger id="sort-by">
+                                                <SelectValue placeholder="Sort by" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="newest">Newest to Oldest</SelectItem>
+                                                <SelectItem value="oldest">Oldest to Newest</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                        {/* Per Page Select */}
+                        <section className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">Show:</span>
+                            <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
+                                <SelectTrigger className="w-[65px]">
+                                    <SelectValue placeholder={perPage} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="5">5</SelectItem>
+                                    <SelectItem value="10">10</SelectItem>
+                                    <SelectItem value="20">20</SelectItem>
+                                    <SelectItem value="50">50</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </section>
                     </div>
                 </div>
-            </div>
+            </section>
+            <section className="flex flex-row gap-2 mb-4">
+                {/* Active Filter Badge */}
+                {filters.notesOnly && (
+                    <div className="flex items-center gap-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        Notes Only <button onClick={() => handleFilterChange('notesOnly', false)}><X className="h-3 w-3" /></button>
+                    </div>
+                )}
+                {filters.location && (
+                    <div className="flex items-center gap-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {getLocationName(filters.location)} <button onClick={() => handleFilterChange('location', '')}><X className="h-3 w-3" /></button>
+                    </div>
+                )}
+                {filters.studentName && (
+                    <div className="flex items-center gap-2 bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {`Student: ${filters.studentName}`} <button onClick={() => handleFilterChange('studentName', '')}><X className="h-3 w-3" /></button>
+                    </div>
+                )}
+            </section>
+            <section>
+                {/* Pagination Controls */}
+                {data && totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-4 mb-4">
+                        <Button variant="outline" size="icon" onClick={() => setPage(p => p - 1)} disabled={page <= 1}>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium">
+                            Page {page} of {totalPages}
+                        </span>
+                        <Button variant="outline" size="icon" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
+            </section>
 
             {/* Content Area */}
             {loading ? (
@@ -265,20 +356,7 @@ export default function NotesRenderer() {
                 <p className="text-center text-muted-foreground mt-10">No notes found matching your criteria.</p>
             )}
 
-            {/* Pagination Controls */}
-            {data && totalPages > 1 && (
-                <div className="flex items-center justify-center gap-4 mt-8">
-                    <Button onClick={() => setPage(p => p - 1)} disabled={page <= 1}>
-                        Previous
-                    </Button>
-                    <span className="text-sm font-medium">
-                        Page {page} of {totalPages}
-                    </span>
-                    <Button onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>
-                        Next
-                    </Button>
-                </div>
-            )}
+
         </main>
     );
 }

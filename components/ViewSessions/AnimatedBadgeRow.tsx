@@ -51,7 +51,7 @@ const AnimatedBadgeRow = ({ users }: { users: UserPool[] }) => {
             onMouseOver={handleSpreadClick}
             // Set a minimum width to contain the badges when spread
             style={{ minWidth: `${users.length * (badgeSize + spreadAmount)}px` }}>
-            <ul className='relative col-span-2'>
+            <ul className='relative col-span-1'>
                 {users.length > 0 &&
                     users.map((mentor, index) => {
                         // Calculate the position for both states
@@ -81,7 +81,7 @@ const AnimatedBadgeRow = ({ users }: { users: UserPool[] }) => {
                     })}
             </ul>
 
-            <ul className={`flex flex-row gap-2 items-center text-muted-foreground col-span-4 flex-wrap`}>
+            <ul className={`flex flex-row gap-2 items-center text-muted-foreground col-span-5 flex-wrap`}>
                 {users.length > 0 &&
                     users.map((mentor, index) => (
                         <li key={mentor.id} className="text-sm">

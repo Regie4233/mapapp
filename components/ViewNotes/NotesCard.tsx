@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card"
 import { Shift } from "@/lib/type"
 import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils";
-import UserBadge from "../ViewSessions/UserBadge";
+import AnimatedBadgeRow from "../ViewSessions/AnimatedBadgeRow";
 
 export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handleOpenSheet: (value: Shift) => void }) {
   
@@ -21,7 +21,7 @@ export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handl
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="col-span-5">
-                    <section className="flex flex-row gap-16">
+                    {/* <section className="flex flex-row gap-16">
                         <div className="relative">
                             {
                                 data.approved.length > 0 &&
@@ -38,11 +38,12 @@ export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handl
                             {data.approved.length > 0 &&
                                 data.expand.approved?.map((mentor, index) => (
                                     <li key={mentor.id} className="text-sm">
-                                        {mentor.firstname} {mentor.lastname}{index % 2 ? '' : ', '}
+                                        {mentor.firstname} {mentor.lastname}{index + 1 === data.approved.length ? '' : ', '}
                                     </li>
                                 ))}
                         </ul>
-                    </section>
+                    </section> */}
+                    <AnimatedBadgeRow users={data.expand.approved} />
 
                 </CardContent>
                 <CardFooter>

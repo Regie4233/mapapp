@@ -8,6 +8,7 @@ export default function AssignMentorCommand({ assignedMentors, setAssignedMentor
     const mentors = useAppSelector(state => state.sessions.allMentors);
     const [searchQuery, setSearchQuery] = useState("");
     const unassignedMentors = mentors.filter(m => !assignedMentors.some(am => am.id === m.id));
+    const singleSelect = true;
     return (
         <Command className="mb-12">
             <CommandInput placeholder="Search for a mentor to assign..." value={searchQuery} onValueChange={setSearchQuery} />
@@ -23,6 +24,11 @@ export default function AssignMentorCommand({ assignedMentors, setAssignedMentor
                                 onSelect={(currentValue) => {
                                     const mentorToAdd = unassignedMentors.find((m) => m.firstname === currentValue);
                                     if (mentorToAdd) {
+                                        if(singleSelect) {
+                                            setAssignedMentors([mentorToAdd]);
+                                            setSearchQuery("");
+                                            return;
+                                        }
                                         setAssignedMentors([...assignedMentors, mentorToAdd]);
                                         setSearchQuery("");
                                     }

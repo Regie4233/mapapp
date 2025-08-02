@@ -181,22 +181,54 @@ export const getAllScheduledShifts = createAsyncThunk(
 
 export const approveMentorRequest = createAsyncThunk(
     'sessions/requestShift',
-    async ({ shiftId, authUser }: { shiftId: string | undefined, authUser: string | undefined }, { rejectWithValue }) => {
+    async ({ shiftId, authUser, manual }: { shiftId: string | undefined, authUser: string | undefined, manual: boolean }, { rejectWithValue }) => {
         try {
-            const res = await fetch('/api/calendar/shift/approve', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ shiftId, authUser }),
-            });
 
-            if (!res.ok) {
-                throw new Error('Failed to approve mentor request');
+            if (manual) {
+                const res = await fetch('/api/calendar/shift/approve/manual', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ shiftId, authUser }),
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to approve mentor request');
+                }
+
+                const data = await res.json();
+                return data;
+            } else {
+                const res = await fetch('/api/calendar/shift/approve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ shiftId, authUser }),
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to approve mentor request');
+                }
+
+                const data = await res.json();
+                return data;
             }
+            // const res = await fetch('/api/calendar/shift/approve', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ shiftId, authUser }),
+            // });
 
-            const data = await res.json();
-            return data;  // Return the response data here
+            // if (!res.ok) {
+            //     throw new Error('Failed to approve mentor request');
+            // }
+
+            // const data = await res.json();
+            // return data;  
         } catch (error) {
             console.error('Error approving mentor request:', error);
             return rejectWithValue(error || 'Failed to approve mentor request');
@@ -301,6 +333,31 @@ export const updateUser = createAsyncThunk(
             return updatedUser as AuthUser;
         } catch (error) {
             return rejectWithValue(error);
+        }
+    }
+);
+
+export const assignMentorToShift = createAsyncThunk(
+    'sessions/assignMentorToShift',
+    async ({ shiftId, mentorIds }: { shiftId: string; mentorIds: string[] }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/assign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, mentorIds }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to assign mentor');
+            }
+
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.error('Error on assigning mentor:', error);
+            return rejectWithValue(error || 'Failed to assign mentor');
         }
     }
 );

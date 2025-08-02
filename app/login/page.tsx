@@ -1,7 +1,14 @@
-
 import { SignInForm } from '@/components/authentication/SiginForm';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export default async function Login({ searchParams,}: {searchParams?: Promise<{ error?: string;}>}) {
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get('pb_auth');
+
+    if (authCookie) {
+        redirect('/dashboard');
+    }
     const params = await searchParams;
   // You can now directly check if the 'error' property exists on searchParams.
   if (params?.error) {

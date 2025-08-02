@@ -1,10 +1,12 @@
 'use client';
-import { useState, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { MoreVertical, Plus } from 'lucide-react';
 import { Shift, UserPool } from '@/lib/type';
 import { ShiftApprovalDrawer } from './ShiftApprovalDrawer';
 import { useAppDispatch } from '@/lib/hooks';
 import { approveMentorRequest, removeMentorRequest } from '@/lib/store/states/sessionsSlice';
+import AssignMentorCommand from './Shift/AssignMentorCommand';
+import { toast } from 'sonner';
 
 
 type MentorRequest = {
@@ -39,28 +41,41 @@ const StatusBadge: FC<{ status: MentorRequest['status'] }> = ({ status }) => {
 // Main Component: The full "Requests" card
 export const PendingRequestsRenderer = ({ shiftData }: { shiftData: Shift }) => {
     const [targetedUser, setTargetedUser] = useState<UserPool | null>(null);
-    const [targetShift, setTargetShift] = useState<Shift | null>(null);
+    // const [targetShift, setTargetShift] = useState<Shift | null>(null);
+    const [showAssignMentor, setShowAssignMentor] = useState(false);
+    const [assignedMentors, setAssignedMentors] = useState<UserPool[]>([]);
     const dispatch = useAppDispatch();
 
     const handleUserClick = (user: UserPool) => {
         setTargetedUser(user);
-        setTargetShift(shiftData);
+        // setTargetShift(shiftData);
     };
     const handleCloseDrawer = () => {
         setTargetedUser(null);
-        setTargetShift(null);
+        // setTargetShift(null);
     };
     const handleApprove = () => {
         // Logic to approve the mentor's request
         console.log(`Approved mentor: ${targetedUser?.firstname} ${targetedUser?.lastname}`);
-        dispatch(approveMentorRequest({ shiftId: targetShift?.id, authUser: targetedUser?.id }));
+        dispatch(approveMentorRequest({ shiftId: shiftData.id, authUser: targetedUser?.id, manual: false }));
         handleCloseDrawer();
     };
 
     const handleRemove = () => {
-        dispatch(removeMentorRequest({ shiftId: targetShift?.id, authUser: targetedUser?.id}));
+        dispatch(removeMentorRequest({ shiftId: shiftData.id, authUser: targetedUser?.id }));
         handleCloseDrawer();
     }
+
+    useEffect(() => {
+        if (assignedMentors.length <= 0) return;
+        if (!shiftData.approved.includes(assignedMentors[0].id)) {
+            console.log("ADD", assignedMentors[0].id, shiftData.id);
+            dispatch(approveMentorRequest({ shiftId: shiftData.id, authUser: assignedMentors[0].id, manual: true }));
+        } else {
+            toast.error(`${assignedMentors[0].firstname} ${assignedMentors[0].lastname} is already assigned to this shift`);
+            setAssignedMentors([]);
+        }
+    }, [assignedMentors]);
 
 
     return (
@@ -110,12 +125,20 @@ export const PendingRequestsRenderer = ({ shiftData }: { shiftData: Shift }) => 
                     </li>
                 ))}
             </ul>
-
-            <button className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#E2E8F0] p-4 font-medium text-gray-700 transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                <Plus size={20} />
-                Assign another mentor
-            </button>
-            <ShiftApprovalDrawer mentor={targetedUser} handleApprove={handleApprove} handleClose={handleCloseDrawer} handleRemove={handleRemove} matchList={shiftData.expand?.approved}/>
+            <section className='mt-2'>
+                {showAssignMentor ? (
+                    <AssignMentorCommand assignedMentors={assignedMentors} setAssignedMentors={setAssignedMentors} />
+                ) : (
+                    <button
+                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#E2E8F0] p-4 font-medium text-gray-700 transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        onClick={() => setShowAssignMentor(true)}
+                    >
+                        <Plus size={20} />
+                        Assign another mentor
+                    </button>
+                )}
+            </section>
+            <ShiftApprovalDrawer mentor={targetedUser} handleApprove={handleApprove} handleClose={handleCloseDrawer} handleRemove={handleRemove} matchList={shiftData.expand?.approved} />
         </div>
     );
 };

@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const notesOnly = request.nextUrl.searchParams.get("notesOnly") === "true";
     const location = request.nextUrl.searchParams.get("location");
     const sort = request.nextUrl.searchParams.get("sort");
+    const studentName = request.nextUrl.searchParams.get("studentName");
 
     // Parse parameters to numbers, with defaults
     const page = pageParam ? parseInt(pageParam, 10) : 1;
@@ -31,6 +32,9 @@ export async function GET(request: NextRequest) {
         if (location) {
             // Assumes 'location' is the field name for the relation in your 'mapapp_shift' collection
             filterParts.push(`location = "${location}"`);
+        }
+        if (studentName) {
+            filterParts.push(`notes.students ~ "${studentName}"`);
         }
         const filter = filterParts.join(' && ');
 
