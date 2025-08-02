@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import PrivilegeDropdown from './PrivilegeDropdown';
 
 interface MentorDetailsSheetProps {
     mentor: UserPool | null;
@@ -141,7 +142,7 @@ export default function MentorDetailsSheet({ mentor, open, onOpenChange, onMento
                         </div>
                         <div>
                             <Label className="text-xs font-medium text-gray-500">Privilege</Label>
-                            <p className="text-sm text-gray-900">{mentor.privilage || 'N/A'}</p>
+                            <PrivilegeDropdown mentor={mentor} onMentorUpdate={onMentorUpdate} />
                         </div>
                         <div>
                             <Label className="text-xs font-medium text-gray-500">About</Label>

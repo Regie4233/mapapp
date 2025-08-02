@@ -60,13 +60,27 @@ export async function PATCH(request: NextRequest) {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
         await pb.collection('_superusers').authWithPassword(pbAdminEmail, pbAdminPassword);
 
-        const { id, authorized } = await request.json();
+        const { id, authorized, privilage } = await request.json();
 
-        if (!id || typeof authorized !== 'boolean') {
-            return NextResponse.json({ error: 'Mentor ID and authorized status are required' }, { status: 400 });
+        if (!id) {
+            return NextResponse.json({ error: 'Mentor ID is required' }, { status: 400 });
         }
 
-        const updatedMentor = await pb.collection('mapapp_users').update(id, { authorized });
+        const dataToUpdate: { authorized?: boolean; privilage?: string } = {};
+
+        if (typeof authorized === 'boolean') {
+            dataToUpdate.authorized = authorized;
+        }
+
+        if (privilage && ['limited', 'manager', 'admin'].includes(privilage)) {
+            dataToUpdate.privilage = privilage;
+        }
+
+        if (Object.keys(dataToUpdate).length === 0) {
+            return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+        }
+
+        const updatedMentor = await pb.collection('mapapp_users').update(id, dataToUpdate);
 
         return NextResponse.json(updatedMentor);
     } catch (error) {
