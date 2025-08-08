@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { shiftId, authUser } = body;
-        console.log('Received data:', body);
+        // console.log('Received data:', body);
 
         // Validate input
         if (!shiftId || !authUser) {
@@ -50,7 +50,7 @@ export async function DELETE(request: NextRequest) {
     try {
         const body = await request.json();
         const { shiftId, authUser } = body;
-        console.log('Received data:', body);
+        // console.log('Received data:', body);
 
         // Validate input
         if (!shiftId || !authUser) {

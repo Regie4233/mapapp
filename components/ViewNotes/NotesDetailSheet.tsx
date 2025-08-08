@@ -161,7 +161,7 @@ export default function NotesDetailSheet({ shift, isOpen, setIsOpen, handleDelet
                     </div>
                 </SheetHeader>
 
-                <ScrollArea className="h-[calc(100vh-140px)]">
+                <ScrollArea className="h-[calc(100vh-190px)] xxh-[77vh]">
                     <div className="space-y-6 p-6">
                         {/* Session Info */}
                         <section className="space-y-3">
@@ -204,7 +204,16 @@ export default function NotesDetailSheet({ shift, isOpen, setIsOpen, handleDelet
                             </div>
                             <div>
                                 <h4 className="font-semibold text-gray-800">Mentor Name</h4>
-                                <p className="text-sm text-gray-600 mt-1">{authUser.firstname ?? 'N/A'} {authUser.lastname ?? 'N/A'}</p>
+                                <ul>
+                                    {
+                                        shift.expand.approved.map(mentor => (
+                                            <li key={mentor.id}>
+                                                {mentor.firstname} {mentor.lastname}
+                                            </li>
+                                        ))
+                                    }
+                                </ul>
+                                {/* <p className="text-sm text-gray-600 mt-1">{authUser.firstname ?? 'N/A'} {authUser.lastname ?? 'N/A'}</p> */}
                             </div>
                         </section>
 

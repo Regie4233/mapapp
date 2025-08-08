@@ -115,7 +115,7 @@ export interface Shift {
   description: string;
   loading: boolean;
   spots: number
-  location: string; 
+  location: string;
 }
 
 /**
@@ -128,7 +128,7 @@ export interface ShiftLocation {
   created: string; // ISO 8601 date-time string
   id: string;
   name: string;
-  shiftOccurences: ShiftOccurrence[]; 
+  shiftOccurences: ShiftOccurrence[];
   updated: string; // ISO 8601 date-time string
 
 }
@@ -197,9 +197,32 @@ export interface ShiftExpand {
 
 
 export interface ListResult<T> {
-    page: number;
-    perPage: number;
-    totalItems: number;
-    totalPages: number;
-    items: T[];
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  items: T[];
+}
+
+
+export interface DocumentCategory {
+  id: string;
+  categoryName: string;
+  files: string[];
+  expand: DocumentExpand;
+}
+
+interface DocumentExpand {
+  files: DocumentFile[];
+}
+
+export interface DocumentFile {
+  collectionId: string;
+  collectionName: string;
+  id: string;
+  title: string;
+  description: string;
+  file: string;
+  field: string;
+  created: string;
 }

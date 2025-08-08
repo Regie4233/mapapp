@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
       await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
         const shiftDate = new Date(date);
-        shiftDate.setHours(0, 0, 0, 0);
+        shiftDate.setUTCHours(0, 0, 0, 0);
 
         const targetLocation = await pb.collection('mapapp_location').getFirstListItem(`name ~ '${location}'`);
         console.log(targetLocation)

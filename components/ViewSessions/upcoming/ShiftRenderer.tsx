@@ -1,5 +1,5 @@
 'use client';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks'
 import { Shift, ShiftLocation, ShiftOccurrence } from '@/lib/type';
 import { useEffect, useState } from 'react'
 import ShiftCards from './ShiftCards';
@@ -26,19 +26,26 @@ export default function ShiftRenderer() {
     const allLocations = useAppSelector(state => state.sessions.allLocations);
 
     // const loading = useAppSelector(state => state.sessions.loading);
-    const selectedShiftOccurences: ShiftOccurrence | undefined = shiftOccurences?.items.find(shift => shift.shiftDate === selectedDate?.replace('T', ' '));
+    const selectedShiftOccurences: ShiftOccurrence | undefined = shiftOccurences?.items.find(shift => shift.shiftDate.split(' ')[0] === selectedDate?.split('T')[0]);
     const authUser = useAppSelector(state => state.sessions.authUser);
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const { getShiftsWeekly } = useDataFetcher();
     const dispatch = useAppDispatch();
 
     const handleChangeLocation = (e: string) => {
         const location = JSON.parse(e);
         dispatch(setSelectedLocation(location));
+        getShiftsWeekly({ targetLocation: location.name, targetDate: selectedDate });
+        setIsLoading(true)
         return location.name;
     }
     useEffect(() => {
-        console.log(selectedLocation)
-    }, [selectedLocation])
+        if (selectedShiftOccurences !== null) {
+            setIsLoading(false)
+        }
+
+    }, [selectedShiftOccurences])
 
     // useEffect(() => {
     //     console.log('all occurence', shiftOccurences)
@@ -47,19 +54,19 @@ export default function ShiftRenderer() {
     // }, [selectedDate]);
 
     useEffect(() => {
-        pb.realtime.subscribe('mapapp_shift',  async function (e) {
+        pb.realtime.subscribe('mapapp_shift', async function (e) {
             console.log('Realtime update received:', e.record);
-            
+
             const res = await pb.collection('mapapp_shift').getOne(e.record.id, {
-                    expand: 'location, approved, pending_approval, notes',
-                });
+                expand: 'location, approved, pending_approval, notes',
+            });
             // console.log('xx', res)
             dispatch(realtimeShiftUpdate(res as Shift));
         });
 
         return () => {
             console.log('Unsubscribing from realtime updates');
-            pb.realtime.unsubscribe(); 
+            pb.realtime.unsubscribe();
         };
     }, []);
     if (authUser === null) return <ShiftRendererSkeleton />
@@ -81,25 +88,28 @@ export default function ShiftRenderer() {
 
             <section>
                 {
-                    selectedShiftOccurences ? (
-                        selectedShiftOccurences?.expand.shifts?.map((shift) => {
-                            if (checkUserOwnedShift(authUser, shift)) return; // Skip shifts that are not owned by the user
-                            return (
-                                <div key={shift.id}>
-                                    {
-                                        authUser.privilage === 'admin' || authUser.privilage === 'manager' ?
-                                            <AdminShiftCard data={shift} />
-                                            :
-                                            <ShiftCards data={shift} />
-                                    }
-                                </div>
-                            )
-                        })
-                    )
+                    isLoading ?
+                       <ShiftRendererSkeleton />
                         :
+                        selectedShiftOccurences ? (
+                            selectedShiftOccurences?.expand.shifts?.map((shift) => {
+                                if (checkUserOwnedShift(authUser, shift)) return; // Skip shifts that are not owned by the user
+                                return (
+                                    <div key={shift.id}>
+                                        {
+                                            authUser.privilage === 'admin' || authUser.privilage === 'manager' ?
+                                                <AdminShiftCard data={shift} />
+                                                :
+                                                <ShiftCards data={shift} />
+                                        }
+                                    </div>
+                                )
+                            })
+                        )
+                            :
 
-                        authUser.privilage === 'admin' || authUser.privilage === 'manager' &&
-                        <p className='text-center text-muted-foreground mt-20'>There are no shifts available on this date</p>
+                            authUser.privilage === 'admin' || authUser.privilage === 'manager' &&
+                            <p className='text-center text-muted-foreground mt-20'>There are no shifts available on this date</p>
                 }
             </section>
 

@@ -153,7 +153,7 @@ export const getUserScheduledShifts = createAsyncThunk(
 
             const res = await fetch(`/api/calendar/user/scheduled?id=${authUser}`)
             const data = await res.json()
-
+       
             // dispatch(setUserScheduledShifts(data.shiftp.items))
             return data.shift.items; // Return the scheduled shifts
         } catch (error) {

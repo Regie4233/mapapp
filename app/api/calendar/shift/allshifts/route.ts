@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
     const location = request.nextUrl.searchParams.get("location");
     const sort = request.nextUrl.searchParams.get("sort");
     const studentName = request.nextUrl.searchParams.get("studentName");
+    const startDate = request.nextUrl.searchParams.get("startDate");
+    const endDate = request.nextUrl.searchParams.get("endDate");
 
     // Parse parameters to numbers, with defaults
     const page = pageParam ? parseInt(pageParam, 10) : 1;
@@ -25,7 +27,7 @@ export async function GET(request: NextRequest) {
         // It's recommended to use an admin API key instead of authenticating with email/password on each request.
         await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
         
-        const filterParts: string[] = [];
+         const filterParts: string[] = [];
         if (notesOnly) {
             filterParts.push('notes != ""');
         }
@@ -35,6 +37,22 @@ export async function GET(request: NextRequest) {
         }
         if (studentName) {
             filterParts.push(`notes.students ~ "${studentName}"`);
+        }
+        if (startDate) {
+            const start = new Date(startDate);
+            const startDateStr = `${start.getUTCFullYear()}-${(start.getUTCMonth() + 1).toString().padStart(2, '0')}-${start.getUTCDate().toString().padStart(2, '0')} 00:00:00`;
+            
+            let end;
+            if (endDate) {
+                end = new Date(endDate);
+            } else {
+                // If no end date, use the start date for a single day query
+                end = start;
+            }
+            const endDateStr = `${end.getUTCFullYear()}-${(end.getUTCMonth() + 1).toString().padStart(2, '0')}-${end.getUTCDate().toString().padStart(2, '0')} 23:59:59`;
+
+            filterParts.push(`shift_date >= "${startDateStr}"`);
+            filterParts.push(`shift_date <= "${endDateStr}"`);
         }
         const filter = filterParts.join(' && ');
 

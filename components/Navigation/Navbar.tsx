@@ -32,9 +32,12 @@ import Image from "next/image";
 const viewTags = [
     { tag: "Shifts", icon: <LuCalendar size={26} /> },
     { tag: "Notes", icon: <LuScroll size={26} /> },
-     { tag: "Students", icon: <PersonStandingIcon size={26} /> },
+    { tag: "Students", icon: <PersonStandingIcon size={26} /> },
+      { tag: "Documents", icon: <LuScroll size={26} /> },
     { tag: "Mentors", icon: <LuUsers size={26} /> },
     { tag: "Sites", icon: <Building2 size={26} /> },
+  
+
     // {tag: "Settings", icon: <LuScroll /> }
 ]
 
@@ -65,10 +68,12 @@ export default function Navbar() {
             case '2':
                 return <span className="flex flex-row gap-2 items-center justify-center">Students</span>
             case '3':
-                return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
+                return <span className="flex flex-row gap-2 items-center justify-center">Documents</span>
             case '4':
-                return <span className="flex flex-row gap-2 items-center justify-center">Sites</span>
+                return <span className="flex flex-row gap-2 items-center justify-center">Mentor</span>
             case '5':
+                return <span className="flex flex-row gap-2 items-center justify-center">Sites</span>
+            case '6':
                 return <span className="flex flex-row gap-2 items-center justify-center">Account</span>
             default:
                 return <span className="flex flex-row gap-2 items-center justify-center">Shifts</span>
@@ -94,8 +99,8 @@ export default function Navbar() {
                         <ul className="p-4 text-2xl flex flex-col gap-5 my-22">
                             {
                                 viewTags.map((tag, index) => {
-                                    if(tag.tag === "Mentors" && authData.privilage !== 'admin') return null;
-                                    if(tag.tag === "Sites" && authData.privilage !== 'admin') return null;
+                                    if (tag.tag === "Mentors" && authData.privilage !== 'admin') return null;
+                                    if (tag.tag === "Sites" && authData.privilage !== 'admin') return null;
                                     return (
                                         <SheetClose key={index} className="flex flex-row justify-end gap-2 items-center" onClick={() => router.push(pathname + '?' + createQueryString('view', index.toString()))}>
                                             <p>{tag.tag}</p>
@@ -108,9 +113,10 @@ export default function Navbar() {
                         {/*  */}
                         <SheetFooter>
                             <div className="flex flex-col ">
-                            <Image src="/logo.png" alt="Company Logo" width={50} height={50} className="rounded-full mb-2" />
-                                
+                                <Image src="/PromiseLink-bg-rem.png" alt="Company Logo" width={50} height={50} className="rounded-full mb-2" />
+
                             </div>
+                            <p className="text-end text-muted-foreground text-xs">0.8.1</p>
                         </SheetFooter>
                     </SheetContent>
                 </Sheet>

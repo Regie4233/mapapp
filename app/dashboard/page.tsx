@@ -14,6 +14,7 @@ import SitesViewer from "@/components/ViewSites/SiteViewer";
 import AccountView from "@/components/ViewAccount/AccountView";
 import NotAuthorized from "@/components/authentication/NotAuthorized";
 import NoAccess from "@/components/authentication/NoAccess";
+import DocumentsView from "@/components/ViewDocuments/DocumentsView";
 
 export default function DashboardPage() {
     const dispatch = useDispatch();
@@ -55,6 +56,7 @@ export default function DashboardPage() {
                 <ShiftsViewer />
                 <NotesViewer />
                 <StudentsViewer />
+                  <DocumentsView />
                 {authUser.privilage === 'admin' ? <MentorViewer /> : <NoAccess />}
                 {authUser.privilage === 'admin' ? <SitesViewer /> : <NoAccess />}
                 <AccountView />

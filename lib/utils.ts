@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { AuthUser, Shift, ShiftOccurencesResponse, ShiftOccurrence } from "./type";
+import { AuthUser, DocumentFile, Shift, ShiftOccurencesResponse, ShiftOccurrence } from "./type";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -270,3 +270,29 @@ export function checkUserIsOwner(user: AuthUser, shift: Shift): boolean {
     return false;
   }
 }
+
+export const downloadFile = async (file: DocumentFile) => {
+  try {
+    console.log(`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${file.collectionId}/${file.id}/${file.file}`)
+     const resp = await fetch(`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${file.collectionId}/${file.id}/${file.file}`);
+    const blob = await resp.blob();
+    const url = window.URL.createObjectURL(new Blob([blob]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.file;
+    link.click();
+    // const response = await fetch(fileUrl);
+    // if (!response.ok) {
+    //   throw new Error(`Failed to fetch file: ${response.statusText}`);
+    // }
+    // const blob = await response.blob();
+    // const link = document.createElement('a');
+    // link.href = window.URL.createObjectURL(blob);
+    // link.download = fileName;
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
+};

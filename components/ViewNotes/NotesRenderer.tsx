@@ -184,7 +184,7 @@ export default function NotesRenderer() {
             <NotesDetailSheet shift={selectedShift} isOpen={openDetails} setIsOpen={setOpenDetails} isDeleting={isDeleting} handleDeleteNote={handleDeleteNote} />
             {/* Controls Bar */}
             <section className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                     {/* Filter Modal */}
                     <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
                         <DialogTrigger asChild>
@@ -288,7 +288,7 @@ export default function NotesRenderer() {
                         </Dialog>
                         {/* Per Page Select */}
                         <section className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">Show:</span>
+                            {/* <span className="text-xs text-muted-foreground">Show:</span> */}
                             <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
                                 <SelectTrigger className="w-[65px]">
                                     <SelectValue placeholder={perPage} />
@@ -304,7 +304,7 @@ export default function NotesRenderer() {
                     </div>
                 </div>
             </section>
-            <section className="flex flex-row gap-2 mb-4">
+            <section className="flex flex-row flex-wrap gap-2 mb-4">
                 {/* Active Filter Badge */}
                 {filters.notesOnly && (
                     <div className="flex items-center gap-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
@@ -319,6 +319,12 @@ export default function NotesRenderer() {
                 {filters.studentName && (
                     <div className="flex items-center gap-2 bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         {`Student: ${filters.studentName}`} <button onClick={() => handleFilterChange('studentName', '')}><X className="h-3 w-3" /></button>
+                    </div>
+                )}
+                {date && (
+                    <div className="flex items-center gap-2 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {`Date: ${date.from?.toLocaleDateString()}${date.to ? ` - ${date.to.toLocaleDateString()}` : ''}`}
+                        <button onClick={() => setDate(undefined)}><X className="h-3 w-3" /></button>
                     </div>
                 )}
             </section>
