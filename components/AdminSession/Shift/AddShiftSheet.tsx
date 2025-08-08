@@ -131,8 +131,6 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
     setDate(new Date(selectedDate));
   }, [selectedDate])
 
-  useEffect(() => {console.log(locations)}, [locations])
-
 
   return (
     <Sheet open={open} onOpenChange={(open) => setOpen(open)}>

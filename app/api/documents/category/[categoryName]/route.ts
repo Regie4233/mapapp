@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Pocketbase from "pocketbase";
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ categoryName: string }> }) {
+    console.log(request)
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
     const context = await params;
     try {
@@ -19,7 +20,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
             await batch.send();
         }
         await pb.collection('mapapp_documents').delete(docs[0].id);
-        return new NextResponse("Category deleted successfully", { status: 200 });
+        return new NextResponse("Category deleted successfully", { status: 200  });
     } catch (error) {
         console.error("Category deletion failed:", error);
         return new NextResponse("Category deletion failed", { status: 500 });

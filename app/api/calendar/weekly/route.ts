@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
     const sunday = weekMinMax.weeksunday.toISOString().replace('T', ' ');
     // console.log(monday, sunday);
 
-    await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin')
+   
+    await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
 
     const locationRecord = await pb.collection('mapapp_shiftOccurences').getList(1, 60, {
         filter: `shiftDate >= "${monday}" && shiftDate <= "${sunday}" && shiftLocation.name ?~ "${resLocation}"`,

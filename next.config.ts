@@ -40,6 +40,18 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/api/files/**",
       },
+      {
+        protocol: "https",
+        hostname: "mentorapromise.org",
+        port: "",
+        pathname: "/api/files/**",
+      },
+      {
+        protocol: "https",
+        hostname: "pb.mentorapromise.org",
+        port: "",
+        pathname: "/api/files/**",
+      },
     ],
   },
 };

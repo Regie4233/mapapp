@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Pocketbase from "pocketbase";
 // import { initPocketBase } from "@/lib/server/pocketbase";
 
-export async function POST(request: NextResponse) {
+export async function POST(request: NextRequest) {
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
     // const user = pb.authStore.model;
 

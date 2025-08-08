@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import Pocketbase, { ClientResponseError } from "pocketbase"
 
 // It's a good practice to use environment variables for credentials
-const pbAdminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'admin@admin.admin';
-const pbAdminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'adminadmin';
+const pbAdminEmail = process.env.NEXT_PB_ADMIN_EMAIL || 'xx';
+const pbAdminPassword = process.env.NEXT_PB_ADMIN_PASSWORD || 'xx';
 
 export async function GET() {
     try {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword(pbAdminEmail, pbAdminPassword);
+        await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(pbAdminEmail, pbAdminPassword);
         const users = await pb.collection('mapapp_users').getList(1, 100);
         return NextResponse.json({ users });
     } catch (error) {
@@ -29,7 +29,7 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
     try {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword(pbAdminEmail, pbAdminPassword);
+        await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(pbAdminEmail, pbAdminPassword);
 
         const { id } = await request.json();
 
@@ -58,7 +58,7 @@ export async function DELETE(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     try {
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword(pbAdminEmail, pbAdminPassword);
+        await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(pbAdminEmail, pbAdminPassword);
 
         const { id, authorized, privilage } = await request.json();
 

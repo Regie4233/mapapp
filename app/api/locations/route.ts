@@ -3,8 +3,8 @@ import Pocketbase, { ClientResponseError } from "pocketbase";
 
 // Constants
 const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-const pbAdminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'admin@admin.admin';
-const pbAdminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'adminadmin';
+const pbAdminEmail = process.env.NEXT_PB_ADMIN_EMAIL || 'admin@admin.admin';
+const pbAdminPassword = process.env.NEXT_PB_ADMIN_PASSWORD || 'adminadmin';
 const SITES_COLLECTION = 'mapapp_location';
 
 // Helper to authenticate with PocketBase
