@@ -115,7 +115,7 @@ export default function StudentsView() {
         {error && <p className="text-center text-red-500">Error: Could not load students.</p>}
 
         {!isLoading && !error && (
-          <ul className="space-y-3">
+          <ul className="space-y-3 md:grid md:grid-cols-2 gap-4">
             {filteredStudents.length > 0 ? (
               filteredStudents.map(student => (
                 // Ensure props match the updated StudentCard component

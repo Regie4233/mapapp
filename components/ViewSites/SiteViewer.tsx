@@ -98,7 +98,7 @@ export default function SitesViewer() {
         {error && <p className="text-center text-red-500">Error: Could not load sites.</p>}
 
         {!isLoading && !error && (
-          <ul className="space-y-3">
+          <ul className="space-y-3 md:grid md:grid-cols-2 gap-4">
             {filteredSites.length > 0 ? (
               filteredSites.map(site => (
                 <SiteCard key={site.id} site={site} handleSelectSite={handleSelectSite} />

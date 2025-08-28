@@ -85,13 +85,13 @@ export default function ShiftsViewer() {
 
     if (!authData) return;
     return (
-        <main>
+        <main className='w-full md:w-2/3 m-autox'>
             {
                 authData?.privilage === 'limited' &&
                 reminderOpen && <ReviewReminder onDismiss={handleDismiss} onContinue={handleContinue} />
             }
             <CVTabs value={tabValue} onValueChange={(e) => setTabValue(e)} defaultValue="upcoming" className="gap-0 relative">
-                <CVTabsList className='w-full rounded-none bg-white'>
+                <CVTabsList className='w-full rounded-none bg-white md:w-1/2'>
                     <CVTabsTrigger value="available">Available</CVTabsTrigger>
                     {
                         (authData.privilage === 'limited' || authData.privilage === 'manager') &&

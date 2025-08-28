@@ -131,7 +131,7 @@ export default function MentorViewer() {
         {error && <p className="text-center text-red-500">Error: Loading mentors</p>}
 
         {!isLoading && !error && (
-          <ul className="space-y-3">
+          <ul className="space-y-3 md:grid md:grid-cols-2 gap-4">
             {filteredMentors.length > 0 ? (
               filteredMentors.map(mentor => (
                 <MentorCard key={mentor.id} mentor={mentor} handleSelectMentor={handleMentorSelect} />

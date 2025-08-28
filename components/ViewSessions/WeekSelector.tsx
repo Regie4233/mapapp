@@ -46,7 +46,7 @@ export default function WeekSelector() {
     // if (shiftOccurences === undefined || shiftOccurences === null || shiftOccurences?.items.length === 0) return <ViewSessionSkeleton />;
     if (daysofWeek === undefined || daysofWeek === null || daysofWeek.length === 0) return <ViewSessionSkeleton />;
     return (
-        <main className="px-3 flex flex-col gap-3 border-b-[1.2px] py-8 border-b-gray-200 bg-white">
+        <main className="px-3 flex flex-col gap-3 border-b-[1.2px] py-8 border-b-gray-200 bg-white w-full md:w-1/2">
             <section className="flex flex-row justify-between">
                 <h2 className=" text-lg font-semibold">{formatDateToMonthYear(new Date(selectedDate))}</h2>
                 <div className="flex flex-row gap-2"><IoIosArrowBack size={22} onClick={() => nextWeekPrev()} /> <IoIosArrowForward size={22} onClick={() => nextWeekNext()} /></div>

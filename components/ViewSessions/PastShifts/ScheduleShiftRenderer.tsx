@@ -19,7 +19,7 @@ export default function ScheduleShiftRenderer({showPast, shifts, targetDate, set
             <WeekCycler date={targetDate} dateSetter={setTargetDate} showPast={showPast}/>
             {
                 shifts.length > 0 ? (
-                    <ul>
+                    <ul className="md:grid md:grid-cols-2 gap-2">
                         {shifts.map((shift, i) => (
                             <li key={i}>
                                 <PastShiftCard data={shift} allowAddNotes={showPast}/>

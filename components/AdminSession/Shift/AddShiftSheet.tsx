@@ -44,7 +44,7 @@ const FormGroup = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: boolean) => void}) {
+export function AddShiftSheet({ open, setOpen }: { open: boolean, setOpen: (value: boolean) => void }) {
   const selectedDate = useAppSelector(state => state.sessions.selectedDate);
   const locations = useAppSelector(state => state.sessions.allLocations);
   // const selectedLocation = useAppSelector(state => state.sessions.selectedLocation);
@@ -105,10 +105,10 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
     setAssignedMentors(prev => prev.filter(mentor => mentor.id !== user.id));
   }
 
-   const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const startTime = e.target.value;
     setShiftStart(startTime);
-
+    console.log(date);
     // Automatically set the end time to one hour after the start time
     if (!startTime) {
       setShiftEnd("");
@@ -136,7 +136,7 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
     <Sheet open={open} onOpenChange={(open) => setOpen(open)}>
       <SheetTrigger asChild className="flex flex-center justify-center">
         {/* You can use the "Add a shift" button from the previous step here */}
-        <button className=" bg-[#4A6A9A] text-white w-11/12 m-auto py-4 rounded-md hover:bg-[#3e5a89] focus:ring-[#4A6A9A] flex flex-row gap-2"><Plus /> Add A Shift</button>
+        <button className=" bg-[#4A6A9A] text-white w-11/12 md:w-1/2 m-auto py-4 rounded-md hover:bg-[#3e5a89] focus:ring-[#4A6A9A] flex flex-row gap-2"><Plus /> Add A Shift</button>
       </SheetTrigger>
 
       {/* Set a max-width to match the design */}
@@ -201,8 +201,8 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
               <Label className="text-gray-800">Time</Label>
               <div className="flex items-center space-x-2">
                 <Input type="time"
-               
-                   value={shiftStart} onChange={handleStartTimeChange}
+
+                  value={shiftStart} onChange={handleStartTimeChange}
                   className="rounded-lg text-center w-full py-6 border-2 border-slate-200 shadow-none"
                   style={hasEmptyFields && shiftStart === "" ? { border: "2px solid red" } : {}}
                 />
@@ -254,12 +254,12 @@ export function AddShiftSheet({open, setOpen}: {open: boolean, setOpen: (value: 
             </section>
           </div>
           <SheetFooter className="pt-6 relative">
-              <Button
-                type="submit"
-                onClick={() => handleCreate()}
-                className="fixed bottom-3 bg-[#4A6A9A] text-white font-bold w-11/12 m-auto py-6 rounded-md text-base hover:bg-[#3e5a89] focus:ring-[#4A6A9A]">
-                Create shift
-              </Button>
+            <Button
+              type="submit"
+              onClick={() => handleCreate()}
+              className="fixed bottom-3 bg-[#4A6A9A] text-white font-bold w-11/12 m-auto py-6 rounded-md text-base hover:bg-[#3e5a89] focus:ring-[#4A6A9A]">
+              Create shift
+            </Button>
           </SheetFooter>
         </ScrollArea>
       </SheetContent>

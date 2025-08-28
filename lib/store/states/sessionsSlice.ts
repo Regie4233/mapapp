@@ -164,7 +164,7 @@ export const getUserScheduledShifts = createAsyncThunk(
 );
 
 export const getAllScheduledShifts = createAsyncThunk(
-    'sessions/getUserScheduledShifts',
+    'sessions/getAllScheduledShifts',
     async (_, { rejectWithValue }) => {
         try {
             const res = await fetch(`/api/calendar/shift/allshift`)
@@ -180,7 +180,7 @@ export const getAllScheduledShifts = createAsyncThunk(
 );
 
 export const approveMentorRequest = createAsyncThunk(
-    'sessions/requestShift',
+    'sessions/approveMentorRequest',
     async ({ shiftId, authUser, manual }: { shiftId: string | undefined, authUser: string | undefined, manual: boolean }, { rejectWithValue }) => {
         try {
 
@@ -237,7 +237,7 @@ export const approveMentorRequest = createAsyncThunk(
 );
 
 export const removeMentorRequest = createAsyncThunk(
-    'sessions/requestShift',
+    'sessions/removeMentorRequest',
     async ({ shiftId, authUser }: { shiftId: string | undefined, authUser: string | undefined }, { rejectWithValue }) => {
         try {
             const res = await fetch('/api/calendar/shift/approve', {
@@ -262,7 +262,7 @@ export const removeMentorRequest = createAsyncThunk(
 );
 
 export const createShift = createAsyncThunk(
-    'sessions/requestShift',
+    'sessions/createShift',
     async ({ title, date, shift_start, shift_end, location, spots, mentorID }: { title: string, date: Date, shift_start: string, shift_end: string, location: string, spots: number, mentorID: UserPool[] }, { rejectWithValue }) => {
         try {
             console.log(title, date, shift_start, shift_end, location);
@@ -555,10 +555,12 @@ const sessionSlice = createSlice({
 
                 if (state.shiftDatas) {
                     const index = state.shiftDatas.items.findIndex(item => item.id === shiftOccurence.id);
-                    const shiftIndex = state.shiftDatas.items[index].shifts.findIndex(item => item === shiftId);
-                    if (shiftIndex !== -1) {
-                        // Directly mutate the draft state (Immer handles immutability)
-                        state.shiftDatas.items[index].expand.shifts.splice(shiftIndex, 1);;
+                    if (index !== -1) {
+                        const shiftIndex = state.shiftDatas.items[index].expand.shifts.findIndex(item => item.id === shiftId);
+                        if (shiftIndex !== -1) {
+                            // Directly mutate the draft state (Immer handles immutability)
+                            state.shiftDatas.items[index].expand.shifts.splice(shiftIndex, 1);
+                        }
                     }
                 }
             })

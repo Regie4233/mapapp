@@ -14,6 +14,7 @@ import { useAppSelector } from "@/lib/hooks"
 // import { cancelRequest, requestShift } from "@/lib/store/states/sessionsSlice";
 import { useState } from "react";
 import ShiftDetails from "../ViewSessions/Upcoming/ShiftDetails";
+import RequestBadge from "./RequestBadge";
 
 export default function AdminShiftCard({ data }: { data: Shift }) {
     const [open, setOpen] = useState(false);
@@ -62,19 +63,7 @@ export default function AdminShiftCard({ data }: { data: Shift }) {
             <Card className="m-4">
                 <section onClick={() => setOpen(!open)} className="flex flex-col gap-4">
                     <CardHeader>
-                        <div>
-                            {/* To show how many slots are available */}
-                            <p className="text-sm font-semibolds bg-[#FEE190] rounded-full w-fit px-2 flex flex-row gap-1 items-center">
-                                <span>
-                                    {
-                                        data.pending_approval.length
-                                    }
-                                </span>
-                                <span>
-                                    Requests
-                                </span>
-                            </p>
-                        </div>
+                        <RequestBadge count={data.pending_approval.length} />
                         {
                             checkRequestPendingStatus(authUser.id, data) === true && <p className="bg-[#FEE190] text-sm px-2 rounded-full w-fit">Awaiting Approval</p>
                         }

@@ -52,15 +52,15 @@ export default function DashboardPage() {
 
     return (
         <Suspense fallback={<DashboardSkeleton />}>
-            <ViewController>
-                <ShiftsViewer />
-                <NotesViewer />
-                <StudentsViewer />
-                  <DocumentsView />
-                {authUser.privilage === 'admin' ? <MentorViewer /> : <NoAccess />}
-                {authUser.privilage === 'admin' ? <SitesViewer /> : <NoAccess />}
-                <AccountView />
-            </ViewController>
+         <ViewController>
+                    <ShiftsViewer />
+                    <NotesViewer />
+                    <StudentsViewer />
+                    <DocumentsView />
+                    {authUser.privilage === 'admin' ? <MentorViewer /> : <NoAccess />}
+                    {authUser.privilage === 'admin' ? <SitesViewer /> : <NoAccess />}
+                    <AccountView />
+                </ViewController>
         </Suspense>
     );
 }

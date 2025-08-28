@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Sheet,
     SheetClose,
@@ -37,18 +37,32 @@ import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { deleteShift } from "@/lib/store/states/sessionsSlice";
 
-// Prop interface for clarity
+
 interface ShiftDetailsProps {
     shift: Shift;
     open: boolean;
     setOpen: (value: boolean) => void;
-    // Callback to notify the parent component of deletion
-    // onShiftDeleted: (shiftId: string) => void;
 }
 
 export default function ShiftDetails({ shift, open, setOpen }: ShiftDetailsProps) {
     const authUser = useAppSelector(state => state.sessions.authUser);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 640); // Tailwind's 'sm' breakpoint is 640px
+        };
+
+        // Set initial value
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    
     const dispatch = useAppDispatch();
     const handleDeleteShift = async () => {
         if (!shift) return;
@@ -96,7 +110,7 @@ export default function ShiftDetails({ shift, open, setOpen }: ShiftDetailsProps
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetContent className="h-[90%]" side="bottom">
+            <SheetContent className="h-[90%] md:h-full" side={isMobile? 'bottom': 'right'}>
                 <SheetClose className="flex items-center flex-row p-4 gap-2" asChild>
                     <button className="self-start text-black shadow-none text-md font-light flex items-center gap-2 hover:text-gray-700">
                         <BsArrowLeft />All Shifts

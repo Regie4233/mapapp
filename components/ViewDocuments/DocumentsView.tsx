@@ -48,44 +48,90 @@ const DocumentsView = () => {
         }
     };
 
+    const handleDeleteDocument = async (documentId: string) => {
+        const res = await fetch(`/api/documents/${documentId}`, {
+            method: 'DELETE',
+        });
+
+        if (res.ok) {
+            setDocuments(prevDocuments =>
+                prevDocuments.map(category => {
+                    const fileIndex = category.expand.files.findIndex(file => file.id === documentId);
+                    if (fileIndex > -1) {
+                        const newFiles = category.expand.files.filter(file => file.id !== documentId);
+                        return {
+                            ...category,
+                            expand: {
+                                ...category.expand,
+                                files: newFiles,
+                            },
+                        };
+                    }
+                    return category;
+                })
+            );
+        } else {
+            console.error("Failed to delete document");
+        }
+    };
+
     const documentsForSelectedCategory = selectedCategory
         ? documents.find((doc) => doc.categoryName === selectedCategory)?.expand.files
         : [];
 
     return (
-        <div className="p-4">
+        <div className='w-full'>
             {selectedCategory ? (
-                <div>
+                <div className='px-4'>
                     <Button onClick={handleBackClick} className="mb-4">Back to Categories</Button>
                     <h1 className="text-2xl font-bold mb-4">{selectedCategory}</h1>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="flex flex-col gap-4">
                         {documentsForSelectedCategory?.map((doc: DocumentFile) => (
-                            <div key={doc.id} className="flex flex-col gap-2 p-4 border rounded-lg">
-                                <p className="font-bold">{doc.title}</p>
-                                <p>{doc.description}</p>
-                                {/* DO NOT REMOVE THE DOWNLOAD BUTTON BELOW */}
-                                <Button className='w-fit self-end' onClick={() => downloadFile(doc)}>
-                                    Download
-                                </Button>
+                            <div key={doc.id} className="flex flex-row items-center justify-between gap-2 p-4 border rounded-lg">
+                                <div className="flex flex-col gap-2">
+                                    <p className="font-bold">{doc.title}</p>
+                                    <p>{doc.description}</p>
+                                </div>
+                                <div className="flex flex-row gap-2 items-center">
+                                    {/* DO NOT REMOVE THE DOWNLOAD BUTTON BELOW */}
+                                    <Button className='w-fit' onClick={() => downloadFile(doc)}>
+                                        Download
+                                    </Button>
+                                    {authUser?.privilage === 'admin' || authUser?.privilage === 'manager' ? (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className='w-fit'>
+                                                <MoreVertical />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={() => handleDeleteDocument(doc.id)}>Delete</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    ) : null}
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             ) : (
                 <div>
-                    <h1 className="text-2xl font-bold mb-4">Document Categories</h1>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <h1 className="px-4 text-xl font-bold mb-4">Categories</h1>
+                    <div className="px-4 flex flex-col gap-4 mt-4 w-1/2">
                         {categories.map((category) => (
                             <div key={category} className="flex flex-row gap-2 justify-between">
-                                <CategoryCard category={category} onClick={() => handleCategoryClick(category)}/>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger className='w-fit'>
-                                        <MoreVertical />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem onClick={() => handleDeleteCategory(category)}>Delete</DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                <CategoryCard category={category} onClick={() => handleCategoryClick(category)} />
+                                {
+                                    authUser?.privilage === 'admin' || authUser?.privilage === 'manager' ? (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className='w-fit'>
+                                                <MoreVertical />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={() => handleDeleteCategory(category)}>Delete</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    ) : null
+                                }
+
                             </div>
 
                         ))}
@@ -94,7 +140,7 @@ const DocumentsView = () => {
             )}
 
             {authUser?.privilage === 'admin' || authUser?.privilage === 'manager' ? (
-                <section className='w-full fixed bottom-0 bg-white py-5 border-t-2 border-[#E2E8F0]'>
+                <section className='w-full fixed bottom-0 bg-white py-5 border-t-2 border-[#E2E8F0] flex justisfy-center'>
                     <AddDocumentButton setOpen={setOpen} />
                     <AddDocumentSheet isOpen={open} setOpen={setOpen} categories={categories} onUploadSuccess={fetchDocuments} />
                 </section>

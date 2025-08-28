@@ -211,8 +211,7 @@ export default function NotesRenderer() {
                                     <Label htmlFor="location-filter">Location</Label>
                                     <Select
                                         value={filters.location || 'all'}
-                                        onValueChange={(value) => handleFilterChange('location', value === 'all' ? '' : value)}
-                                    >
+                                        onValueChange={(value) => handleFilterChange('location', value === 'all' ? '' : value)}>
                                         <SelectTrigger id="location-filter">
                                             <SelectValue placeholder="Select a location" />
                                         </SelectTrigger>
@@ -232,8 +231,7 @@ export default function NotesRenderer() {
                                         <PopoverTrigger asChild>
                                             <Button
                                                 variant="outline"
-                                                className="w-full justify-start font-normal"
-                                            >
+                                                className="w-full justify-start font-normal">
                                                 <span>
                                                     {date?.from ? (
                                                         date.to ? (
@@ -353,7 +351,7 @@ export default function NotesRenderer() {
             ) : error ? (
                 <p className="text-center text-red-500 mt-10">{error}</p>
             ) : data && data.items.length > 0 ? (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col md:grid grid-cols-2 gap-4">
                     {data.items.map((shift) => (
                         <NotesCard data={shift} key={shift.id} handleOpenSheet={handleOpenSheet} />
                     ))}
@@ -361,8 +359,6 @@ export default function NotesRenderer() {
             ) : (
                 <p className="text-center text-muted-foreground mt-10">No notes found matching your criteria.</p>
             )}
-
-
         </main>
     );
 }

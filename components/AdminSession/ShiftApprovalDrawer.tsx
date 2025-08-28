@@ -35,7 +35,7 @@ export function ShiftApprovalDrawer({ mentor, handleApprove, handleClose, handle
 
   return (
     <Sheet open={!!mentor} onOpenChange={handleClose}>
-      <SheetContent side="bottom" className='h-[65%]'>
+      <SheetContent side="bottom" className='h-[65%] md:h-[40%]'>
         <div className="mx-auto w-full max-w-sm font-sans">
           <SheetHeader>
             <SheetTitle className="text-2xl font-bold text-gray-900">

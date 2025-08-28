@@ -3,7 +3,7 @@ import NotesRenderer from './NotesRenderer';
 
 export default function NotesViewer() {
   return (
-    <main>
+    <main className='w-full'>
         <NotesRenderer />
     </main>
   )

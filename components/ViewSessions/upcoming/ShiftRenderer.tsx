@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import ShiftCards from './ShiftCards';
 import ShiftRendererSkeleton from './ShiftRendererSkeleton';
 import { checkUserOwnedShift } from '@/lib/utils';
-import AdminShiftCard from '@/components/AdminSession/AdminShiftCard';
+// import AdminShiftCard from '@/components/AdminSession/AdminShiftCard';
 import { AddShiftSheet } from '@/components/AdminSession/Shift/AddShiftSheet';
 import {
     Select,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { realtimeShiftUpdate, setSelectedLocation } from '@/lib/store/states/sessionsSlice';
 import { pb } from '@/lib/server/pocketbase';
+import { AdminShiftTable } from '@/components/AdminSession/AdminShiftTable';
 
 
 
@@ -72,7 +73,7 @@ export default function ShiftRenderer() {
     if (authUser === null) return <ShiftRendererSkeleton />
     return (
         <section className='mb-32'>
-            <section className='p-4'>
+            <section className='p-4 w-full md:w-1/2'>
                 <Select value={selectedLocation?.name || ''} onValueChange={(e) => handleChangeLocation(e)}>
                     <SelectTrigger className="w-full py-6">
                         {selectedLocation?.name}
@@ -86,30 +87,31 @@ export default function ShiftRenderer() {
                 </Select>
             </section>
 
-            <section>
+            <section className='md:grid md:grid-cols-2 gap-2'>
                 {
                     isLoading ?
                        <ShiftRendererSkeleton />
                         :
-                        selectedShiftOccurences ? (
-                            selectedShiftOccurences?.expand.shifts?.map((shift) => {
-                                if (checkUserOwnedShift(authUser, shift)) return; // Skip shifts that are not owned by the user
-                                return (
-                                    <div key={shift.id}>
-                                        {
-                                            authUser.privilage === 'admin' || authUser.privilage === 'manager' ?
-                                                <AdminShiftCard data={shift} />
-                                                :
-                                                <ShiftCards data={shift} />
-                                        }
-                                    </div>
-                                )
-                            })
+                        authUser.privilage === 'admin' || authUser.privilage === 'manager' ? (
+                            selectedShiftOccurences?.expand.shifts && selectedShiftOccurences.expand.shifts.length > 0 ? (
+                                <AdminShiftTable data={selectedShiftOccurences.expand.shifts} />
+                            ) : (
+                                <p className='text-center text-muted-foreground mt-20'>There are no shifts available on this date</p>
+                            )
+                        ) : (
+                            selectedShiftOccurences ? (
+                                selectedShiftOccurences?.expand.shifts?.map((shift) => {
+                                    if (checkUserOwnedShift(authUser, shift)) return; // Skip shifts that are not owned by the user
+                                    return (
+                                        <div key={shift.id}>
+                                            <ShiftCards data={shift} />
+                                        </div>
+                                    )
+                                })
+                            ) : (
+                                null
+                            )
                         )
-                            :
-
-                            authUser.privilage === 'admin' || authUser.privilage === 'manager' &&
-                            <p className='text-center text-muted-foreground mt-20'>There are no shifts available on this date</p>
                 }
             </section>
 

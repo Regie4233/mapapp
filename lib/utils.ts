@@ -13,8 +13,8 @@ export function cn(...inputs: ClassValue[]) {
  * @returns returns 7 days of the week of the input date returns YYYY-MM-DD
  */
 export const FindWeek = (initalDate: Date) => {
-  let targetDay = initalDate.getDay() ;
-  if(targetDay === 0){
+  let targetDay = initalDate.getDay();
+  if (targetDay === 0) {
     targetDay = 7;
   }
   const startdifference = targetDay - 1;
@@ -42,16 +42,17 @@ export function formatDateToMonthYear(
 
     return "Invalid Date";
   }
-
+ 
   try {
 
-    const monthName = dateInput.toLocaleString(locale, { month: 'long' });
+    const monthName = dateInput.toLocaleDateString(locale, { month: 'long', timeZone: 'UTC' });
+    const year = dateInput.getUTCFullYear();
+    const day = dateInput.getUTCDate();
 
-
-    const year = dateInput.getFullYear();
-
-
-    return `${monthName} ${full ? dateInput.getDate() : ''} ${year}`;
+    if (full) {
+      return `${monthName} ${day} ${year}`;
+    }
+    return `${monthName} ${year}`;
 
   } catch (error) {
     return error + "Invalid Date";
@@ -228,7 +229,7 @@ export function filterShifts_by_user(shiftOccurences: ShiftOccurencesResponse | 
 export function filterShifts_by_week(shifts: Shift[], weekStart: Date, weekEnd: Date): Shift[] {
   // Ensure weekStart and weekEnd are valid Date objects
   if (!(weekStart instanceof Date) || isNaN(weekStart.getTime()) ||
-      !(weekEnd instanceof Date) || isNaN(weekEnd.getTime())) {
+    !(weekEnd instanceof Date) || isNaN(weekEnd.getTime())) {
     throw new Error("Invalid week start or end date");
   }
   return shifts.filter(shift => {
@@ -274,7 +275,7 @@ export function checkUserIsOwner(user: AuthUser, shift: Shift): boolean {
 export const downloadFile = async (file: DocumentFile) => {
   try {
     console.log(`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${file.collectionId}/${file.id}/${file.file}`)
-     const resp = await fetch(`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${file.collectionId}/${file.id}/${file.file}`);
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${file.collectionId}/${file.id}/${file.file}`);
     const blob = await resp.blob();
     const url = window.URL.createObjectURL(new Blob([blob]));
     const link = document.createElement("a");

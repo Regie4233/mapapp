@@ -33,7 +33,7 @@ export default function WeekCycler({showPast = false, date, dateSetter }: {showP
 
 
   return (
-    <main className=' flex flex-row gap-2 items-center justify-between p-6'>
+    <main className=' flex flex-row gap-2 items-center justify-between p-6 w-full md:w-1/2'>
    
      <ChevronLeft 
      style={!showPast && weekBefore <= new Date() ? {visibility: 'hidden'} : {visibility: 'visible'}}
