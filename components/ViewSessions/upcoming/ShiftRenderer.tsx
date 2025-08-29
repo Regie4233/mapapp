@@ -1,11 +1,11 @@
 'use client';
-import { useAppDispatch, useAppSelector, useDataFetcher } from '@/lib/hooks'
+import { useAppDispatch, useAppSelector, useDataFetcher, useIsMobile } from '@/lib/hooks'
 import { Shift, ShiftLocation, ShiftOccurrence } from '@/lib/type';
 import { useEffect, useState } from 'react'
 import ShiftCards from './ShiftCards';
 import ShiftRendererSkeleton from './ShiftRendererSkeleton';
 import { checkUserOwnedShift } from '@/lib/utils';
-// import AdminShiftCard from '@/components/AdminSession/AdminShiftCard';
+import AdminShiftCard from '@/components/AdminSession/AdminShiftCard';
 import { AddShiftSheet } from '@/components/AdminSession/Shift/AddShiftSheet';
 import {
     Select,
@@ -33,6 +33,7 @@ export default function ShiftRenderer() {
     const [isLoading, setIsLoading] = useState(false);
     const { getShiftsWeekly } = useDataFetcher();
     const dispatch = useAppDispatch();
+    const isMobile = useIsMobile();
 
     const handleChangeLocation = (e: string) => {
         const location = JSON.parse(e);
@@ -94,7 +95,12 @@ export default function ShiftRenderer() {
                         :
                         authUser.privilage === 'admin' || authUser.privilage === 'manager' ? (
                             selectedShiftOccurences?.expand.shifts && selectedShiftOccurences.expand.shifts.length > 0 ? (
-                                <AdminShiftTable data={selectedShiftOccurences.expand.shifts} />
+                                
+                                isMobile ? (
+                                    selectedShiftOccurences.expand.shifts.map((shift) => <AdminShiftCard key={shift.id} data={shift} />)
+                                ) : (
+                                    <AdminShiftTable data={selectedShiftOccurences.expand.shifts} />
+                                )
                             ) : (
                                 <p className='text-center text-muted-foreground mt-20'>There are no shifts available on this date</p>
                             )

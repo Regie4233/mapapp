@@ -3,8 +3,28 @@ import { useDispatch, useSelector, useStore } from 'react-redux';
 import type { RootState, AppDispatch, AppStore } from './store/store';
 import { AuthUser, TargetWeekQuery } from './type';
 import { setAllLocations, setAllMentors, setScheduledShiftsWeek, setShiftDatas, setUserPastShifts, setUserPastShiftsWeek, setUserScheduledShifts } from './store/states/sessionsSlice';
+import { useState, useEffect } from 'react';
 
+export const useIsMobile = (maxWidth = 768) => {
+  const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < maxWidth);
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [maxWidth]);
+
+  return isMobile;
+};
 
 export function useDataFetcher() {
     const dispatch = useDispatch()

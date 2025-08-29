@@ -180,7 +180,7 @@ export const getAllScheduledShifts = createAsyncThunk(
 );
 
 export const approveMentorRequest = createAsyncThunk(
-    'sessions/approveMentorRequest',
+    'sessions/requestShift',
     async ({ shiftId, authUser, manual }: { shiftId: string | undefined, authUser: string | undefined, manual: boolean }, { rejectWithValue }) => {
         try {
 
@@ -237,7 +237,7 @@ export const approveMentorRequest = createAsyncThunk(
 );
 
 export const removeMentorRequest = createAsyncThunk(
-    'sessions/removeMentorRequest',
+    'sessions/requestShift',
     async ({ shiftId, authUser }: { shiftId: string | undefined, authUser: string | undefined }, { rejectWithValue }) => {
         try {
             const res = await fetch('/api/calendar/shift/approve', {
@@ -262,7 +262,7 @@ export const removeMentorRequest = createAsyncThunk(
 );
 
 export const createShift = createAsyncThunk(
-    'sessions/createShift',
+    'sessions/requestShift',
     async ({ title, date, shift_start, shift_end, location, spots, mentorID }: { title: string, date: Date, shift_start: string, shift_end: string, location: string, spots: number, mentorID: UserPool[] }, { rejectWithValue }) => {
         try {
             console.log(title, date, shift_start, shift_end, location);
@@ -504,6 +504,7 @@ const sessionSlice = createSlice({
                 const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
                 const targetId = action.payload.shiftOccurence.items[0].id;
                 state.loading = 'Fulfilled State';
+                console.log('Requested shift:', shiftOccurence);
                 //update the shifts
                 if (state.shiftDatas) {
                     const index = state.shiftDatas.items.findIndex(item => item.id === targetId);

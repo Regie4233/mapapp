@@ -10,7 +10,7 @@ export default function AssignMentorCommand({ assignedMentors, setAssignedMentor
     const unassignedMentors = mentors.filter(m => !assignedMentors.some(am => am.id === m.id));
     const singleSelect = true;
     return (
-        <Command className="mb-12">
+       <Command className="mb-12">
             <CommandInput placeholder="Search for a mentor to assign..." value={searchQuery} onValueChange={setSearchQuery} />
             <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>

@@ -71,6 +71,7 @@ export const PendingRequestsRenderer = ({ shiftData }: { shiftData: Shift }) => 
         if (!shiftData.approved.includes(assignedMentors[0].id)) {
             console.log("ADD", assignedMentors[0].id, shiftData.id);
             dispatch(approveMentorRequest({ shiftId: shiftData.id, authUser: assignedMentors[0].id, manual: true }));
+           
         } else {
             toast.error(`${assignedMentors[0].firstname} ${assignedMentors[0].lastname} is already assigned to this shift`);
             setAssignedMentors([]);

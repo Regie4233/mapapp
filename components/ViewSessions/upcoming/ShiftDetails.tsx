@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     Sheet,
     SheetClose,
@@ -27,7 +27,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { BsArrowLeft } from "react-icons/bs";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector, useIsMobile } from "@/lib/hooks";
 import { Shift } from "@/lib/type"
 import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -47,21 +47,7 @@ interface ShiftDetailsProps {
 export default function ShiftDetails({ shift, open, setOpen }: ShiftDetailsProps) {
     const authUser = useAppSelector(state => state.sessions.authUser);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 640); // Tailwind's 'sm' breakpoint is 640px
-        };
-
-        // Set initial value
-        handleResize();
-
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    const isMobile = useIsMobile(640);
     
     const dispatch = useAppDispatch();
     const handleDeleteShift = async () => {
