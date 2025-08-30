@@ -7,6 +7,7 @@ export interface Notes {
   worked_on_today: string;
   struggle_with_anything: string;
   any_wins_today: string;
+  other_notes: string;
   content: string;
   summarized: NoteSummary;
   shiftId: Shift;
@@ -17,17 +18,21 @@ export interface Notes {
 
 export interface NoteSummary {
   workedOn: string;
-  students: StudentNotes[];
+  students: Student[];
   keyNotes: string;
 }
 
 
 
-export interface StudentNotes {
+export interface Student {
+  id: string;
+  created: string;
   name: string;
-  strengths: string[];
-  challenges: string[];
-  notes: string[];
+  expand: StudentExpand;
+  location: ShiftLocation
+  note: string;
+  updated: string;
+  avatar: string;
 }
 
 // export interface Shift {
@@ -78,6 +83,8 @@ export interface AuthUser {
   updated: Date;
   title: string;
   about: string;
+  avatar: string;
+  authorized: boolean;
 }
 
 export interface TargetWeekQuery {
@@ -98,7 +105,7 @@ export interface Shift {
   collectionName: string;
   created: string; // ISO 8601 date-time string
   expand: ShiftExpand; // In your example, it's empty {}, but could contain more
-  id: number;
+  id: string;
   pending_approval: string[]; // Assuming these are IDs or some string identifiers
   shift_date: string; // ISO 8601 date-time string (date part might be most relevant)
   shift_end: string; // Time string, e.g., "HH:mm"
@@ -108,7 +115,7 @@ export interface Shift {
   description: string;
   loading: boolean;
   spots: number
-  location: string; 
+  location: string;
 }
 
 /**
@@ -121,9 +128,14 @@ export interface ShiftLocation {
   created: string; // ISO 8601 date-time string
   id: string;
   name: string;
-  shiftOccurences: string[]; // Array of ShiftOccurrence IDs
+  shiftOccurences: ShiftOccurrence[];
   updated: string; // ISO 8601 date-time string
 
+}
+
+export interface StudentExpand {
+  location: ShiftLocation;
+  notes: Notes[];
 }
 
 /**
@@ -172,16 +184,45 @@ export interface UserPool {
   title: string;
   updated: string;
   verified: boolean;
+  authorized: boolean;
+  avatar: string;
 }
 
 export interface ShiftExpand {
   approved: UserPool[];
   notes: Notes;
   pending_approval: UserPool[];
+  location: ShiftLocation;
 }
 
-// --- Example Usage (how you might type a variable holding this data) ---
-// const myShiftOccurrence: ShiftOccurrence = { ... your JSON data ... };
 
-// If you have an array of these:
-// const myShiftOccurrences: ShiftOccurrence[] = [ ... array of your JSON data ... ];
+export interface ListResult<T> {
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  items: T[];
+}
+
+
+export interface DocumentCategory {
+  id: string;
+  categoryName: string;
+  files: string[];
+  expand: DocumentExpand;
+}
+
+interface DocumentExpand {
+  files: DocumentFile[];
+}
+
+export interface DocumentFile {
+  collectionId: string;
+  collectionName: string;
+  id: string;
+  title: string;
+  description: string;
+  file: string;
+  field: string;
+  created: string;
+}

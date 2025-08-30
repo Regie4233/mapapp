@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
         }
         console.log('Shift ID:', shiftId);
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+      await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
 
         const shift = await pb.collection('mapapp_shift').update(shiftId, {
             'pending_approval+': [authUser],
@@ -48,7 +48,7 @@ export async function PATCH(request: NextRequest) {
         }
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_PASSWORD || '');
 
         const res = await pb.collection('mapapp_shift').update(shiftId, {
             'pending_approval-': [authUser],
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         }
 
         const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8080');
-        await pb.collection('_superusers').authWithPassword('admin@admin.admin', 'adminadmin');
+await pb.collection(process.env.NEXT_PB_ADMIN_COLLECTION || '').authWithPassword(process.env.NEXT_PB_ADMIN_EMAIL || '', process.env.NEXT_PB_ADMIN_EMAIL || '');
 
         const shift = await pb.collection('mapapp_shift').getOne(shiftId);
         const isPending = shift.pending_approval.includes(authUser);

@@ -1,15 +1,52 @@
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default async function Home() {
- 
+const PromiseLinkLogin = () => {
   return (
-    // create simple landing page with tailwindcss
-    <main className="flex flex-col items-center justify-center min-h-screen ">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">Welcome</h1>
-        <p className="text-center mb-4">This is a placeholder please delete this code</p>
-        <a href="/login" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-center block mt-4">Login</a>
-      </div>
-     
+    <main className='flex flex-col min-h-screen bg-[#FDFCF4] items-center justify-center w-full'>
+      <main className="flex w-full h-screen md:h-fit md:w-fit md:m-auto p-12 bg-[#FDFCF4] flex-col justify-evenly items-center text-center">
+       
+        <div className='text-[#273A57] '>
+           <Image
+            alt="PromiseLink logo"
+            src="/PromiseLink-bg-rem.png"
+            width={192}
+            height={192}
+            className="h-48 sw-48 object-contain mx-auto w-full"
+            priority // Load the logo quickly as it's LCP
+          />
+          <h1 className="text-4xl font-bold tracking-wide text-navy ">
+            PROMISELINK
+          </h1>
+          <p className="mt-2 mb-12 text-lg text-navy ">
+            LINKING PROMISES. IGNITING CHANGE.
+          </p>
+        </div>
+
+        <div className='text-[#273A57] md:w-2/3'>
+          <h2 className="mb-4 text-2xl font-semibold text-navy ">Welcome!</h2>
+          <p className="mb-10 text-base leading-relaxed text-navy/80 ">
+            Welcome to the Mentor A Promise portal. Manage your schedule, connect
+            with students, and track progress all in one place.
+          </p>
+        </div>
+
+
+        <Link
+          href="/login" // Change to your actual login/signup route
+          className="inline-block w-full md:w-fit rounded-lg bg-navy py-4 px-8 font-semibold text-white bg-[#273A57] shadow-md transition-colors duration-300 hover:bg-navy/90"
+        >
+          Login or Sign Up
+        </Link>
+      </main>
+
+      <footer className="mt-auto py-4 text-center">
+        <p className="text-sm text-navy/60">
+          © 2024 PromiseLink. All rights reserved.
+        </p>
+      </footer>
     </main>
   );
-}
+};
+
+export default PromiseLinkLogin;
