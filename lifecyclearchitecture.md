@@ -13,8 +13,7 @@ The following diagram illustrates the end-to-end deployment process:
 ```mermaid
 graph TD
     subgraph "Local Development / CI/CD"
-        A[Next.js Codebase] -->|`next build`| B(Standalone Output);
-        B -->|`docker build`| C(Docker Image);
+        A[Next.js Codebase] -->|`docker build`| C(Docker Image);
     end
 
     subgraph "Portainer"
@@ -34,18 +33,9 @@ graph TD
 
 ## 3. Step-by-Step Guide
 
-### Step 1: Build the Next.js Application
+### Step 1: Build the Docker Image
 
-The Next.js application is configured with `output: 'standalone'` in `next.config.ts`. This creates a minimal, production-optimized server in the `.next/standalone` directory when the `next build` command is run.
-
-1.  **Run the build command**:
-    ```bash
-    npm run build
-    ```
-
-### Step 2: Build the Docker Image
-
-The project includes a multi-stage `Dockerfile` to create a lean and secure Docker image.
+The project includes a multi-stage `Dockerfile` that handles the entire build process, including running `npm run build` internally. This creates a lean and secure Docker image with a standalone Next.js server.
 
 1.  **Build the image**:
     ```bash
@@ -56,13 +46,13 @@ The project includes a multi-stage `Dockerfile` to create a lean and secure Dock
     docker build --build-arg NEXT_PUBLIC_POCKETBASE_URL=https://your-pocketbase-url.com -t your-image-name:latest .
     ```
 
-### Step 3: Upload to Portainer
+### Step 2: Upload to Portainer
 
 1.  **Navigate to your Portainer instance**.
 2.  Go to the **Images** section.
 3.  **Upload the Docker image** you built in the previous step.
 
-### Step 4: Create the Container in Portainer
+### Step 3: Create the Container in Portainer
 
 1.  From the **Images** section in Portainer, find your uploaded image and click **Deploy** or **Create container**.
 2.  **Configure the container**:
@@ -71,7 +61,7 @@ The project includes a multi-stage `Dockerfile` to create a lean and secure Dock
     *   Under **Advanced container settings > Network**, connect the container to the `nginxproxymanager` network.
 3.  **Deploy the container**.
 
-### Step 5: Configure Nginx Proxy Manager
+### Step 4: Configure Nginx Proxy Manager
 
 1.  **Navigate to your Nginx Proxy Manager instance**.
 2.  Go to **Hosts > Proxy Hosts** and click **Add Proxy Host**.
