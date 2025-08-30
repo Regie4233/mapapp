@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import PocketBase, { ClientResponseError } from 'pocketbase';
 
 const NOTES_COLLECTION = 'mapapp_notes';
-// const SHIFTS_COLLECTION = 'mapapp_shift';
+const SHIFTS_COLLECTION = 'mapapp_shift';
 
 type NoteResponse = {
     students: StudentNote[];
@@ -140,53 +140,53 @@ export async function POST(request: NextRequest) {
 
 
 
-            // studentsList.forEach(async (element) => {
-            //     const student = summarizedNotes.students.find((student) => student.name === element.name);
-            //     if (student) {
-            //         console.log(`${element.note}. [Post Date:${noteDate}]${student.notes}`);
-            //         const studentOverview = await AI(`${element.note}. [Post Date:${noteDate}] ${student.notes}`, 'overview');
-            //         console.log("Student Overview:", studentOverview);
-            //         // batch.collection('mapapp_students').update(element.id, {
-            //         //     "notes": studentOverview,
-            //         // });
-            //        const yyy = await pb.collection('mapapp_students').update(element.id, {
-            //              "notes": studentOverview,
-            //         });
-            //         console.log("Updated student notes:", yyy);
-            //     }
-            // });
+            studentsList.forEach(async (element) => {
+                const student = summarizedNotes.students.find((student) => student.name === element.name);
+                if (student) {
+                    console.log(`${element.note}. [Post Date:${noteDate}]${student.notes}`);
+                    const studentOverview = await AI(`${element.note}. [Post Date:${noteDate}] ${student.notes}`, 'overview');
+                    console.log("Student Overview:", studentOverview);
+                    // batch.collection('mapapp_students').update(element.id, {
+                    //     "notes": studentOverview,
+                    // });
+                   const yyy = await pb.collection('mapapp_students').update(element.id, {
+                         "notes": studentOverview,
+                    });
+                    console.log("Updated student notes:", yyy);
+                }
+            });
 
-            // const result = await batch.send();
-            // console.log(result)
+            const result = await batch.send();
+            console.log(result)
         }
 
 
         // -------------------------------
-        // const result = await pb.collection(SHIFTS_COLLECTION).getOne(shiftId, {
-        //     expand: 'notes',
-        // });
+        const result = await pb.collection(SHIFTS_COLLECTION).getOne(shiftId, {
+            expand: 'notes',
+        });
 
-        // if (!result) {
-        //     return NextResponse.json({ error: 'Shift not found' }, { status: 404 });
-        // }
+        if (!result) {
+            return NextResponse.json({ error: 'Shift not found' }, { status: 404 });
+        }
 
-        // // If the shift has no notes, create a new one and link it
-        // if (!result.expand?.notes) {
-        //     const notesRes = await pb.collection(NOTES_COLLECTION).create(data);
-        //     await pb.collection(SHIFTS_COLLECTION).update(result.id, {
-        //         'notes': notesRes.id,
-        //     });
-        // } else {
-        //     // Otherwise, update the existing note
-        //     await pb.collection(NOTES_COLLECTION).update(result.expand.notes.id, data);
-        // }
+        // If the shift has no notes, create a new one and link it
+        if (!result.expand?.notes) {
+            const notesRes = await pb.collection(NOTES_COLLECTION).create(data);
+            await pb.collection(SHIFTS_COLLECTION).update(result.id, {
+                'notes': notesRes.id,
+            });
+        } else {
+            // Otherwise, update the existing note
+            await pb.collection(NOTES_COLLECTION).update(result.expand.notes.id, data);
+        }
 
-        // const updatedShift = await pb.collection(SHIFTS_COLLECTION).getOne(shiftId, {
-        //     expand: 'notes, approved, pending_approval, location',
-        // });
+        const updatedShift = await pb.collection(SHIFTS_COLLECTION).getOne(shiftId, {
+            expand: 'notes, approved, pending_approval, location',
+        });
 
 
-        // return NextResponse.json({ shift: updatedShift }, { status: 200 });
+        return NextResponse.json({ shift: updatedShift }, { status: 200 });
     } catch (error) {
         console.error('Error in POST /api/notes:', error);
         if (error instanceof ClientResponseError) {

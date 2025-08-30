@@ -6,6 +6,7 @@ import StoreProvider from "@/components/shared/StoreProvider";
 import Navbar from "@/components/Navigation/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import DesktopHeader from "@/components/Navigation/DesktopHeader";
+// import DesktopHeader from "@/components/Navigation/DesktopHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,14 +41,15 @@ export default function RootLayout({
       >
         <StoreProvider>
           <Toaster position="top-right" toastOptions={{ style: { backgroundColor: "#FDC52A" } }} />
-          <DesktopHeader />
+          <Suspense>
+            <DesktopHeader />
+          </Suspense>
           <main className="md:flex md:flex-row">
             <Suspense>
               <Navbar />
             </Suspense>
             {children}
           </main>
-
         </StoreProvider>
       </body>
     </html>
