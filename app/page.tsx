@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 const PromiseLinkLogin = () => {
   return (
-    <>
-      <main className="flex w-full h-screen p-12 bg-[#FDFCF4] flex-col justify-evenly items-center text-center">
+    <main className='flex flex-col min-h-screen bg-[#FDFCF4] items-center justify-center w-full'>
+      <main className="flex w-full h-screen md:h-fit md:w-fit md:m-auto p-12 bg-[#FDFCF4] flex-col justify-evenly items-center text-center">
        
         <div className='text-[#273A57] '>
            <Image
@@ -12,7 +12,7 @@ const PromiseLinkLogin = () => {
             src="/PromiseLink-bg-rem.png"
             width={192}
             height={192}
-            className="h-48 w-48 object-contain mx-auto w-full"
+            className="h-48 sw-48 object-contain mx-auto w-full"
             priority // Load the logo quickly as it's LCP
           />
           <h1 className="text-4xl font-bold tracking-wide text-navy ">
@@ -23,7 +23,7 @@ const PromiseLinkLogin = () => {
           </p>
         </div>
 
-        <div className='text-[#273A57]'>
+        <div className='text-[#273A57] md:w-2/3'>
           <h2 className="mb-4 text-2xl font-semibold text-navy ">Welcome!</h2>
           <p className="mb-10 text-base leading-relaxed text-navy/80 ">
             Welcome to the Mentor A Promise portal. Manage your schedule, connect
@@ -34,7 +34,7 @@ const PromiseLinkLogin = () => {
 
         <Link
           href="/login" // Change to your actual login/signup route
-          className="inline-block w-full rounded-lg bg-navy py-4 px-8 font-semibold text-white bg-[#273A57] shadow-md transition-colors duration-300 hover:bg-navy/90"
+          className="inline-block w-full md:w-fit rounded-lg bg-navy py-4 px-8 font-semibold text-white bg-[#273A57] shadow-md transition-colors duration-300 hover:bg-navy/90"
         >
           Login or Sign Up
         </Link>
@@ -45,7 +45,7 @@ const PromiseLinkLogin = () => {
           © 2024 PromiseLink. All rights reserved.
         </p>
       </footer>
-    </>
+    </main>
   );
 };
 

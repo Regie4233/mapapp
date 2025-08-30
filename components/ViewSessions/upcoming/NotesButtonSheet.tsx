@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { Clock, MapPin, Users } from "lucide-react" // Import icons
+import { Clock, MapPin, Users, CheckCircle } from "lucide-react" // Import icons
 import {
     Sheet,
     SheetClose, // Used for the 'X' button
@@ -21,6 +21,7 @@ import { updateNote } from "@/lib/store/states/sessionsSlice"
 import { Shift } from "@/lib/type" // Assuming a similar Shift type definition
 import { convertTo12HourFormat } from "@/lib/utils" // For conditional classes
 import { BsArrowLeft } from "react-icons/bs"
+import { toast } from "sonner"
 
 // A helper component for displaying metadata with an icon
 const MetaItem = ({ icon: Icon, children }: { icon: React.ElementType, children: React.ReactNode }) => (
@@ -34,6 +35,7 @@ const MetaItem = ({ icon: Icon, children }: { icon: React.ElementType, children:
 export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
     const [isOpen, setIsOpen] = useState(false)
     const [editMode, setEditMode] = useState(false)
+    const [isNoteCreated, setIsNoteCreated] = useState(shift?.expand?.notes ? true : false)
 
     const [students, setStudents] = useState(shift?.expand?.notes?.students ?? "")
     const [workedOnToday, setWorkedOnToday] = useState(shift?.expand?.notes?.worked_on_today ?? "")
@@ -54,17 +56,18 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
             formData.append("any_wins_today", anyWinsToday)
             formData.append("noteId", shift.expand?.notes?.id ?? '0')
             shift.approved.forEach(mentorId => formData.append("mentors", mentorId))
-            // formData.append('otherNotes', shift.expand.notes.other_notes);
             formData.append('noteDate', `${shift.shift_date} Time: ${shift.shift_start}`);
-            console.log("Submitting notes for shift", shift);
             
             formData.append('location', shift.expand.location.id);
-            dispatch(updateNote(formData))
+            await dispatch(updateNote(formData)).unwrap()
 
             setEditMode(false)
             setIsOpen(false)
+            setIsNoteCreated(true)
+            toast.success("Note created successfully!")
         } catch (error) {
             console.error("Failed to submit notes", error)
+            toast.error("Failed to create note.")
         }
     }
 
@@ -81,37 +84,30 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
         return <p className="text-red-500">You must be logged in to view notes.</p>
     }
 
-    // --- Data for display ---
     const studentNames = students.split(',').map(s => s.trim()).filter(Boolean);
 
-    // Assumes you have a way to get mentor names. Fallbacks to IDs.
-    //   const mentorDisplayNames = shift.expand?.pending_approval?.map(m => m.firstname + ' ' + m.lastname).join(', ') ?? shift.approved.join(', ');
-
-    //   const formattedDateTime = new Intl.DateTimeFormat('en-US', {
-    //     month: 'long',
-    //     day: 'numeric',
-    //     year: 'numeric',
-    //     hour: 'numeric',
-    //     minute: 'numeric',
-    //     hour12: true,
-    //   }).format(new Date(shift.shift_start)).replace(' at ', ' | ');
     if (shift === undefined || shift === null) return;
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <Button variant="outline" className="w-full text-white bg-[#0A5FA3]">
-                    Add Session Notes
-                </Button>
+                {isNoteCreated ? (
+                    <Button variant="outline" className="w-full text-white bg-green-500" disabled>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Note Submitted
+                    </Button>
+                ) : (
+                    <Button variant="outline" className="w-full text-white bg-[#0A5FA3]">
+                        Add Session Notes
+                    </Button>
+                )}
             </SheetTrigger>
 
-            {/* Set padding to 0 and manage it internally for better control over layout */}
             <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg">
 
                 <SheetHeader className="border-b px-6 text-left">
                     <SheetClose className="flex items-center flex-row gap-2" asChild>
                         <p className="self-start text-black shadow-none text-md font-light"><BsArrowLeft />All Shifts</p>
                     </SheetClose>
-                    {/* Using a simple div instead of SheetTitle for left alignment */}
                     <div className="text-xl font-semibold">Session Notes {shift.id}</div>
                     <SheetTitle />
                     <SheetDescription />
@@ -119,7 +115,6 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
 
                 <ScrollArea className="h-[77vh]">
                     <div className="space-y-6 p-6">
-                        {/* Session Info */}
                         <section className="space-y-3">
                             <h3 className="text-lg font-bold">{shift.title}</h3>
                             <div className="space-y-2 text-sm">
@@ -131,7 +126,6 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
 
                         <hr />
 
-                        {/* Students & Mentor */}
                         <section className="space-y-4">
                             <div>
                                 <h4 className="font-semibold text-gray-800">Student Name(s)</h4>
@@ -167,7 +161,6 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
 
                         <hr />
 
-                        {/* Notes Form */}
                         <section className="space-y-4">
                             <div>
                                 <h4 className="font-semibold text-gray-800">What did you and your students work on today?</h4>
@@ -212,7 +205,6 @@ export default function NotesButtonSheet({ shift }: { shift: Shift | null }) {
                     </div>
                 </ScrollArea>
 
-                {/* Footer with a top border for visual separation */}
                 <SheetFooter className="border-t p-4">
                     {shift.approved.includes(authUser.id) &&
                         (!editMode ? (

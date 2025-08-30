@@ -136,7 +136,7 @@ export function AddShiftSheet({ open, setOpen }: { open: boolean, setOpen: (valu
     <Sheet open={open} onOpenChange={(open) => setOpen(open)}>
       <SheetTrigger asChild className="flex flex-center justify-center">
         {/* You can use the "Add a shift" button from the previous step here */}
-        <button className=" bg-[#4A6A9A] text-white w-11/12 md:w-1/2 m-auto py-4 rounded-md hover:bg-[#3e5a89] focus:ring-[#4A6A9A] flex flex-row gap-2"><Plus /> Add A Shift</button>
+        <button className=" bg-[#4A6A9A] text-white w-11/12 md:w-1/8 m-auto md:mx-2 py-4 rounded-md hover:bg-[#3e5a89] focus:ring-[#4A6A9A] flex flex-row gap-2"><Plus /> Add A Shift</button>
       </SheetTrigger>
 
       {/* Set a max-width to match the design */}

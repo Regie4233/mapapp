@@ -86,11 +86,10 @@ export async function POST(request: NextRequest) {
             const studentFilter = summarizedNotes.students
                 .map(student => `name ?~ "${student.name.replace(/"/g, '""')}"`)
                 .join(' || ');
-            console.log("Student Filter for AI:", studentFilter);
             const filter = `${studentFilter} && location.id ~ "${locationId}"`;
             const studentsList = await pb.collection('mapapp_students').getFullList({ filter });
-            console.log("Found students:", studentsList);
-            // const batch = pb.createBatch();
+
+            const batch = pb.createBatch();
 
             const updatePayloads = await Promise.all(
                 studentsList.map(async (element) => {
@@ -98,20 +97,14 @@ export async function POST(request: NextRequest) {
                     const index = summarizedNotes.students.findIndex((s) => s.name === element.name);
                     if (index !== -1) summarizedNotes.students.splice(index, 1)
                     if (student) {
-                        console.log(`Processing AI for: ${element.name}`);
                         const studentOverview = await AI(`${element.note}. [Post Date:${noteDate}] ${student.notes}`, 'overview');
-                        console.log({ name: element.name, note: studentOverview.summary });
-
                         return { id: element.id, notes: studentOverview.summary };
                     }
-                    console.log(`No AI summary found for student: ${element.name}`);
-
                     return null;
                 })
             );
-            const batch = pb.createBatch();
+
             if (summarizedNotes.students.length > 0) {
-                console.log("Some students were not found in the database:", summarizedNotes.students);
                 summarizedNotes.students.forEach(student => {
                     batch.collection('mapapp_students').create({
                         name: student.name,
@@ -120,44 +113,17 @@ export async function POST(request: NextRequest) {
                     });
                 });
             }
-            // 2. Create a batch request for all database updates
 
-            updatePayloads
-                .forEach(payload => {
-                    if (!payload) return; // Skip null payloads
-                    console.log(`Updating student ${payload.id} with notes: ${payload.notes}`);
-                    batch.collection('mapapp_students').update(payload.id, {
-                        "note": payload.notes,
-                    });
+            updatePayloads.forEach(payload => {
+                if (!payload) return;
+                batch.collection('mapapp_students').update(payload.id, {
+                    "note": payload.notes,
                 });
-
-            // 3. Send the single batch request
-            if (batch.collection.length > 0) {
-                console.log(`Sending batch update for ${batch.collection.length} students...`);
-                const result = await batch.send();
-                console.log("Batch update result:", result);
-            }
-
-
-
-            studentsList.forEach(async (element) => {
-                const student = summarizedNotes.students.find((student) => student.name === element.name);
-                if (student) {
-                    console.log(`${element.note}. [Post Date:${noteDate}]${student.notes}`);
-                    const studentOverview = await AI(`${element.note}. [Post Date:${noteDate}] ${student.notes}`, 'overview');
-                    console.log("Student Overview:", studentOverview);
-                    // batch.collection('mapapp_students').update(element.id, {
-                    //     "notes": studentOverview,
-                    // });
-                   const yyy = await pb.collection('mapapp_students').update(element.id, {
-                         "notes": studentOverview,
-                    });
-                    console.log("Updated student notes:", yyy);
-                }
             });
 
-            const result = await batch.send();
-            console.log(result)
+            if (batch.collection.length > 0) {
+                await batch.send();
+            }
         }
 
 

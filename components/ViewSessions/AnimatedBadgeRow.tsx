@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 
 
-const AnimatedBadgeRow = ({ users }: { users: UserPool[] }) => {
+const AnimatedBadgeRow = ({ users = [] }: { users: UserPool[] }) => {
     // State to track if the badges are spread apart
     const [isSpread, setIsSpread] = useState(false);
 
@@ -49,7 +49,7 @@ const AnimatedBadgeRow = ({ users }: { users: UserPool[] }) => {
             className="grid grid-cols-6 cursor-pointer" // Added h-10 for click area
             onClick={handleSpreadClick}
             onMouseOver={handleSpreadClick}
-            // Set a minimum width to contain the badges when spread
+            // Set a minimum width to contain the badges when spreadgg
             style={{ minWidth: `${users.length * (badgeSize + spreadAmount)}px` }}>
             <ul className='relative col-span-1'>
                 {users.length > 0 &&

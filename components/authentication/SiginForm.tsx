@@ -51,7 +51,7 @@ export async function SignInForm({ error }: { error?: string }) {
     // Then in the form: <SubmitButton />
 
     return (
-        <div className="flex items-center justify-center flex-col min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+        <div className="flex items-center justify-center flex-col min-h-screen bg-gray-100 dark:bg-gray-900 md:m-auto md:w-full">
             <div className="text-center">
                     <Image
                         src="/logo3.png" // Make sure you have a logo in your `public` folder

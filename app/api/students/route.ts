@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Pocketbase, { ClientResponseError } from "pocketbase";
 
 // It's a good practice to use environment variables for credentials
-const pbAdminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'admin@admin.admin';
-const pbAdminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'adminadmin';
+const pbAdminEmail = process.env.NEXT_PB_ADMIN_EMAIL || 'admin@admin.admin';
+const pbAdminPassword = process.env.NEXT_PB_ADMIN_PASSWORD || 'adminadmin';
 const STUDENTS_COLLECTION = 'mapapp_students';
 
 /**

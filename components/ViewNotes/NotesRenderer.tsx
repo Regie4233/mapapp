@@ -350,7 +350,7 @@ export default function NotesRenderer() {
                 </div>
             ) : error ? (
                 <p className="text-center text-red-500 mt-10">{error}</p>
-            ) : data && data.items.length > 0 ? (
+            ) : data && data.items && data.items.length > 0 ? (
                 <div className="flex flex-col md:grid grid-cols-2 gap-4">
                     {data.items.map((shift) => (
                         <NotesCard data={shift} key={shift.id} handleOpenSheet={handleOpenSheet} />
