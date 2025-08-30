@@ -16,6 +16,8 @@ Just a note about Keyshawn— he’s very soft spoken and may be hard to underst
 
 
 
+
+
 We did our stretching and brief exercises, and we talked about stress and causes if stress, and how stress makes you feel. They are looking forward to learning about how to reduce stress tomorrow and making slime on Thursday. 
 
 Kids enjoyed and participated. We worked on rhyming words and played rhyming games with several, Rut and Keyshawn enjoyed playing. Bryson got frustrated and bored, and didn't want to participate. He worked by himself on a spelling puzzle. Sebastian did not participate, he may have some challenges and struggles. 
@@ -29,3 +31,404 @@ with students Naileany, Ariah, Ali
 We worked on Spelling
 Ariah had some struggle spelling on her own, mixing up letters like C’s and S’s, but she did a great job with some guidance
 The students enjoyed making spelling into a game with Bananagrams - the game keeps them more engaged.
+
+
+
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+// import { AuthRecord } from "pocketbase";
+import { AuthUser, Shift, ShiftLocation, ShiftOccurencesResponse, ShiftOccurrence, UserPool } from "@/lib/type";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+const defaultDate = new Date()
+defaultDate.setHours(0, 0, 0, 0);
+
+interface SessionState {
+    authUser: AuthUser | null;
+    selectedDate: string;
+    shiftDatas: ShiftOccurencesResponse | null;
+    dateTargetWeek: string | null;
+    userScheduledShifts: Shift[];
+    userPastShifts: Shift[];
+    loading: string;
+    allMentors: UserPool[];
+    allLocations: ShiftLocation[];
+}
+
+
+const initialState: SessionState = {
+    authUser: null,
+    selectedDate: defaultDate.toISOString(),
+    shiftDatas: null,
+    dateTargetWeek: null,
+    userScheduledShifts: [],
+    userPastShifts: [],
+    loading: 'Idle',
+    allMentors: [],
+    allLocations: [],
+}
+
+export const requestShift = createAsyncThunk(
+    'sessions/requestShift',
+    async ({ shiftId, authUser }: { shiftId: string, authUser: string }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, authUser }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to request shift');
+            }
+
+            const data = await res.json();
+
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error requesting shift:', error);
+            return rejectWithValue(error || 'Failed to request shift');
+        }
+    }
+);
+export const cancelRequest = createAsyncThunk(
+    'sessions/cancelRequest',
+    async ({ shiftId, authUser }: { shiftId: string, authUser: string }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/request', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, authUser }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to request shift');
+            }
+
+            const data = await res.json();
+
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error requesting shift:', error);
+            return rejectWithValue(error || 'Failed to request shift');
+        }
+    }
+);
+
+export const createNotes = createAsyncThunk(
+    'sessions/createNotes',
+    async ({ shiftId, notes }: { shiftId: string, notes: string }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, notes }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to request shift');
+            }
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error creating notes:', error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
+export const updateNote = createAsyncThunk(
+    'sessions/createNotes',
+    async (formdata: FormData, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/notes/noai', {
+                method: 'POST',
+                body: formdata,
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to request shift');
+            }
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error creating notes:', error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
+export const getUserScheduledShifts = createAsyncThunk(
+    'sessions/getUserScheduledShifts',
+    async (authUser: string, { rejectWithValue }) => {
+
+
+        try {
+
+            const res = await fetch(`/api/calendar/user/scheduled?id=${authUser}`)
+            const data = await res.json()
+
+            // dispatch(setUserScheduledShifts(data.shiftp.items))
+            return data.shift.items; // Return the scheduled shifts
+        } catch (error) {
+            console.error("Error fetching weekly shifts:", error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
+export const getAllScheduledShifts = createAsyncThunk(
+    'sessions/getUserScheduledShifts',
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`/api/calendar/shift/allshift`)
+            const data = await res.json()
+
+            // dispatch(setUserScheduledShifts(data.shiftp.items))
+            return data.shift.items; // Return the scheduled shifts
+        } catch (error) {
+            console.error("Error fetching weekly shifts:", error);
+            return rejectWithValue(error || 'Failed to create notes');
+        }
+    }
+);
+
+export const approveMentorRequest = createAsyncThunk(
+    'sessions/requestShift',
+    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string | undefined }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/approve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, authUser }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to approve mentor request');
+            }
+
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error approving mentor request:', error);
+            return rejectWithValue(error || 'Failed to approve mentor request');
+        }
+    }
+);
+
+export const removeMentorRequest = createAsyncThunk(
+    'sessions/requestShift',
+    async ({ shiftId, authUser }: { shiftId: number | undefined, authUser: string | undefined }, { rejectWithValue }) => {
+        try {
+            const res = await fetch('/api/calendar/shift/approve', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ shiftId, authUser }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to approve mentor request');
+            }
+
+            const data = await res.json();
+            return data;  // Return the response data here
+        } catch (error) {
+            console.error('Error approving mentor request:', error);
+            return rejectWithValue(error || 'Failed to approve mentor request');
+        }
+    }
+);
+
+export const createShift = createAsyncThunk(
+    'sessions/requestShift',
+    async ({ title, date, shift_start, shift_end, location, spots, mentorID }: { title: string, date: Date, shift_start: string, shift_end: string, location: string, spots: number, mentorID: UserPool[] }, { rejectWithValue }) => {
+        try {
+            console.log(title, date, shift_start, shift_end, location);
+            const mentorIds = mentorID.map(mentor => mentor.id).join(", ")
+            console.log(mentorIds)
+            const res = await fetch('/api/calendar/shift/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, date, shift_start, shift_end, location, spots, mentorIds }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to create shift');
+            }
+
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.error('Error on creating shift:', error);
+            return rejectWithValue(error || 'Failed to create shift');
+        }
+    }
+)
+
+const sessionSlice = createSlice({
+    name: 'sessions',
+    initialState,
+    reducers: {
+        setAuthUser: (state, action: PayloadAction<AuthUser>) => {
+            try {
+                if (action.payload === null) return;
+                state.authUser = action.payload;
+            } catch (error) {
+                console.error("Error setting auth user:", error);
+            }
+
+        },
+        clearAuthUser: (state) => {
+            state.authUser = null;
+        },
+        setSelectedDate: (state, action: PayloadAction<string>) => {
+            state.selectedDate = action.payload;
+        },
+        setShiftDatas: (state, action: PayloadAction<ShiftOccurencesResponse>) => {
+            state.shiftDatas = action.payload;
+        },
+        clearShiftDatas: (state) => {
+            state.shiftDatas = null;
+        },
+        clearSelectedDate: (state) => {
+            state.selectedDate = '';
+        },
+        setDateTargetWeek: (state, action: PayloadAction<string>) => {
+            state.dateTargetWeek = action.payload;
+        },
+        clearDateTargetWeek: (state) => {
+            state.dateTargetWeek = null;
+        },
+        setUserScheduledShifts: (state, action: PayloadAction<Shift[]>) => {
+            state.userScheduledShifts = action.payload;
+        },
+        clearUserScheduledShifts: (state) => {
+            state.userScheduledShifts = [];
+        },
+        setUserPastShifts: (state, action: PayloadAction<Shift[]>) => {
+            state.userPastShifts = action.payload;
+        },
+        clearUserPastShifts: (state) => {
+            state.userPastShifts = [];
+        },
+        setAllMentors: (state, action: PayloadAction<UserPool[]>) => {
+            state.allMentors = action.payload;
+        },
+        setAllLocations: (state, action: PayloadAction<ShiftLocation[]>) => {
+            state.allLocations = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(requestShift.pending, (state) => {
+            state.loading = 'Pending State';
+            console.log('Requesting shift...');
+        })
+            .addCase(requestShift.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
+                const targetId = action.payload.shiftOccurence.items[0].id;
+
+                //update the shifts
+                if (state.shiftDatas !== null) {
+                    const tempData: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
+
+                    if (!tempData.items.some(item => item.id === targetId)) {
+                        console.log('Slice: no shift found')
+                        tempData.items.push(shiftOccurence);
+                        state.shiftDatas = tempData
+                        state.loading = 'Idle';
+                    } else {
+                        console.log('Slice: shift found')
+                        const updatedItems: ShiftOccurrence[] = tempData.items.map(occurence => {
+                            if (occurence.id === targetId) {
+                                return shiftOccurence;
+                            }
+                            return occurence;
+                        });
+                        state.shiftDatas.items = updatedItems
+                        state.loading = 'Idle';
+                    }
+                }
+            })
+            .addCase(requestShift.rejected, (state, action) => {
+                state.loading = 'Rejected State';
+                console.error('Error requesting shift:', action.payload);
+            })
+            .addCase(cancelRequest.pending, (state) => {
+                state.loading = 'Pending State';
+            })
+            .addCase(cancelRequest.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                const shiftOccurence: ShiftOccurrence = action.payload.shiftOccurence.items[0];
+                const targetId = action.payload.shiftOccurence.items[0].id;
+                if (state.shiftDatas !== null) {
+                    const tempData: ShiftOccurencesResponse = JSON.parse(JSON.stringify(state.shiftDatas));
+                    const updatedItems: ShiftOccurrence[] = tempData.items.map(occurence => {
+                        if (occurence.id === targetId) {
+                            return shiftOccurence;
+                        }
+                        return occurence;
+                    });
+
+                    state.shiftDatas.items = updatedItems
+                    state.loading = 'Idle';
+                }
+            })
+            .addCase(getUserScheduledShifts.pending, (state) => {
+                state.loading = 'Pending State';
+            })
+            .addCase(getUserScheduledShifts.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                console.log('Fetched user scheduled shifts:', action.payload);
+                state.userScheduledShifts = action.payload; // Update the userScheduledShifts with the fetched data
+                state.loading = 'Idle';
+            })
+            .addCase(getUserScheduledShifts.rejected, (state, action) => {
+                state.loading = 'Rejected State';
+                console.error('Error fetching user scheduled shifts:', action.payload);
+            })
+            // create addcase for createNotes that updates the scheduled shifts
+            .addCase(createNotes.pending, (state) => {
+                state.loading = 'Pending State';
+                console.log('PENDING NOTE CREATION...');
+            })
+            .addCase(createNotes.fulfilled, (state, action) => {
+                state.loading = 'Fulfilled State';
+                const shiftData = action.payload.shift;
+                // const targetOccurence = action.payload.shiftOccurence.items[0];
+                console.log('Created notes:', shiftData);
+                // Update the shift occurrence with the new notes
+                if (state.userScheduledShifts !== null) {
+                    const tempData: Shift[] = JSON.parse(JSON.stringify(state.userScheduledShifts));
+                    const updatedItems: Shift[] = tempData.map(shift => {
+                        if (shift.id === shiftData.id) {
+                            return shiftData
+                        }
+                        return shift;
+                    });
+                    state.userScheduledShifts = updatedItems;
+                    state.loading = 'Idle';
+                }
+            })
+
+    },
+
+});
+
+
+
+
+export const { setAuthUser, clearAuthUser, setSelectedDate,
+    clearSelectedDate, setShiftDatas, setDateTargetWeek, setUserPastShifts, clearUserPastShifts,
+    clearDateTargetWeek, setUserScheduledShifts, clearUserScheduledShifts, clearShiftDatas, setAllMentors, setAllLocations } = sessionSlice.actions;
+export default sessionSlice.reducer;

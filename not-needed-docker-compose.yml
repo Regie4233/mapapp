@@ -1,0 +1,19 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+      args:
+        # This build argument will be populated from the .env file
+        # by Docker Compose automatically.
+        - NEXT_PUBLIC_PB_IMAGE_URL
+    image: mapapp:latest
+    container_name: mentor-app
+    ports:
+      - "3000:3000"
+    # This loads the .env file for the runtime environment.
+    env_file:
+      - .env.production
+
+# BEEN using args directly in cli docker build args

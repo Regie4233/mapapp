@@ -1,0 +1,5 @@
+notes to check if the state changes if view is changed otherwise use redux to save state
+
+-need students view
+
+-mentor view -> change to account
