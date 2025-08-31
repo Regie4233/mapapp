@@ -117,7 +117,7 @@ export default function Navbar() {
                                 <Image src="/PromiseLink-bg-rem.png" alt="Company Logo" width={50} height={50} className="rounded-full mb-2" />
 
                             </div>
-                            <p className="text-end text-muted-foreground text-xs">1.4</p>
+                            <p className="text-end text-muted-foreground text-xs">1.5</p>
                         </SheetFooter>
                     </SheetContent>
                 </Sheet>
