@@ -9,6 +9,7 @@ import {
 import { Shift } from "@/lib/type"
 import { convertTo12HourFormat, formatDateToMonthYear } from "@/lib/utils";
 import AnimatedBadgeRow from "../ViewSessions/AnimatedBadgeRow";
+import { MapPin } from "lucide-react";
 
 export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handleOpenSheet: (value: Shift) => void }) {
   
@@ -44,7 +45,9 @@ export default function NotesCard({ data, handleOpenSheet}: { data: Shift, handl
                         </ul>
                     </section> */}
                     <AnimatedBadgeRow users={data.expand.approved} />
-
+{data.location && (
+                    <p className="mt-4 text-sm text-gray-600 flex gap-2 items-center"><MapPin size={14}/> {data.expand.location.name}</p>
+                )}
                 </CardContent>
                 <CardFooter>
                 
